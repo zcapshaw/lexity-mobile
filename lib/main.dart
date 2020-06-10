@@ -1,86 +1,116 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Lexity',
       theme: ThemeData(
-        // This is the theme of your application.
         primarySwatch: Colors.teal,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
+        textTheme: TextTheme(
+          headline3: GoogleFonts.ibmPlexSerif(
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[800],
+          ),
+          headline6: GoogleFonts.roboto(
+            fontWeight: FontWeight.w700,
+            color: Colors.grey[800],
+          ),
+        ),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Lexity'),
+      home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
+  MyHomePage({Key key}) : super(key: key);
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            title: Text(''),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            title: Text(''),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            title: Text(''),
+          ),
+        ],
+        currentIndex: 0,
+        backgroundColor: Colors.grey[200],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
         child: Icon(Icons.add),
+      ),
+      body: SafeArea(
+        child: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(left: 20, top: 30),
+                child: Text(
+                  'Reading List',
+                  style: Theme.of(context).textTheme.headline3,
+                ),
+              ),
+              Container(
+                margin: EdgeInsets.only(left: 20, top: 20),
+                child: Text(
+                  'Reading (3)',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+              ),
+              Column(children: <Widget>[
+                Divider(),
+                ListTile(
+                  title: Text('Sapiens'),
+                  subtitle: Text('Yuval Noah Harari'),
+                  leading: Image.network(
+                      'https://books.google.com/books/content/images/frontcover/FmyBAwAAQBAJ?fife=w200-h300'),
+                  trailing: Icon(Icons.reorder),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Skin in the Game'),
+                  subtitle: Text('Nassim Nicholas Taleb'),
+                  leading: Image.network(
+                      'https://pictures.abebooks.com/isbn/9780425284629-us.jpg'),
+                  trailing: Icon(Icons.reorder),
+                ),
+                Divider(),
+                ListTile(
+                  title: Text('Man\'s Search for Meaning'),
+                  subtitle: Text('Viktor Frankl'),
+                  leading: Image.network(
+                    'https://images-na.ssl-images-amazon.com/images/I/41-m35gRb3L._AC_UL160_.jpg',
+                  ),
+                  trailing: Icon(Icons.reorder),
+                ),
+                Divider(),
+              ])
+            ],
+          ),
+        ),
       ),
     );
   }
