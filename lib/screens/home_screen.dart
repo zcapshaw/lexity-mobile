@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -6,11 +9,55 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+class Book {
+  String title;
+  String author;
+  String coverImage;
+
+  Book(
+      {@required this.title, @required this.author, @required this.coverImage});
+
+  Book.fromJson(Map<String, dynamic> json)
+      : title = json['title'],
+        author = json['authors'][0],
+        coverImage = json['cover'];
+
+  Map<String, dynamic> toJson() =>
+      {'title': title, 'author': author, 'coverImage': coverImage};
+}
+
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void getData() async {
+    final String user = 'Users/74527';
+    http.Response response = await http.get(
+        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/$user');
+
+    if (response.statusCode == 200) {
+      var data = response.body;
+
+      var toReadJson = jsonDecode(data)['READING'] as List;
+      List<Book> toRead =
+          toReadJson.map((bookJson) => Book.fromJson(bookJson)).toList();
+
+      for (var book in toRead) {
+        print(book.title);
+      }
+    } else {
+      print(response.statusCode);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
+    getData();
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -31,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.grey[200],
       ),
       floatingActionButton: FloatingActionButton(
+        onPressed: () {},
         child: Icon(Icons.add),
       ),
       body: SafeArea(
@@ -79,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   trailing: Icon(Icons.reorder),
                 ),
                 Divider(),
-              ])
+              ]),
             ],
           ),
         ),
