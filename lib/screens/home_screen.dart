@@ -20,6 +20,8 @@ class Book {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int wantToReadCount;
+
   Future<List<Book>> _getReadingList() async {
     final String user = 'Users/77198';
 
@@ -34,8 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
       readingList.add(book);
     }
+    setState(() {
+      wantToReadCount = readingList.length;
+    });
 
-    print(readingList.length);
     return readingList;
   }
 
@@ -79,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Container(
                 margin: EdgeInsets.only(left: 20, top: 20, bottom: 10),
                 child: Text(
-                  'Want to read (2)',
+                  'Want to read (${wantToReadCount ?? ''})',
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ),
