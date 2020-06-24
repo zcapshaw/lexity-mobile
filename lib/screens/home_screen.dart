@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -10,54 +11,36 @@ class HomeScreen extends StatefulWidget {
 }
 
 class Book {
-  String title;
-  String author;
-  String coverImage;
+  final String title;
+  final String author;
+  final String coverImage;
 
   Book(
       {@required this.title, @required this.author, @required this.coverImage});
-
-  Book.fromJson(Map<String, dynamic> json)
-      : title = json['title'],
-        author = json['authors'][0],
-        coverImage = json['cover'];
-
-  Map<String, dynamic> toJson() =>
-      {'title': title, 'author': author, 'coverImage': coverImage};
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-  }
+  Future<List<Book>> _getReadingList() async {
+    final String user = 'Users/77198';
 
-  void getData() async {
-    final String user = 'Users/74527';
-    http.Response response = await http.get(
+    var data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/$user');
+    var jsonData = jsonDecode(data.body)['TO_READ'];
+    List<Book> readingList = [];
 
-    if (response.statusCode == 200) {
-      var data = response.body;
+    for (var b in jsonData) {
+      Book book = Book(
+          title: b['title'], author: b['authors'][0], coverImage: b['cover']);
 
-      var toReadJson = jsonDecode(data)['READING'] as List;
-      List<Book> toRead =
-          toReadJson.map((bookJson) => Book.fromJson(bookJson)).toList();
-
-      for (var book in toRead) {
-        print(book.title);
-      }
-    } else {
-      print(response.statusCode);
+      readingList.add(book);
     }
+
+    print(readingList.length);
+    return readingList;
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    getData();
-
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -94,40 +77,46 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 20, top: 20),
+                margin: EdgeInsets.only(left: 20, top: 20, bottom: 10),
                 child: Text(
-                  'Reading (3)',
+                  'Want to read (2)',
                   style: Theme.of(context).textTheme.headline6,
                 ),
               ),
-              Column(children: <Widget>[
-                Divider(),
-                ListTile(
-                  title: Text('Sapiens'),
-                  subtitle: Text('Yuval Noah Harari'),
-                  leading: Image.network(
-                      'https://books.google.com/books/content/images/frontcover/FmyBAwAAQBAJ?fife=w200-h300'),
-                  trailing: Icon(Icons.reorder),
+              Divider(),
+              Container(
+                child: FutureBuilder(
+                  future: _getReadingList(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.data == null) {
+                      return Container(
+                        child: Center(
+                          child: Text('Loading...'),
+                        ),
+                      );
+                    }
+
+                    return Flexible(
+                      child: ListView.builder(
+                          itemCount: snapshot.data.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Column(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: Image.network(
+                                      snapshot.data[index].coverImage),
+                                  title: Text(snapshot.data[index].title),
+                                  subtitle: Text(snapshot.data[index].author),
+                                  trailing: Icon(Icons.reorder),
+                                ),
+                                Divider(),
+                              ],
+                            );
+                          }),
+                    );
+                  },
                 ),
-                Divider(),
-                ListTile(
-                  title: Text('Skin in the Game'),
-                  subtitle: Text('Nassim Nicholas Taleb'),
-                  leading: Image.network(
-                      'https://pictures.abebooks.com/isbn/9780425284629-us.jpg'),
-                  trailing: Icon(Icons.reorder),
-                ),
-                Divider(),
-                ListTile(
-                  title: Text('Man\'s Search for Meaning'),
-                  subtitle: Text('Viktor Frankl'),
-                  leading: Image.network(
-                    'https://images-na.ssl-images-amazon.com/images/I/41-m35gRb3L._AC_UL160_.jpg',
-                  ),
-                  trailing: Icon(Icons.reorder),
-                ),
-                Divider(),
-              ]),
+              ),
             ],
           ),
         ),
