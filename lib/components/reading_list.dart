@@ -128,7 +128,7 @@ class HeadingItem implements ListItem {
   Widget buildLeading(BuildContext context) => null;
 }
 
-/// A ListItem that contains data to display a message.
+/// A ListItem that contains book info
 class BookItem implements ListItem {
   final String title;
   final String subtitle;
