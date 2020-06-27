@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'package:lexity_mobile/components/reading_list.dart';
 

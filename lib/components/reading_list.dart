@@ -12,32 +12,37 @@ class _ReadingListState extends State<ReadingList> {
   //Construct a List of ListItems from the API response
   Future<List<ListItem>> _getReadingList() async {
     final String user = 'Users/77198';
+    List<ListItem> readingList;
 
-    var data = await http.get(
+    final http.Response data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/$user');
 
-    //Construct a 'readingList' array with a HeadingItem and BookItems
-    var readingJson = jsonDecode(data.body)['READING'];
-    List<ListItem> readingList = [
-      HeadingItem('Reading'),
-    ];
-    for (var b in readingJson) {
-      BookItem book = BookItem(b['title'], b['authors'][0]);
-      readingList.add(book);
-    }
+    if (data.statusCode == 200) {
+      //Construct a 'readingList' array with a HeadingItem and BookItems
+      var readingJson = jsonDecode(data.body)['READING'];
+      readingList = [
+        HeadingItem('Reading'),
+      ];
+      for (var b in readingJson) {
+        BookItem book = BookItem(b['title'], b['authors'][0], b['cover']);
+        readingList.add(book);
+      }
 
-    //Construct a 'toRead' array with a HeadingItem and BookItems
-    var toReadJson = jsonDecode(data.body)['TO_READ'];
-    List<ListItem> toRead = [
-      HeadingItem('Want to read'),
-    ];
-    for (var b in toReadJson) {
-      BookItem book = BookItem(b['title'], b['authors'][0]);
-      toRead.add(book);
-    }
+      //Construct a 'toRead' array with a HeadingItem and BookItems
+      var toReadJson = jsonDecode(data.body)['TO_READ'];
+      List<ListItem> toRead = [
+        HeadingItem('Want to read'),
+      ];
+      for (var b in toReadJson) {
+        BookItem book = BookItem(b['title'], b['authors'][0], b['cover']);
+        toRead.add(book);
+      }
 
-    //Combine the 'readingList' and 'toRead' lists into one List to render
-    readingList.addAll(toRead);
+      //Combine the 'readingList' and 'toRead' lists into one List to render
+      readingList.addAll(toRead);
+    } else {
+      print(data.statusCode);
+    }
 
     return readingList;
   }
@@ -58,14 +63,19 @@ class _ReadingListState extends State<ReadingList> {
           }
 
           return Flexible(
-            child: ListView.separated(
+            child: ListView.builder(
                 itemCount: snapshot.data.length,
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(),
                 itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: snapshot.data[index].buildTitle(context),
-                    subtitle: snapshot.data[index].buildSubtitle(context),
+                  return Column(
+                    children: <Widget>[
+                      ListTile(
+                        leading: snapshot.data[index].buildLeading(context),
+                        title: snapshot.data[index].buildTitle(context),
+                        subtitle: snapshot.data[index].buildSubtitle(context),
+                        trailing: snapshot.data[index].buildTrailing(context),
+                      ),
+                      Divider()
+                    ],
                   );
                 }),
           );
@@ -82,6 +92,12 @@ abstract class ListItem {
 
   /// The subtitle line, if any, to show in a list item.
   Widget buildSubtitle(BuildContext context);
+
+  // The trailing widget to show in a list item.
+  Widget buildTrailing(BuildContext context);
+
+  // The trailing widget to show in a list item.
+  Widget buildLeading(BuildContext context);
 }
 
 /// A ListItem that contains data to display a heading.
@@ -91,23 +107,31 @@ class HeadingItem implements ListItem {
   HeadingItem(this.heading);
 
   Widget buildTitle(BuildContext context) {
-    return Text(
-      heading,
-      style: Theme.of(context).textTheme.headline6,
+    return Container(
+      margin: EdgeInsets.only(top: 20),
+      child: Text(
+        heading,
+        style: Theme.of(context).textTheme.headline6,
+      ),
     );
   }
 
   Widget buildSubtitle(BuildContext context) => null;
+  Widget buildTrailing(BuildContext context) => null;
+  Widget buildLeading(BuildContext context) => null;
 }
 
 /// A ListItem that contains data to display a message.
 class BookItem implements ListItem {
-  final String sender;
-  final String body;
+  final String title;
+  final String subtitle;
+  final String cover;
+  final IconData icon = Icons.reorder;
 
-  BookItem(this.sender, this.body);
+  BookItem(this.title, this.subtitle, this.cover);
 
-  Widget buildTitle(BuildContext context) => Text(sender);
-
-  Widget buildSubtitle(BuildContext context) => Text(body);
+  Widget buildTitle(BuildContext context) => Text(title);
+  Widget buildSubtitle(BuildContext context) => Text(subtitle);
+  Widget buildTrailing(BuildContext context) => Icon(icon);
+  Widget buildLeading(BuildContext context) => Image.network(cover);
 }
