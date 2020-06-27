@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'screens/home_screen.dart';
 
 void main() {
@@ -10,21 +11,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        textTheme: TextTheme(
-          headline3: GoogleFonts.ibmPlexSerif(
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
+        theme: ThemeData(
+          primarySwatch: Colors.teal,
+          textTheme: TextTheme(
+            headline3: GoogleFonts.ibmPlexSerif(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[800],
+            ),
+            headline6: GoogleFonts.roboto(
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[800],
+            ),
           ),
-          headline6: GoogleFonts.roboto(
-            fontWeight: FontWeight.w700,
-            color: Colors.grey[800],
-          ),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: HomeScreen(),
-    );
+        initialRoute: '/',
+        routes: {
+          '/': (context) => HomeScreen(),
+          '/bookSearch': (context) => BookSearchScreen(),
+        });
   }
 }
