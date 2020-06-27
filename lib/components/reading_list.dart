@@ -60,9 +60,11 @@ class _ReadingListState extends State<ReadingList> {
         future: _getReadingList(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.data == null) {
-            return Container(
-              child: Center(
-                child: Text('Loading...'),
+            return Expanded(
+              child: Container(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
               ),
             );
           }
