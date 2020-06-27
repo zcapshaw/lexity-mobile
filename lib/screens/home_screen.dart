@@ -54,31 +54,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-// Future<List<Book>> _getToReadList() async {
-//   final String user = 'Users/77198';
-
-//   var data = await http.get(
-//       'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/$user');
-//   var toReadJson = jsonDecode(data.body)['TO_READ'];
-//   List<Book> toReadList = [];
-
-//   for (var b in toReadJson) {
-//     Book book = Book(b['title'], b['authors'][0]);
-//     toReadList.add(book);
-//   }
-//   setState(() {
-//     wantToReadCount = toReadList.length;
-//   });
-//   return toReadList;
-// }
-
-// class Book {
-//   final String title;
-//   final String author;
-
-//   Book(this.title, this.author);
-
-//   Widget buildTitle(BuildContext context) => Text(title);
-//   Widget buildAuthor(BuildContext context) => Text(author);
-// }

@@ -20,8 +20,10 @@ class _ReadingListState extends State<ReadingList> {
     if (data.statusCode == 200) {
       //Construct a 'readingList' array with a HeadingItem and BookItems
       var readingJson = jsonDecode(data.body)['READING'];
+      int readingCount = readingJson.length;
+
       readingList = [
-        HeadingItem('Reading'),
+        HeadingItem('Reading ($readingCount)'),
       ];
       for (var b in readingJson) {
         BookItem book = BookItem(b['title'], b['authors'][0], b['cover']);
@@ -30,8 +32,10 @@ class _ReadingListState extends State<ReadingList> {
 
       //Construct a 'toRead' array with a HeadingItem and BookItems
       var toReadJson = jsonDecode(data.body)['TO_READ'];
+      int toReadCount = toReadJson.length;
+
       List<ListItem> toRead = [
-        HeadingItem('Want to read'),
+        HeadingItem('Want to read ($toReadCount)'),
       ];
       for (var b in toReadJson) {
         BookItem book = BookItem(b['title'], b['authors'][0], b['cover']);
@@ -42,6 +46,7 @@ class _ReadingListState extends State<ReadingList> {
       readingList.addAll(toRead);
     } else {
       print(data.statusCode);
+      print(data.reasonPhrase);
     }
 
     return readingList;
