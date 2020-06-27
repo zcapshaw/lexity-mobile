@@ -9,33 +9,37 @@ class ReadingList extends StatefulWidget {
 }
 
 class _ReadingListState extends State<ReadingList> {
-  final items = List<ListItem>.generate(
-    12,
-    (i) => i % 6 == 0
-        ? HeadingItem("Heading $i")
-        : BookItem("Title $i", "Author $i"),
-  );
-
+  //Construct a List of ListItems from the API response
   Future<List<ListItem>> _getReadingList() async {
     final String user = 'Users/77198';
 
     var data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/$user');
 
-    //JSON for the Reading portion of the response object
+    //Construct a 'readingList' array with a HeadingItem and BookItems
     var readingJson = jsonDecode(data.body)['READING'];
-    List<ListItem> reading = [
+    List<ListItem> readingList = [
       HeadingItem('Reading'),
-      BookItem('Title 1', 'Author 1')
     ];
+    for (var b in readingJson) {
+      BookItem book = BookItem(b['title'], b['authors'][0]);
+      readingList.add(book);
+    }
 
-    // for (var b in toReadJson) {
-    //   Book book = Book(
-    //       title: b['title'], author: b['authors'][0], coverImage: b['cover']);
-    //   toReadList.add(book);
-    // }
-    print(reading);
-    return reading;
+    //Construct a 'toRead' array with a HeadingItem and BookItems
+    var toReadJson = jsonDecode(data.body)['TO_READ'];
+    List<ListItem> toRead = [
+      HeadingItem('Want to read'),
+    ];
+    for (var b in toReadJson) {
+      BookItem book = BookItem(b['title'], b['authors'][0]);
+      toRead.add(book);
+    }
+
+    //Combine the 'readingList' and 'toRead' lists into one List to render
+    readingList.addAll(toRead);
+
+    return readingList;
   }
 
   @override
