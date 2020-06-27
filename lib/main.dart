@@ -22,6 +22,13 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.w700,
               color: Colors.grey[800],
             ),
+            bodyText1: GoogleFonts.roboto(
+              color: Colors.grey[800],
+              fontWeight: FontWeight.w600,
+            ),
+            bodyText2: GoogleFonts.roboto(
+              color: Colors.grey[800],
+            ),
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
