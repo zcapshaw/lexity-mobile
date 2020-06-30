@@ -7,6 +7,8 @@ class BookSearchScreen extends StatefulWidget {
 }
 
 class _BookSearchScreenState extends State<BookSearchScreen> {
+  final String illustration = 'assets/undraw_reading_time_gvg0.svg';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,6 +25,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                       Expanded(
                         child: CupertinoTextField(
                           autofocus: true,
+                          clearButtonMode: OverlayVisibilityMode.editing,
                           decoration: BoxDecoration(
                               color: Colors.grey[200],
                               borderRadius: BorderRadius.circular(10)),
@@ -44,12 +47,29 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                           Navigator.pop(context);
                         },
                         child: Text('Cancel'),
-                        focusColor: Colors.red,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
                       )
                     ],
                   ),
                 ),
               ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
+                child: Text(
+                  'Pro tip: You can search by title, author, or ISBN.sa',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 16,
+                    letterSpacing: 0.4,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+              Container(
+                  child: Expanded(
+                      child: Image.asset('undraw_reading_time_gvg0.png'))),
             ],
           ),
         ),
