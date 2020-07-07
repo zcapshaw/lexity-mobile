@@ -68,9 +68,10 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                 ),
               ),
               Container(
-                  child: Expanded(
-                      child:
-                          Image.asset('/assets/undraw_reading_time_gvg0.png'))),
+                child: Expanded(
+                  child: Image.asset('assets/undraw_reading_time_gvg0.png'),
+                ),
+              ),
             ],
           ),
         ),
