@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ReadingList extends StatefulWidget {
   @override
@@ -47,6 +48,7 @@ class _ReadingListState extends State<ReadingList> {
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
+      print(DotEnv().env['USER_JWT']);
     }
 
     return readingList;
