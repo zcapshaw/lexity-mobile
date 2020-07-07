@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -12,11 +13,17 @@ class ReadingList extends StatefulWidget {
 class _ReadingListState extends State<ReadingList> {
   //Construct a List of ListItems from the API response
   Future<List<ListItem>> _getReadingList() async {
-    final String user = 'Users/77198';
+    final String user = 'Users/74763';
+    final userJwt = DotEnv().env['USER_JWT'];
+    // final decodedJwt = jsonDecode(
+    //     ascii.decode(base64.decode(base64.normalize(userJwt.split(".")[1]))));
     List<ListItem> readingList;
 
     final http.Response data = await http.get(
-        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/$user');
+        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=$user',
+        headers: {
+          'user-jwt': '$userJwt',
+        });
 
     if (data.statusCode == 200) {
       //Construct a 'readingList' array with a HeadingItem and BookItems
@@ -48,7 +55,7 @@ class _ReadingListState extends State<ReadingList> {
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
-      print(DotEnv().env['USER_JWT']);
+      print(userJwt);
     }
 
     return readingList;
