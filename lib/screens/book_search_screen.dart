@@ -83,18 +83,19 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
               ),
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
-                child: Text(
-                  'Pro tip: You can search by title, author, or ISBN',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 16,
-                    letterSpacing: 0.4,
-                    height: 1.5,
+                child: Container(
+                  child: Text(
+                    'Pro tip: You can search by title, author, or ISBN',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 16,
+                      letterSpacing: 0.4,
+                      height: 1.5,
+                    ),
                   ),
                 ),
               ),
-              //TODO: Refactor so illustration doesn't bounce when you close the keyboard
               Expanded(
                 child: Image.asset('assets/undraw_reading_time_gvg0.png'),
               ),
