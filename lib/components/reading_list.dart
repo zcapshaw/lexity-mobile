@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,8 +14,7 @@ class _ReadingListState extends State<ReadingList> {
   Future<List<ListItem>> _getReadingList() async {
     final String user = 'Users/74763';
     final userJwt = DotEnv().env['USER_JWT'];
-    // final decodedJwt = jsonDecode(
-    //     ascii.decode(base64.decode(base64.normalize(userJwt.split(".")[1]))));
+
     List<ListItem> readingList;
 
     final http.Response data = await http.get(

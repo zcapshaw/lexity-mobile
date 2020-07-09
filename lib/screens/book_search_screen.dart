@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class BookSearchScreen extends StatefulWidget {
   @override
@@ -8,10 +12,27 @@ class BookSearchScreen extends StatefulWidget {
 
 class _BookSearchScreenState extends State<BookSearchScreen> {
   final String illustration = 'assets/undraw_reading_time_gvg0.svg';
+  String queryText = '';
+
+  void _fetchResults() async {
+    final String user = 'Users/74763';
+    final userJwt = DotEnv().env['USER_JWT'];
+
+    final http.Response data = await http.get(
+        'https://stellar-aurora-280316.uc.r.appspot.com/search/private/books?userId=$user&searchText=$queryText',
+        headers: {
+          'user-jwt': '$userJwt',
+        });
+
+    print(jsonDecode(data.body));
+  }
 
   @override
   Widget build(BuildContext context) {
+    _fetchResults();
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
@@ -29,6 +50,12 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                           decoration: BoxDecoration(
                               color: Colors.grey[200],
                               borderRadius: BorderRadius.circular(10)),
+                          textInputAction: TextInputAction.search,
+                          onChanged: (text) {
+                            setState(() {
+                              queryText = text;
+                            });
+                          },
                           placeholder: 'Search for books',
                           prefix: Padding(
                             padding: const EdgeInsets.all(8.0),
@@ -57,7 +84,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
               Container(
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
                 child: Text(
-                  'Pro tip: You can search by title, author, or ISBN.sa',
+                  'Pro tip: You can search by title, author, or ISBN',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey[500],
@@ -67,10 +94,12 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                   ),
                 ),
               ),
-              Container(
-                child: Expanded(
-                  child: Image.asset('assets/undraw_reading_time_gvg0.png'),
-                ),
+              //TODO: Refactor so illustration doesn't bounce when you close the keyboard
+              Expanded(
+                child: Image.asset('assets/undraw_reading_time_gvg0.png'),
+              ),
+              Expanded(
+                child: Container(),
               ),
             ],
           ),
