@@ -81,31 +81,39 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                   ),
                 ),
               ),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
-                child: Container(
-                  child: Text(
-                    'Pro tip: You can search by title, author, or ISBN',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey[500],
-                      fontSize: 16,
-                      letterSpacing: 0.4,
-                      height: 1.5,
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Image.asset('assets/undraw_reading_time_gvg0.png'),
-              ),
-              Expanded(
-                child: Container(),
-              ),
+              AddBookBackground(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class AddBookBackground extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
+          child: Container(
+            child: Text(
+              'Pro tip: You can search by title, author, or ISBN',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 16,
+                letterSpacing: 0.4,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ),
+        Container(
+          child: Image.asset('assets/undraw_reading_time_gvg0.png'),
+        ),
+      ],
     );
   }
 }
