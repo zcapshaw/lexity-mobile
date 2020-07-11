@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:lexity_mobile/screens/add_book_screen.dart';
 
 class BookSearchScreen extends StatefulWidget {
   @override
@@ -127,6 +128,15 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                               subtitle: Text(snapshot.data[index].author ?? ''),
                               leading:
                                   Image.network(snapshot.data[index].thumbnail),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddBookScreen(
+                                        book: snapshot.data[index]),
+                                  ),
+                                );
+                              },
                             ),
                             Divider(),
                           ],
@@ -172,6 +182,7 @@ class AddBookBackground extends StatelessWidget {
   }
 }
 
+//TODO refactor to incorporate this with othe Book classes
 class BookTile {
   final String title;
   final String author;
