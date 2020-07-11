@@ -36,13 +36,17 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       //Populate the books array by looping over jsonData and creating a BookTile for each element
       for (var b in jsonData) {
         //handle books that come back from Google with missing data
-        final String author = b.containsKey('authors') ? b['authors'][0] : '';
         final String cover =
             b.containsKey('cover') ? b['cover']['thumbnail'] : '';
         final String title = b.containsKey('title') ? b['title'] : '';
+        String author = b.containsKey('authors') ? b['authors'][0] : '';
+
+        if (b['inUserList']) {
+          author = '$author ● On my list';
+        }
 
         //construct a BookTile object and add it to the books array
-        BookTile book = BookTile(title, author, cover, b['inUserList']);
+        BookTile book = BookTile(title, author, cover);
         books.add(book);
       }
 
@@ -173,7 +177,6 @@ class BookTile {
   final String title;
   final String author;
   final String thumbnail;
-  final bool inUserList;
 
-  BookTile(this.title, this.author, this.thumbnail, this.inUserList);
+  BookTile(this.title, this.author, this.thumbnail);
 }
