@@ -35,16 +35,15 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
       //Populate the books array by looping over jsonData and creating a BookTile for each element
       for (var b in jsonData) {
-        //handle books that come back from Google with no cover data
-        if (b.containsKey('cover')) {
-          BookTile book = BookTile(b['title'], b['authors'[0]],
-              b['cover']['thumbnail'], b['inUserList']);
-          books.add(book);
-        } else {
-          BookTile book =
-              BookTile(b['title'], b['authors'[0]], null, b['inUserList']);
-          books.add(book);
-        }
+        //handle books that come back from Google with missing data
+        final String author = b.containsKey('authors') ? b['authors'][0] : '';
+        final String cover =
+            b.containsKey('cover') ? b['cover']['thumbnail'] : '';
+        final String title = b.containsKey('title') ? b['title'] : '';
+
+        //construct a BookTile object and add it to the books array
+        BookTile book = BookTile(title, author, cover, b['inUserList']);
+        books.add(book);
       }
 
       print(books.length);
@@ -77,6 +76,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                               color: Colors.grey[200],
                               borderRadius: BorderRadius.circular(10)),
                           textInputAction: TextInputAction.search,
+                          //TODO: add debouncing to onChange logic
                           onChanged: (text) {
                             setState(() {
                               queryText = text;
@@ -117,9 +117,16 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                     return ListView.builder(
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index) {
-                        print(snapshot.data);
-                        return ListTile(
-                          title: Text(snapshot.data[index].title),
+                        return Column(
+                          children: <Widget>[
+                            ListTile(
+                              title: Text(snapshot.data[index].title),
+                              subtitle: Text(snapshot.data[index].author ?? ''),
+                              leading:
+                                  Image.network(snapshot.data[index].thumbnail),
+                            ),
+                            Divider(),
+                          ],
                         );
                       },
                     );
