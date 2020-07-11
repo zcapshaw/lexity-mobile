@@ -15,21 +15,30 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.teal,
+          appBarTheme: AppBarTheme(
+              color: Colors.grey[200],
+              iconTheme: IconThemeData(
+                color: Colors.grey[700],
+              )),
           textTheme: TextTheme(
             headline3: GoogleFonts.ibmPlexSerif(
               fontWeight: FontWeight.w600,
-              color: Colors.grey[800],
+              color: Colors.grey[700],
             ),
             headline6: GoogleFonts.roboto(
               fontWeight: FontWeight.w700,
-              color: Colors.grey[800],
+              color: Colors.grey[700],
             ),
             bodyText1: GoogleFonts.roboto(
-              color: Colors.grey[800],
+              color: Colors.grey[700],
               fontWeight: FontWeight.w600,
+              letterSpacing: 0.75,
             ),
             bodyText2: GoogleFonts.roboto(
-              color: Colors.grey[800],
+              color: Colors.grey[700],
+            ),
+            subtitle1: GoogleFonts.roboto(
+              color: Colors.grey[700],
             ),
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,

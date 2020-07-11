@@ -18,7 +18,22 @@ class _AddBookScreenState extends State<AddBookScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Book'),
+        title: Text(
+          'Add Book',
+          style: Theme.of(context).textTheme.subtitle1,
+        ),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {},
+            child: Text(
+              'Done',
+              style: TextStyle(
+                color: Colors.teal[700],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: ListView(
