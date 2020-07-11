@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 
 class AddBookScreen extends StatefulWidget {
-  const AddBookScreen({Key key, this.book}) : super(key: key);
+  const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
 
   final BookTile book;
+  final String bookId;
 
   @override
   _AddBookScreenState createState() => _AddBookScreenState();

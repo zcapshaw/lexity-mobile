@@ -47,7 +47,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         }
 
         //construct a BookTile object and add it to the books array
-        BookTile book = BookTile(title, author, cover);
+        BookTile book = BookTile(title, author, cover, b['googleId']);
         books.add(book);
       }
 
@@ -57,6 +57,29 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       print(data.reasonPhrase);
     }
     return books;
+  }
+
+  void _createBook(book) async {
+    final String googleId = book.googleId;
+
+    final http.Response response = await http.post(
+      'https://stellar-aurora-280316.uc.r.appspot.com/book/create/$googleId',
+    );
+    if (response.statusCode == 200) {
+      var responseJson = json.decode(response.body);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddBookScreen(
+            book: book,
+            bookId: responseJson['id'],
+          ),
+        ),
+      );
+
+      print(responseJson['id']);
+    }
   }
 
   @override
@@ -124,20 +147,14 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                         return Column(
                           children: <Widget>[
                             ListTile(
-                              title: Text(snapshot.data[index].title),
-                              subtitle: Text(snapshot.data[index].author ?? ''),
-                              leading:
-                                  Image.network(snapshot.data[index].thumbnail),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddBookScreen(
-                                        book: snapshot.data[index]),
-                                  ),
-                                );
-                              },
-                            ),
+                                title: Text(snapshot.data[index].title),
+                                subtitle:
+                                    Text(snapshot.data[index].author ?? ''),
+                                leading: Image.network(
+                                    snapshot.data[index].thumbnail),
+                                onTap: () {
+                                  _createBook(snapshot.data[index]);
+                                }),
                             Divider(),
                           ],
                         );
@@ -187,6 +204,7 @@ class BookTile {
   final String title;
   final String author;
   final String thumbnail;
+  final String googleId;
 
-  BookTile(this.title, this.author, this.thumbnail);
+  BookTile(this.title, this.author, this.thumbnail, this.googleId);
 }
