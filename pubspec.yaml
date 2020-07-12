@@ -30,8 +30,11 @@ dependencies:
   google_fonts: ^1.1.0
   http: ^0.12.1
   flutter_dotenv: ^2.1.0
+  json_annotation: ^3.0.1
 
 dev_dependencies:
+  json_serializable: ^3.3.0
+  build_runner: ^1.10.0
   flutter_test:
     sdk: flutter
 

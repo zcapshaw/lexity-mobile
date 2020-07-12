@@ -11,11 +11,11 @@ class ReadingList extends StatefulWidget {
 
 class _ReadingListState extends State<ReadingList> {
   //Construct a List of ListItems from the API response
-  Future<List<ListItem>> _getReadingList() async {
+  Future<List<ReadingListItem>> _getReadingList() async {
     final String user = 'Users/74763';
     final userJwt = DotEnv().env['USER_JWT'];
 
-    List<ListItem> readingList;
+    List<ReadingListItem> readingList;
 
     final http.Response data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=$user',
@@ -40,7 +40,7 @@ class _ReadingListState extends State<ReadingList> {
       var toReadJson = jsonDecode(data.body)['TO_READ'];
       int toReadCount = toReadJson.length;
 
-      List<ListItem> toRead = [
+      List<ReadingListItem> toRead = [
         HeadingItem('Want to read ($toReadCount)'),
       ];
       for (var b in toReadJson) {
@@ -100,7 +100,7 @@ class _ReadingListState extends State<ReadingList> {
 }
 
 /// The base class for the different types of items the list can contain.
-abstract class ListItem {
+abstract class ReadingListItem {
   /// The title line to show in a list item.
   Widget buildTitle(BuildContext context);
 
@@ -115,7 +115,7 @@ abstract class ListItem {
 }
 
 /// A ListItem that contains data to display a heading.
-class HeadingItem implements ListItem {
+class HeadingItem implements ReadingListItem {
   final String heading;
 
   HeadingItem(this.heading);
@@ -136,7 +136,7 @@ class HeadingItem implements ListItem {
 }
 
 /// A ListItem that contains book info
-class BookItem implements ListItem {
+class BookItem implements ReadingListItem {
   final String title;
   final String subtitle;
   final String cover;

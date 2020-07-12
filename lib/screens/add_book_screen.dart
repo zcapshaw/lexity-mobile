@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
+part 'add_book_screen.g.dart';
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
@@ -122,4 +124,18 @@ class _AddBookScreenState extends State<AddBookScreen> {
       ),
     );
   }
+}
+
+@JsonSerializable()
+class ListItem {
+  ListItem(this.userId, this.bookId, this.type, this.labels, this.notes);
+
+  String userId;
+  String bookId;
+  String type;
+  List<String> labels;
+  //need to update the type of notes to the Note class when we add that
+  List notes;
+
+  Map<String, dynamic> toJson() => _$ListItemToJson(this);
 }
