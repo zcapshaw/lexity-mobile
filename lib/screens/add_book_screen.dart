@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'dart:convert';
+
 part 'add_book_screen.g.dart';
 
 class AddBookScreen extends StatefulWidget {
@@ -17,6 +21,37 @@ class _AddBookScreenState extends State<AddBookScreen> {
   //
   List<bool> _listStatus = [true, false, false];
 
+  void _saveListItem() async {
+    final String userId = 'Users/74763';
+    final userJwt = DotEnv().env['USER_JWT'];
+    //TODO: Update this to reflect button state
+    final String type = 'TO_READ';
+    final List labels = [];
+    final List notes = [];
+
+    final ListItem item = ListItem(userId, widget.bookId, type, labels, notes);
+    final jsonItem = _$ListItemToJson(item);
+    final encoded = jsonEncode(item);
+
+    final http.Response res = await http.post(
+      'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
+      headers: {
+        'user-jwt': '$userJwt',
+        'Content-Type': 'application/json',
+      },
+      body: encoded,
+    );
+    if (res.statusCode == 200) {
+      print('successfully added ${widget.bookId}');
+    } else {
+      print(res.statusCode);
+      print(res.reasonPhrase);
+      print(res.body);
+    }
+
+    print(encoded);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +62,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
         ),
         actions: <Widget>[
           FlatButton(
-            onPressed: () {},
+            onPressed: () {
+              _saveListItem();
+            },
             child: Text(
               'Done',
               style: TextStyle(
@@ -133,7 +170,7 @@ class ListItem {
   String userId;
   String bookId;
   String type;
-  List<String> labels;
+  List labels;
   //need to update the type of notes to the Note class when we add that
   List notes;
 

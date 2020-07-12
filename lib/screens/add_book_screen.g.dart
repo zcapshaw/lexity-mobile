@@ -11,7 +11,7 @@ ListItem _$ListItemFromJson(Map<String, dynamic> json) {
     json['userId'] as String,
     json['bookId'] as String,
     json['type'] as String,
-    (json['labels'] as List)?.map((e) => e as String)?.toList(),
+    json['labels'] as List,
     json['notes'] as List,
   );
 }
