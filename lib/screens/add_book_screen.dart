@@ -1,9 +1,12 @@
+import 'home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+
+import 'package:lexity_mobile/screens/home_screen.dart';
 
 part 'add_book_screen.g.dart';
 
@@ -20,18 +23,17 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   //
   List<bool> _listStatus = [true, false, false];
+  String listType = 'TO_READ';
 
   void _saveListItem() async {
     final String userId = 'Users/74763';
     final userJwt = DotEnv().env['USER_JWT'];
-    //TODO: Update this to reflect button state
-    final String type = 'TO_READ';
+    final String type = listType;
     final List labels = [];
     final List notes = [];
 
     final ListItem item = ListItem(userId, widget.bookId, type, labels, notes);
     final jsonItem = _$ListItemToJson(item);
-    final encoded = jsonEncode(item);
 
     final http.Response res = await http.post(
       'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
@@ -39,17 +41,19 @@ class _AddBookScreenState extends State<AddBookScreen> {
         'user-jwt': '$userJwt',
         'Content-Type': 'application/json',
       },
-      body: encoded,
+      body: jsonEncode(jsonItem),
     );
     if (res.statusCode == 200) {
       print('successfully added ${widget.bookId}');
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => HomeScreen()));
     } else {
       print(res.statusCode);
       print(res.reasonPhrase);
       print(res.body);
     }
 
-    print(encoded);
+    print(jsonEncode(jsonItem));
   }
 
   @override
@@ -139,6 +143,13 @@ class _AddBookScreenState extends State<AddBookScreen> {
                             //only allows one choice to be selected at a time
                             for (int i = 0; i < _listStatus.length; i++) {
                               _listStatus[i] = i == index;
+                            }
+                            if (index == 0) {
+                              listType = 'TO_READ';
+                            } else if (index == 1) {
+                              listType = 'READING';
+                            } else if (index == 2) {
+                              listType = 'READ';
                             }
                           });
                         },
