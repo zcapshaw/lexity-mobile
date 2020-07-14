@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:lexity_mobile/components/reading_list.dart';
+import 'package:lexity_mobile/components/bottom_nav_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -12,26 +13,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            title: Text(''),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            title: Text(''),
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            title: Text(''),
-          ),
-        ],
-        currentIndex: 0,
-        backgroundColor: Colors.grey[200],
-      ),
+      bottomNavigationBar: BottomNavBar(0),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, '/bookSearch');
+        },
         child: Icon(Icons.add),
       ),
       body: SafeArea(

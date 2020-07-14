@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'screens/home_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future main() async {
+  await DotEnv().load('.env');
   runApp(MyApp());
 }
 
@@ -10,21 +13,41 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.teal,
-        textTheme: TextTheme(
-          headline3: GoogleFonts.ibmPlexSerif(
-            fontWeight: FontWeight.w600,
-            color: Colors.grey[800],
+        theme: ThemeData(
+          primarySwatch: Colors.teal,
+          appBarTheme: AppBarTheme(
+              color: Colors.grey[200],
+              brightness: Brightness.light,
+              iconTheme: IconThemeData(
+                color: Colors.grey[700],
+              )),
+          textTheme: TextTheme(
+            headline3: GoogleFonts.ibmPlexSerif(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+            ),
+            headline6: GoogleFonts.roboto(
+              fontWeight: FontWeight.w700,
+              color: Colors.grey[700],
+            ),
+            bodyText1: GoogleFonts.roboto(
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.75,
+            ),
+            bodyText2: GoogleFonts.roboto(
+              color: Colors.grey[700],
+            ),
+            subtitle1: GoogleFonts.roboto(
+              color: Colors.grey[700],
+            ),
           ),
-          headline6: GoogleFonts.roboto(
-            fontWeight: FontWeight.w700,
-            color: Colors.grey[800],
-          ),
+          visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: HomeScreen(),
-    );
+        initialRoute: '/',
+        routes: {
+          '/': (context) => HomeScreen(),
+          '/bookSearch': (context) => BookSearchScreen(),
+        });
   }
 }

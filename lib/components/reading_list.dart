@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ReadingList extends StatefulWidget {
   @override
@@ -10,12 +11,17 @@ class ReadingList extends StatefulWidget {
 
 class _ReadingListState extends State<ReadingList> {
   //Construct a List of ListItems from the API response
-  Future<List<ListItem>> _getReadingList() async {
-    final String user = 'Users/77198';
-    List<ListItem> readingList;
+  Future<List<ReadingListItem>> _getReadingList() async {
+    final String user = 'Users/74763';
+    final userJwt = DotEnv().env['USER_JWT'];
+
+    List<ReadingListItem> readingList;
 
     final http.Response data = await http.get(
-        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/$user');
+        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=$user',
+        headers: {
+          'user-jwt': '$userJwt',
+        });
 
     if (data.statusCode == 200) {
       //Construct a 'readingList' array with a HeadingItem and BookItems
@@ -34,7 +40,7 @@ class _ReadingListState extends State<ReadingList> {
       var toReadJson = jsonDecode(data.body)['TO_READ'];
       int toReadCount = toReadJson.length;
 
-      List<ListItem> toRead = [
+      List<ReadingListItem> toRead = [
         HeadingItem('Want to read ($toReadCount)'),
       ];
       for (var b in toReadJson) {
@@ -47,6 +53,7 @@ class _ReadingListState extends State<ReadingList> {
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
+      print(userJwt);
     }
 
     return readingList;
@@ -93,7 +100,7 @@ class _ReadingListState extends State<ReadingList> {
 }
 
 /// The base class for the different types of items the list can contain.
-abstract class ListItem {
+abstract class ReadingListItem {
   /// The title line to show in a list item.
   Widget buildTitle(BuildContext context);
 
@@ -108,7 +115,7 @@ abstract class ListItem {
 }
 
 /// A ListItem that contains data to display a heading.
-class HeadingItem implements ListItem {
+class HeadingItem implements ReadingListItem {
   final String heading;
 
   HeadingItem(this.heading);
@@ -128,8 +135,8 @@ class HeadingItem implements ListItem {
   Widget buildLeading(BuildContext context) => null;
 }
 
-/// A ListItem that contains data to display a message.
-class BookItem implements ListItem {
+/// A ListItem that contains book info
+class BookItem implements ReadingListItem {
   final String title;
   final String subtitle;
   final String cover;
