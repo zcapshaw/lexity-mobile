@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter/cupertino.dart';
 
 class ReadingList extends StatefulWidget {
   @override
@@ -32,7 +33,8 @@ class _ReadingListState extends State<ReadingList> {
         HeadingItem('Reading ($readingCount)'),
       ];
       for (var b in readingJson) {
-        BookItem book = BookItem(b['title'], b['authors'][0], b['cover']);
+        BookItem book =
+            BookItem(b['title'], b['authors'][0], b['cover'], b['listId']);
         readingList.add(book);
       }
 
@@ -44,7 +46,8 @@ class _ReadingListState extends State<ReadingList> {
         HeadingItem('Want to read ($toReadCount)'),
       ];
       for (var b in toReadJson) {
-        BookItem book = BookItem(b['title'], b['authors'][0], b['cover']);
+        BookItem book =
+            BookItem(b['title'], b['authors'][0], b['cover'], b['listId']);
         toRead.add(book);
       }
 
@@ -53,10 +56,54 @@ class _ReadingListState extends State<ReadingList> {
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
-      print(userJwt);
     }
 
     return readingList;
+  }
+
+  Future<void> _deleteBook(listId) async {
+    final String user = 'Users/74763';
+    final userJwt = DotEnv().env['USER_JWT'];
+
+    final http.Response res = await http.delete(
+        'https://stellar-aurora-280316.uc.r.appspot.com/list/delete/?userId=$user&listId=$listId',
+        headers: {
+          'user-jwt': '$userJwt',
+        });
+    if (res.statusCode == 200) {
+      print('successfully deleted book');
+    } else {
+      print(res.statusCode);
+      print(res.reasonPhrase);
+    }
+  }
+
+  Future<bool> _promptUser(DismissDirection direction, title) async {
+    return await showCupertinoDialog<bool>(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            content: Text("Are you sure you want to delete $title?"),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: Text("Delete"),
+                onPressed: () {
+                  // Dismiss the dialog and
+                  // also dismiss the swiped item
+                  Navigator.of(context).pop(true);
+                },
+              ),
+              CupertinoDialogAction(
+                child: Text('Cancel'),
+                onPressed: () {
+                  // Dismiss the dialog but don't
+                  // dismiss the swiped item
+                  return Navigator.of(context).pop(false);
+                },
+              )
+            ],
+          ),
+        ) ??
+        false; // In case the user dismisses the dialog by clicking away from it
   }
 
   @override
@@ -80,36 +127,41 @@ class _ReadingListState extends State<ReadingList> {
             child: ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (BuildContext context, int index) {
+                  if (snapshot.data[index] is HeadingItem) {
+                    return Column(
+                      children: <Widget>[
+                        ListTile(
+                          leading: snapshot.data[index].buildLeading(context),
+                          title: snapshot.data[index].buildTitle(context),
+                          subtitle: snapshot.data[index].buildSubtitle(context),
+                          trailing: snapshot.data[index].buildTrailing(context),
+                        ),
+                        Divider(
+                          height: 0,
+                        ),
+                      ],
+                    );
+                  }
                   return Column(
                     children: <Widget>[
                       Dismissible(
-                        key: Key(index.toString()),
-                        background: Container(
-                          color: Colors.redAccent[200],
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              Container(
-                                padding: EdgeInsets.only(right: 12),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.delete_outline,
-                                      color: Colors.white,
-                                    ),
-                                    Text(
-                                      'Delete',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
+                        key: UniqueKey(),
+                        confirmDismiss: (direction) =>
+                            _promptUser(direction, snapshot.data[index].title),
+                        background: SwipeBackground(),
+                        secondaryBackground: SecondarySwipeBackground(),
+                        //TODO: Remove this when we add more swipe actions
+                        direction: DismissDirection.endToStart,
+                        onDismissed: (direction) {
+                          setState(() {
+                            _deleteBook(snapshot.data[index].listId);
+                          });
+
+                          // Show a snackbar. This snackbar could also contain "Undo" actions.
+                          Scaffold.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.grey[600],
+                              content: Text("Book deleted from list.")));
+                        },
                         child: ListTile(
                           leading: snapshot.data[index].buildLeading(context),
                           title: snapshot.data[index].buildTitle(context),
@@ -171,12 +223,77 @@ class BookItem implements ReadingListItem {
   final String title;
   final String subtitle;
   final String cover;
+  final String listId;
   final IconData icon = Icons.reorder;
 
-  BookItem(this.title, this.subtitle, this.cover);
+  BookItem(this.title, this.subtitle, this.cover, this.listId);
 
   Widget buildTitle(BuildContext context) => Text(title);
   Widget buildSubtitle(BuildContext context) => Text(subtitle);
   Widget buildTrailing(BuildContext context) => Icon(icon);
   Widget buildLeading(BuildContext context) => Image.network(cover);
+}
+
+class SecondarySwipeBackground extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.redAccent[200],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(right: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.delete_outline,
+                  color: Colors.white,
+                ),
+                Text(
+                  'Delete',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class SwipeBackground extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.teal[900],
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.only(left: 12),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(
+                  Icons.play_circle_outline,
+                  color: Colors.white,
+                ),
+                Text(
+                  'Start',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
 }
