@@ -100,6 +100,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                       Expanded(
                         child: CupertinoTextField(
                           autofocus: true,
+                          autocorrect: false,
                           clearButtonMode: OverlayVisibilityMode.editing,
                           decoration: BoxDecoration(
                               color: Colors.grey[200],

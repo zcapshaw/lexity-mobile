@@ -5,18 +5,21 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'swipe_background.dart';
+import 'package:lexity_mobile/models/reading_list_item.dart';
+
 class ReadingList extends StatefulWidget {
   @override
   _ReadingListState createState() => _ReadingListState();
 }
 
 class _ReadingListState extends State<ReadingList> {
+  List<ReadingListItem> readingList;
+
   //Construct a List of ListItems from the API response
   Future<List<ReadingListItem>> _getReadingList() async {
     final String user = 'Users/74763';
     final userJwt = DotEnv().env['USER_JWT'];
-
-    List<ReadingListItem> readingList;
 
     final http.Response data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=$user',
@@ -78,17 +81,19 @@ class _ReadingListState extends State<ReadingList> {
     }
   }
 
-  Future<bool> _promptUser(DismissDirection direction, title) async {
+  Future<bool> _promptUser(DismissDirection direction, book) async {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
-            content: Text("Are you sure you want to delete $title?"),
+            content: Text("Are you sure you want to delete ${book.title}?"),
             actions: <Widget>[
               CupertinoDialogAction(
                 child: Text("Delete"),
                 onPressed: () {
                   // Dismiss the dialog and
                   // also dismiss the swiped item
+
+                  _deleteBook(book.listId);
                   Navigator.of(context).pop(true);
                 },
               ),
@@ -147,17 +152,14 @@ class _ReadingListState extends State<ReadingList> {
                       Dismissible(
                         key: UniqueKey(),
                         confirmDismiss: (direction) =>
-                            _promptUser(direction, snapshot.data[index].title),
+                            _promptUser(direction, snapshot.data[index]),
                         background: SwipeBackground(),
-                        secondaryBackground: SecondarySwipeBackground(),
                         //TODO: Remove this when we add more swipe actions
                         direction: DismissDirection.endToStart,
                         onDismissed: (direction) {
                           setState(() {
-                            _deleteBook(snapshot.data[index].listId);
+                            readingList.remove(snapshot.data[index]);
                           });
-
-                          // Show a snackbar. This snackbar could also contain "Undo" actions.
                           Scaffold.of(context).showSnackBar(SnackBar(
                               backgroundColor: Colors.grey[600],
                               content: Text("Book deleted from list.")));
@@ -177,122 +179,6 @@ class _ReadingListState extends State<ReadingList> {
                 }),
           );
         },
-      ),
-    );
-  }
-}
-
-/// The base class for the different types of items the list can contain.
-abstract class ReadingListItem {
-  /// The title line to show in a list item.
-  Widget buildTitle(BuildContext context);
-
-  /// The subtitle line, if any, to show in a list item.
-  Widget buildSubtitle(BuildContext context);
-
-  // The trailing widget to show in a list item.
-  Widget buildTrailing(BuildContext context);
-
-  // The trailing widget to show in a list item.
-  Widget buildLeading(BuildContext context);
-}
-
-/// A ListItem that contains data to display a heading.
-class HeadingItem implements ReadingListItem {
-  final String heading;
-
-  HeadingItem(this.heading);
-
-  Widget buildTitle(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 30, bottom: 10),
-      child: Text(
-        heading,
-        style: Theme.of(context).textTheme.headline6,
-      ),
-    );
-  }
-
-  Widget buildSubtitle(BuildContext context) => null;
-  Widget buildTrailing(BuildContext context) => null;
-  Widget buildLeading(BuildContext context) => null;
-}
-
-/// A ListItem that contains book info
-class BookItem implements ReadingListItem {
-  final String title;
-  final String subtitle;
-  final String cover;
-  final String listId;
-  final IconData icon = Icons.reorder;
-
-  BookItem(this.title, this.subtitle, this.cover, this.listId);
-
-  Widget buildTitle(BuildContext context) => Text(title);
-  Widget buildSubtitle(BuildContext context) => Text(subtitle);
-  Widget buildTrailing(BuildContext context) => Icon(icon);
-  Widget buildLeading(BuildContext context) => Image.network(cover);
-}
-
-class SecondarySwipeBackground extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.redAccent[200],
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(right: 12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.delete_outline,
-                  color: Colors.white,
-                ),
-                Text(
-                  'Delete',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class SwipeBackground extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.teal[900],
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Container(
-            padding: EdgeInsets.only(left: 12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(
-                  Icons.play_circle_outline,
-                  color: Colors.white,
-                ),
-                Text(
-                  'Start',
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
       ),
     );
   }
