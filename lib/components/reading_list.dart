@@ -82,13 +82,44 @@ class _ReadingListState extends State<ReadingList> {
                 itemBuilder: (BuildContext context, int index) {
                   return Column(
                     children: <Widget>[
-                      ListTile(
-                        leading: snapshot.data[index].buildLeading(context),
-                        title: snapshot.data[index].buildTitle(context),
-                        subtitle: snapshot.data[index].buildSubtitle(context),
-                        trailing: snapshot.data[index].buildTrailing(context),
+                      Dismissible(
+                        key: Key(index.toString()),
+                        background: Container(
+                          color: Colors.redAccent[200],
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Container(
+                                padding: EdgeInsets.only(right: 12),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.white,
+                                    ),
+                                    Text(
+                                      'Delete',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: snapshot.data[index].buildLeading(context),
+                          title: snapshot.data[index].buildTitle(context),
+                          subtitle: snapshot.data[index].buildSubtitle(context),
+                          trailing: snapshot.data[index].buildTrailing(context),
+                        ),
                       ),
-                      Divider()
+                      Divider(
+                        height: 0,
+                      ),
                     ],
                   );
                 }),
@@ -122,7 +153,7 @@ class HeadingItem implements ReadingListItem {
 
   Widget buildTitle(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      margin: EdgeInsets.only(top: 30, bottom: 10),
       child: Text(
         heading,
         style: Theme.of(context).textTheme.headline6,
