@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future main() async {
@@ -26,6 +27,11 @@ class MyApp extends StatelessWidget {
               fontWeight: FontWeight.w600,
               color: Colors.grey[700],
             ),
+            headline4: GoogleFonts.ibmPlexSerif(
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1A6978),
+              fontSize: 36,
+            ),
             headline6: GoogleFonts.roboto(
               fontWeight: FontWeight.w700,
               color: Colors.grey[700],
@@ -44,9 +50,10 @@ class MyApp extends StatelessWidget {
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: '/',
+        initialRoute: '/login',
         routes: {
           '/': (context) => HomeScreen(),
+          '/login': (context) => LoginScreen(),
           '/bookSearch': (context) => BookSearchScreen(),
         });
   }
