@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (userJwt.isNotEmpty && userId.isNotEmpty) {
         print('You have made it this far!');
         closeWebView();
-        Navigator.pushNamed(context, '/');
+        // Navigator.pushNamed(context, '/');
       }
     }, onError: (err) {
       print(err);
