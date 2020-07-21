@@ -1,14 +1,66 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:http/http.dart' as http; // Will use when integrating API
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:uni_links/uni_links.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+Future<void> _launchInWebViewOrVC(String url) async {
+  if (await canLaunch(url)) {
+    await launch(
+      url,
+      forceSafariVC: true,
+      forceWebView: true,
+    );
+  } else {
+    throw 'Could not launch $url';
+  }
+}
+
+void _signUpWithTwitter() async {
+  final http.Response res =
+      await http.get('http://localhost:3000/auth/twitter/signin');
+  if (res.statusCode == 200) {
+    final Map decoded = jsonDecode(res.body);
+    _launchInWebViewOrVC(decoded['url']);
+  } else {
+    print(res.statusCode);
+    print(res.reasonPhrase);
+    print(res.body);
+  }
+}
+
 class _LoginScreenState extends State<LoginScreen> {
+  StreamSubscription _sub;
+
+  @override
+  initState() {
+    super.initState();
+    initUniLinks();
+  }
+
+  @override
+  dispose() {
+    if (_sub != null) _sub.cancel();
+    super.dispose();
+  }
+
+  Future<Null> initUniLinks() async {
+    _sub = getUriLinksStream().listen((Uri uri) {
+      print(uri);
+    }, onError: (err) {
+      print(err);
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -56,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Color(0xFF00ACEE),
                   ),
                   onPressed: () {
-                    print('Sign up for Twitter');
+                    _signUpWithTwitter();
                   },
                 ),
               ),
