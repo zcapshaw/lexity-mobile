@@ -39,12 +39,12 @@ void _signUpWithTwitter() async {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  StreamSubscription _sub;
+  StreamSubscription _sub; // subscribe to stream of incoming lexity:// URIs
 
   @override
   initState() {
     super.initState();
-    initUniLinks();
+    initUniLinks(); // initialize the URI stream
   }
 
   @override
@@ -53,9 +53,16 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  // TODO: need setup app linking for Android as well
   Future<Null> initUniLinks() async {
     _sub = getUriLinksStream().listen((Uri uri) {
-      print(uri);
+      final userJwt = uri.queryParameters['user-jwt'];
+      final userId = uri.queryParameters['user-id'];
+      if (userJwt.isNotEmpty && userId.isNotEmpty) {
+        print('You have made it this far!');
+        closeWebView();
+        Navigator.pushNamed(context, '/');
+      }
     }, onError: (err) {
       print(err);
     });
