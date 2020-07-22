@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -44,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   initState() {
     super.initState();
+    readStorage();
     initUniLinks(); // initialize the URI stream
   }
 
@@ -56,16 +58,28 @@ class _LoginScreenState extends State<LoginScreen> {
   // TODO: need setup app linking for Android as well
   Future<Null> initUniLinks() async {
     _sub = getUriLinksStream().listen((Uri uri) {
-      final userJwt = uri.queryParameters['user-jwt'];
-      final userId = uri.queryParameters['user-id'];
-      if (userJwt.isNotEmpty && userId.isNotEmpty) {
+      final accessToken = uri.queryParameters['access_token'];
+      final userId = uri.queryParameters['user_id'];
+      if (accessToken.isNotEmpty && userId.isNotEmpty) {
         print('You have made it this far!');
-        closeWebView();
         // Navigator.pushNamed(context, '/');
+      } else {
+        print('Could not authenticate user');
+        print(uri.queryParameters['error']);
       }
+      closeWebView();
     }, onError: (err) {
       print(err);
     });
+  }
+
+  // Create storage
+  final storage = new FlutterSecureStorage();
+
+  // Read value
+  Future<Null> readStorage() async {
+    String value = await storage.read(key: 'user_id');
+    print(value);
   }
 
   Widget build(BuildContext context) {
