@@ -1,5 +1,6 @@
 import 'dart:async';
-
+import 'package:lexity_mobile/models/user.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -45,6 +46,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   initState() {
     super.initState();
+    var user = Provider.of<UserModel>(context, listen: false);
+    user.addAuth('Users/Test', 'sometoken', true);
+    print('Did it come back around? ${user.authN}');
     readStorage();
     initUniLinks(); // initialize the URI stream
   }

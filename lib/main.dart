@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'models/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future main() async {
   await DotEnv().load('.env');
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserModel(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
