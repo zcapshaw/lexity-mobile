@@ -61,6 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
       final accessToken = uri.queryParameters['access_token'];
       final userId = uri.queryParameters['user_id'];
       if (accessToken.isNotEmpty && userId.isNotEmpty) {
+        writeStorage('user_id', userId);
+        writeStorage('access_token', accessToken);
         print('You have made it this far!');
         // Navigator.pushNamed(context, '/');
       } else {
@@ -79,7 +81,13 @@ class _LoginScreenState extends State<LoginScreen> {
   // Read value
   Future<Null> readStorage() async {
     String value = await storage.read(key: 'user_id');
+    String value2 = await storage.read(key: 'access_token');
     print(value);
+    print(value2);
+  }
+
+  Future<Null> writeStorage(String key, String value) async {
+    await storage.write(key: key, value: value);
   }
 
   Widget build(BuildContext context) {
