@@ -20,6 +20,7 @@ Future main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final bool authN = false;
     return MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.teal,
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: '/login',
+        initialRoute: authN ? '/' : '/login',
         routes: {
           '/': (context) => HomeScreen(),
           '/login': (context) => LoginScreen(),
