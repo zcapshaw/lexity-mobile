@@ -8,48 +8,23 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-Future<void> _launchInWebViewOrVC(String url) async {
-  if (await canLaunch(url)) {
-    await launch(
-      url,
-      forceSafariVC: true,
-      forceWebView: true,
-    );
-  } else {
-    throw 'Could not launch $url';
-  }
-}
-
-void _signUpWithTwitter() async {
-  final http.Response res =
-      await http.get('http://localhost:3000/auth/twitter/signin');
-  if (res.statusCode == 200) {
-    final Map decoded = jsonDecode(res.body);
-    _launchInWebViewOrVC(decoded['url']);
-  } else {
-    print(res.statusCode);
-    print(res.reasonPhrase);
-    print(res.body);
-  }
-}
-
 class _LoginScreenState extends State<LoginScreen> {
   StreamSubscription _sub; // subscribe to stream of incoming lexity:// URIs
+  var user;
 
   @override
   initState() {
     super.initState();
-    var user = Provider.of<UserModel>(context, listen: false);
-    user.addAuth('Users/Test', 'sometoken', true);
-    print('Did it come back around? ${user.authN}');
-    readStorage();
+    user = Provider.of<UserModel>(context, listen: false);
+    //user.addAuth('Users/Test', 'sometoken', true);
+    //print('Did it come back around? ${user.authN}');
+    // readStorage();
     initUniLinks(); // initialize the URI stream
   }
 
@@ -59,14 +34,45 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  Future<void> _launchInWebViewOrVC(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: true,
+        forceWebView: true,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  void _signUpWithTwitter() async {
+    user.addAuth('Users/Test', 'someAccessToken', true);
+    // final http.Response res =
+    //     await http.get('http://localhost:3000/auth/twitter/signin');
+    // if (res.statusCode == 200) {
+    //   final Map decoded = jsonDecode(res.body);
+    //   _launchInWebViewOrVC(decoded['url']);
+    // } else {
+    //   print(res.statusCode);
+    //   print(res.reasonPhrase);
+    //   print(res.body);
+    // }
+  }
+
+  void _signUpWithApple() async {
+    user.logout();
+  }
+
   // TODO: need setup app linking for Android as well
   Future<Null> initUniLinks() async {
     _sub = getUriLinksStream().listen((Uri uri) {
       final accessToken = uri.queryParameters['access_token'];
       final userId = uri.queryParameters['user_id'];
       if (accessToken.isNotEmpty && userId.isNotEmpty) {
-        writeStorage('user_id', userId);
-        writeStorage('access_token', accessToken);
+        user.addAuth(userId, accessToken, true);
+        // writeStorage('user_id', userId);
+        // writeStorage('access_token', accessToken);
         print('You have made it this far!');
         // Navigator.pushNamed(context, '/');
       } else {
@@ -77,21 +83,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }, onError: (err) {
       print(err);
     });
-  }
-
-  // Create storage
-  final storage = new FlutterSecureStorage();
-
-  // Read value
-  Future<Null> readStorage() async {
-    String value = await storage.read(key: 'user_id');
-    String value2 = await storage.read(key: 'access_token');
-    print(value);
-    print(value2);
-  }
-
-  Future<Null> writeStorage(String key, String value) async {
-    await storage.write(key: key, value: value);
   }
 
   Widget build(BuildContext context) {
@@ -163,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Color(0xFF000000),
                   ),
                   onPressed: () {
-                    print('Sign up for Apple');
+                    _signUpWithApple();
                   },
                 ),
               ),
