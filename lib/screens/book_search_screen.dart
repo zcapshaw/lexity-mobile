@@ -24,7 +24,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     final http.Response data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/search/private/books?userId=$user&searchText=$queryText',
         headers: {
-          'user-jwt': '$userJwt',
+          'access-token': '$userJwt',
         });
 
     //declare an empty list of BookTiles

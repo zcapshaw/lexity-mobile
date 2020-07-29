@@ -86,13 +86,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _toggleSignin() {
     setState(() {
+      signUp = !signUp;
       twitterButtonText =
           signUp ? 'SIGN UP WITH TWITTER' : 'SIGN IN WITH TWITTER';
       appleButtonText = signUp ? 'SIGN UP WITH APPLE' : 'SIGN IN WITH APPLE';
       sentenceOne =
-          signUp ? 'Alread have an account? ' : 'Don\'t have an account? ';
+          signUp ? 'Already have an account? ' : 'Don\'t have an account? ';
       sentenceTwo = signUp ? 'Sign in' : 'Sign up';
-      signUp = !signUp;
     });
   }
 

@@ -70,7 +70,7 @@ class MyHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserModel>(context, listen: true);
-    print('User authorized? ${user.authN}');
+    print('User authenticated? ${user.authN}');
     if (!user.authN) {
       return LoginScreen();
     } else {
