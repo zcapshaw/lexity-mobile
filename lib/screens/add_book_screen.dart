@@ -24,13 +24,18 @@ class _AddBookScreenState extends State<AddBookScreen> {
   //
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
+  String noteText = '';
 
   void _saveListItem() async {
     final String userId = 'Users/74763';
     final userJwt = DotEnv().env['USER_JWT'];
+
+    final Note note = Note(noteText);
+    final jsonNote = _$NoteToJson(note);
+
     final String type = listType;
     final List labels = [];
-    final List notes = [];
+    final List notes = [jsonNote];
 
     final ListItem item = ListItem(userId, widget.bookId, type, labels, notes);
     final jsonItem = _$ListItemToJson(item);
@@ -160,7 +165,14 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
             ),
             Divider(),
-            AddNoteTile(),
+            AddNoteTile(
+              onTextChange: (text) {
+                setState(() {
+                  noteText = text;
+                });
+                print(noteText);
+              },
+            ),
           ],
         ),
       ),
@@ -184,21 +196,38 @@ class ListItem {
 
 @JsonSerializable()
 class Note {
+  //TODO: add sourceName as optional parameter
   Note(this.comment);
 
   String comment;
+
+  Map<String, dynamic> toJson() => _$NoteToJson(this);
 }
 
-class AddNoteTile extends StatefulWidget {
-  @override
-  _AddNoteTileState createState() => _AddNoteTileState();
-}
+class AddNoteTile extends StatelessWidget {
+  final Function onTextChange;
 
-class _AddNoteTileState extends State<AddNoteTile> {
+  AddNoteTile({this.onTextChange});
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: ListTileHeaderText('Add a note'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ListTileHeaderText('Add a note'),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: TextField(
+              decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Jot down any thoughts here'),
+              maxLines: null,
+              onChanged: (text) => onTextChange(text),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
