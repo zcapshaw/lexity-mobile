@@ -94,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: GestureDetector(
                       onTap: () {
                         print('Sign in');
+                        Navigator.pushNamed(context, '/');
                       },
                       child: RichText(
                         textAlign: TextAlign.center,
