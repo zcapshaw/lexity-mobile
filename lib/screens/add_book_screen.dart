@@ -1,13 +1,13 @@
 import 'home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 
 import 'package:lexity_mobile/screens/home_screen.dart';
-
+import 'package:lexity_mobile/screens/book_search_screen.dart';
+import 'package:lexity_mobile/components/list_tile_header_text.dart';
 part 'add_book_screen.g.dart';
 
 class AddBookScreen extends StatefulWidget {
@@ -96,14 +96,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(left: 20, top: 8),
-                    child: Text(
-                      'Add to list',
-                      style: Theme.of(context).textTheme.headline6,
-                      textAlign: TextAlign.left,
-                    ),
-                  ),
+                  ListTileHeaderText('Add to list'),
                   Container(
                     margin: EdgeInsets.only(top: 20),
                     child: Center(
@@ -167,6 +160,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
             ),
             Divider(),
+            AddNoteTile(),
           ],
         ),
       ),
@@ -186,4 +180,25 @@ class ListItem {
   List notes;
 
   Map<String, dynamic> toJson() => _$ListItemToJson(this);
+}
+
+@JsonSerializable()
+class Note {
+  Note(this.comment);
+
+  String comment;
+}
+
+class AddNoteTile extends StatefulWidget {
+  @override
+  _AddNoteTileState createState() => _AddNoteTileState();
+}
+
+class _AddNoteTileState extends State<AddNoteTile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ListTileHeaderText('Add a note'),
+    );
+  }
 }
