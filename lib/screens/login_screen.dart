@@ -16,15 +16,18 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StreamSubscription _sub; // subscribe to stream of incoming lexity:// URIs
-  var user;
+  var user; // global user for use in class methods
+  String twitterButtonText = 'SIGN UP WITH TWITTER';
+  String appleButtonText = 'SIGN UP WITH APPLE';
+  String sentenceOne = 'Already have an account? ';
+  String sentenceTwo = 'Sign in';
+  bool signUp = true;
 
   @override
   initState() {
     super.initState();
+    // assign user for access to UserModel methods
     user = Provider.of<UserModel>(context, listen: false);
-    //user.addAuth('Users/Test', 'sometoken', true);
-    //print('Did it come back around? ${user.authN}');
-    // readStorage();
     initUniLinks(); // initialize the URI stream
   }
 
@@ -47,21 +50,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signUpWithTwitter() async {
-    user.addAuth('Users/Test', 'someAccessToken', true);
-    // final http.Response res =
-    //     await http.get('http://localhost:3000/auth/twitter/signin');
-    // if (res.statusCode == 200) {
-    //   final Map decoded = jsonDecode(res.body);
-    //   _launchInWebViewOrVC(decoded['url']);
-    // } else {
-    //   print(res.statusCode);
-    //   print(res.reasonPhrase);
-    //   print(res.body);
-    // }
+    final http.Response res =
+        await http.get('http://localhost:3000/auth/twitter/signin');
+    if (res.statusCode == 200) {
+      final Map decoded = jsonDecode(res.body);
+      _launchInWebViewOrVC(decoded['url']);
+    } else {
+      print(res.statusCode);
+      print(res.reasonPhrase);
+      print(res.body);
+    }
   }
 
   void _signUpWithApple() async {
-    user.logout();
+    print('Signup with Apple');
   }
 
   // TODO: need setup app linking for Android as well
@@ -71,17 +73,26 @@ class _LoginScreenState extends State<LoginScreen> {
       final userId = uri.queryParameters['user_id'];
       if (accessToken.isNotEmpty && userId.isNotEmpty) {
         user.addAuth(userId, accessToken, true);
-        // writeStorage('user_id', userId);
-        // writeStorage('access_token', accessToken);
-        print('You have made it this far!');
-        // Navigator.pushNamed(context, '/');
       } else {
+        // TODO: Consider showing a SnackBar with login error to user
         print('Could not authenticate user');
         print(uri.queryParameters['error']);
       }
       closeWebView();
     }, onError: (err) {
       print(err);
+    });
+  }
+
+  void _toggleSignin() {
+    setState(() {
+      twitterButtonText =
+          signUp ? 'SIGN UP WITH TWITTER' : 'SIGN IN WITH TWITTER';
+      appleButtonText = signUp ? 'SIGN UP WITH APPLE' : 'SIGN IN WITH APPLE';
+      sentenceOne =
+          signUp ? 'Alread have an account? ' : 'Don\'t have an account? ';
+      sentenceTwo = signUp ? 'Sign in' : 'Sign up';
+      signUp = !signUp;
     });
   }
 
@@ -121,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   borderSide: BorderSide(color: Colors.grey[400]),
                   label: Text(
-                    'SIGN UP WITH TWITTER',
+                    twitterButtonText,
                     style: TextStyle(
                       color: Colors.grey[600],
                       letterSpacing: 0.3,
@@ -143,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   borderSide: BorderSide(color: Colors.grey[400]),
                   label: Text(
-                    'SIGN UP WITH APPLE',
+                    appleButtonText,
                     style: TextStyle(
                       color: Colors.grey[600],
                       letterSpacing: 0.3,
@@ -162,12 +173,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.only(top: 20),
                 child: GestureDetector(
                   onTap: () {
-                    print('Sign in');
+                    _toggleSignin();
                   },
                   child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      text: 'Already have an account? ',
+                      text: sentenceOne,
                       style: TextStyle(
                         color: Colors.grey[600],
                         fontSize: 16,
@@ -176,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       children: <TextSpan>[
                         TextSpan(
-                          text: 'Sign in',
+                          text: sentenceTwo,
                           style:
                               TextStyle(decoration: TextDecoration.underline),
                         ),

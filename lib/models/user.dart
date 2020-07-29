@@ -7,7 +7,7 @@ class UserModel extends ChangeNotifier {
   User appUser = new User();
 
   UserModel() {
-    _deleteAll();
+    // _deleteAll(); // used to temporarily clear storage during testing
     _init();
   }
 
@@ -30,6 +30,7 @@ class UserModel extends ChangeNotifier {
 
   bool get authN => appUser.authN ?? false;
 
+  // initialize the new user from values in local secure storage
   Future<void> _init() async {
     appUser = await User.create();
     print(
