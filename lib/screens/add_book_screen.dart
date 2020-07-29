@@ -38,7 +38,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final http.Response res = await http.post(
       'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
       headers: {
-        'user-jwt': '$userJwt',
+        'access-token': '$userJwt',
         'Content-Type': 'application/json',
       },
       body: jsonEncode(jsonItem),

@@ -24,7 +24,7 @@ class _ReadingListState extends State<ReadingList> {
     final http.Response data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=$user',
         headers: {
-          'user-jwt': '$userJwt',
+          'access-token': '$userJwt',
         });
 
     if (data.statusCode == 200) {
@@ -71,7 +71,7 @@ class _ReadingListState extends State<ReadingList> {
     final http.Response res = await http.delete(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/delete/?userId=$user&listId=$listId',
         headers: {
-          'user-jwt': '$userJwt',
+          'access-token': '$userJwt',
         });
     if (res.statusCode == 200) {
       print('successfully deleted book');
