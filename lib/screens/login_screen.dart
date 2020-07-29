@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signUpWithApple() async {
-    print('Signup with Apple');
+    user.addAuth('Users/Apple', 'appleAccessToken', true);
   }
 
   // TODO: need setup app linking for Android as well
