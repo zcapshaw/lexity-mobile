@@ -7,7 +7,7 @@ class UserModel extends ChangeNotifier {
   User appUser = new User();
 
   UserModel() {
-    //_deleteAll();
+    _deleteAll();
     _init();
   }
 
@@ -85,6 +85,10 @@ class User {
 // Quick class to convert string to bool
 extension BoolParsing on String {
   bool parseBool() {
-    return this.toLowerCase() == 'true';
+    if (this != null) {
+      return this.toLowerCase() == 'true';
+    } else {
+      return false;
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
@@ -20,9 +21,8 @@ Future main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserModel>(context, listen: true);
-    print('User authorized? ${user.authN}');
     return MaterialApp(
+        home: MyHome(),
         theme: ThemeData(
           primarySwatch: Colors.teal,
           appBarTheme: AppBarTheme(
@@ -59,11 +59,22 @@ class MyApp extends StatelessWidget {
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: user.authN ? '/' : '/login',
         routes: {
-          '/': (context) => HomeScreen(),
           '/login': (context) => LoginScreen(),
           '/bookSearch': (context) => BookSearchScreen(),
         });
+  }
+}
+
+class MyHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<UserModel>(context, listen: true);
+    print('User authorized? ${user.authN}');
+    if (!user.authN) {
+      return LoginScreen();
+    } else {
+      return HomeScreen();
+    }
   }
 }
