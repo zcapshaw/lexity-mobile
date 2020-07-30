@@ -7,6 +7,6 @@ class ListService {
 
   static const API = 'https://stellar-aurora-280316.uc.r.appspot.com';
   final headers = {
-    'access-token': '$userJwt',
+    'user-jwt': '$userJwt',
   };
 }

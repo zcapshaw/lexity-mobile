@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
+import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'models/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future main() async {
   await DotEnv().load('.env');
-  runApp(MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserModel(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        home: MyHome(),
         theme: ThemeData(
           primarySwatch: Colors.teal,
           appBarTheme: AppBarTheme(
@@ -47,20 +56,25 @@ class MyApp extends StatelessWidget {
             subtitle1: GoogleFonts.roboto(
               color: Colors.grey[700],
             ),
-            subtitle2: GoogleFonts.roboto(
-              color: Colors.grey[600],
-              fontSize: 16,
-              letterSpacing: 0.4,
-              height: 1.5,
-            ),
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: '/login',
         routes: {
-          '/': (context) => HomeScreen(),
           '/login': (context) => LoginScreen(),
           '/bookSearch': (context) => BookSearchScreen(),
         });
+  }
+}
+
+class MyHome extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<UserModel>(context, listen: true);
+    print('User authenticated? ${user.authN}');
+    if (!user.authN) {
+      return LoginScreen();
+    } else {
+      return HomeScreen();
+    }
   }
 }
