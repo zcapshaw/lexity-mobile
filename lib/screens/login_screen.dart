@@ -100,29 +100,23 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.fromLTRB(20, 80, 20, 0),
-          child: Column(
-            children: <Widget>[
-              Container(
-                  padding: EdgeInsets.fromLTRB(70, 0, 70, 20),
-                  child: Image.asset('assets/undraw_book_lover.png')),
-              Container(
-                child: Text(
-                  'Welcome to Lexity',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
+        bottom: false,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              bottom: 0,
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                child: Image.asset('assets/signin_bottom.png'),
               ),
-              Container(
-                padding: EdgeInsets.fromLTRB(0, 5, 0, 30),
-                child: Text(
-                  'Read great books. Share big ideas.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
-                    letterSpacing: 0.4,
-                    height: 1.5,
+            ),
+            Container(
+              margin: EdgeInsets.fromLTRB(20, 80, 20, 0),
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.fromLTRB(70, 0, 70, 20),
+                    child: Image.asset('assets/undraw_book_lover.png'),
                   ),
                 ),
               ),
@@ -160,9 +154,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       letterSpacing: 0.3,
                     ),
                   ),
-                  icon: FaIcon(
-                    FontAwesomeIcons.apple,
-                    color: Color(0xFF000000),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    child: OutlineButton.icon(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      borderSide: BorderSide(color: Colors.grey[400]),
+                      label: Text(
+                        'SIGN UP WITH TWITTER',
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      icon: FaIcon(
+                        FontAwesomeIcons.twitter,
+                        color: Color(0xFF00ACEE),
+                      ),
+                      onPressed: () {
+                        print('Sign up for Twitter');
+                      },
+                    ),
                   ),
                   onPressed: () {
                     _signUpWithApple();
@@ -190,21 +202,15 @@ class _LoginScreenState extends State<LoginScreen> {
                           text: sentenceTwo,
                           style:
                               TextStyle(decoration: TextDecoration.underline),
+
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
-      bottomSheet: Container(
-        color: Colors.white,
-        child: Image.asset(
-          'assets/signin_bottom.png',
-          width: MediaQuery.of(context).size.width,
+            ),
+          ],
         ),
       ),
     );
