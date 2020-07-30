@@ -50,8 +50,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signUpWithTwitter() async {
-    final http.Response res =
-        await http.get('http://localhost:3000/auth/twitter/signin');
+    final http.Response res = await http.get(
+        'https://stellar-aurora-280316.uc.r.appspot.com/auth/twitter/signin');
     if (res.statusCode == 200) {
       final Map decoded = jsonDecode(res.body);
       _launchInWebViewOrVC(decoded['url']);
