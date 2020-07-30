@@ -56,12 +56,6 @@ class MyApp extends StatelessWidget {
             subtitle1: GoogleFonts.roboto(
               color: Colors.grey[700],
             ),
-            subtitle2: GoogleFonts.roboto(
-              color: Colors.grey[600],
-              fontSize: 16,
-              letterSpacing: 0.4,
-              height: 1.5,
-            ),
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
