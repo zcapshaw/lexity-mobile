@@ -18,7 +18,6 @@ class UserModel extends ChangeNotifier {
     _writeStorage('userId', id);
     _writeStorage('accessToken', accessToken);
     _writeStorage('authN', authN.toString());
-    print('made some updates in user model - true here? $authN');
     notifyListeners();
   }
 
@@ -29,6 +28,7 @@ class UserModel extends ChangeNotifier {
   }
 
   bool get authN => appUser.authN ?? false;
+  bool get createComplete => appUser.createComplete ?? false;
 
   // initialize the new user from values in local secure storage
   Future<void> _init() async {
@@ -51,12 +51,14 @@ class User {
   String id;
   String accessToken;
   bool authN;
+  bool createComplete;
 
   // Default constructor
   User() {
     id = null;
     accessToken = null;
-    authN = false;
+    authN = null;
+    createComplete = false;
   }
 
   // Private constructor
@@ -77,6 +79,7 @@ class User {
     appUser.id = allValues['userId'];
     appUser.accessToken = allValues['accessToken'];
     appUser.authN = allValues['authN'].parseBool();
+    appUser.createComplete = true;
 
     // Return the fully initialized object
     return appUser;

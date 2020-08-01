@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/splash_screen.dart';
 import 'models/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: MyHome(),
+        // home: MyHome(),
         theme: ThemeData(
           primarySwatch: Colors.teal,
           appBarTheme: AppBarTheme(
@@ -59,22 +60,12 @@ class MyApp extends StatelessWidget {
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
+        initialRoute: '/splash',
         routes: {
+          '/': (context) => HomeScreen(),
           '/login': (context) => LoginScreen(),
+          '/splash': (context) => SplashScreen(),
           '/bookSearch': (context) => BookSearchScreen(),
         });
-  }
-}
-
-class MyHome extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final user = Provider.of<UserModel>(context, listen: true);
-    print('User authenticated? ${user.authN}');
-    if (!user.authN) {
-      return LoginScreen();
-    } else {
-      return HomeScreen();
-    }
   }
 }
