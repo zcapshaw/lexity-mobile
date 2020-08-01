@@ -12,6 +12,8 @@ void authNav(context) {
   var user = Provider.of<UserModel>(context, listen: true);
   print('User authenticated: ${user.authN}');
   if (user.createComplete && user.authN) {
+    // SchedulerBinding allows for frame transitions AFTER all current transitions are done
+    // It's essentially used to prevent conflict errors by awaiting transitions in progress
     SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
       Navigator.of(context).pushNamed('/');
     });
