@@ -5,7 +5,9 @@ import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'package:provider/provider.dart';
 
+import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/screens/home_screen.dart';
 
 part 'add_book_screen.g.dart';
@@ -21,24 +23,29 @@ class AddBookScreen extends StatefulWidget {
 }
 
 class _AddBookScreenState extends State<AddBookScreen> {
-  //
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
+  var user;
+
+  @override
+  initState() {
+    super.initState();
+    // assign user for access to UserModel methods
+    user = Provider.of<UserModel>(context, listen: false);
+  }
 
   void _saveListItem() async {
-    final String userId = 'Users/74763';
-    final userJwt = DotEnv().env['USER_JWT'];
     final String type = listType;
     final List labels = [];
     final List notes = [];
 
-    final ListItem item = ListItem(userId, widget.bookId, type, labels, notes);
+    final ListItem item = ListItem(user.id, widget.bookId, type, labels, notes);
     final jsonItem = _$ListItemToJson(item);
 
     final http.Response res = await http.post(
       'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
       headers: {
-        'access-token': '$userJwt',
+        'access-token': '${user.accessToken}',
         'Content-Type': 'application/json',
       },
       body: jsonEncode(jsonItem),
