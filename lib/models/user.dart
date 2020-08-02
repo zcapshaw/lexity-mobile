@@ -27,6 +27,8 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  String get id => appUser.id;
+  String get accessToken => appUser.accessToken;
   bool get authN => appUser.authN ?? false;
   bool get createComplete => appUser.createComplete ?? false;
 
