@@ -57,8 +57,8 @@ class User {
 
   // Default constructor
   User() {
-    id = null;
-    accessToken = null;
+    id = '';
+    accessToken = '';
     authN = null;
     createComplete = false;
   }
