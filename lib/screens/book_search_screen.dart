@@ -17,7 +17,7 @@ class BookSearchScreen extends StatefulWidget {
 class _BookSearchScreenState extends State<BookSearchScreen> {
   final String illustration = 'assets/undraw_reading_time_gvg0.svg';
   String queryText = '';
-  var user;
+  var user = UserModel();
 
   @override
   initState() {

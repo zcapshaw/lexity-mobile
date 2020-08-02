@@ -25,7 +25,7 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
-  var user;
+  var user = UserModel();
 
   @override
   initState() {
