@@ -3,8 +3,10 @@ import 'package:flutter/semantics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
+import 'screens/main_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/user_screen.dart';
 import 'screens/splash_screen.dart';
 import 'models/user.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -62,7 +64,9 @@ class MyApp extends StatelessWidget {
         ),
         initialRoute: '/splash',
         routes: {
-          '/': (context) => HomeScreen(),
+          '/': (context) => MainScreen(),
+          '/home': (context) => HomeScreen(),
+          '/user': (context) => UserScreen(),
           '/login': (context) => LoginScreen(),
           '/splash': (context) => SplashScreen(),
           '/bookSearch': (context) => BookSearchScreen(),

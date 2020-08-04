@@ -2,25 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/components/reading_list.dart';
 
-class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key}) : super(key: key);
+class UserScreen extends StatefulWidget {
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  _UserScreenState createState() => _UserScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<UserModel>(context, listen: false);
+    var user = Provider.of<UserModel>(context, listen: true);
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/bookSearch');
-        },
-        child: Icon(Icons.add),
-      ),
       body: SafeArea(
         child: Container(
           child: Column(
@@ -43,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: Theme.of(context).textTheme.headline3,
                 ),
               ),
-              ReadingList(),
             ],
           ),
         ),
