@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:lexity_mobile/models/user.dart';
 
@@ -14,16 +15,19 @@ class _UserScreenState extends State<UserScreen> {
   Widget build(BuildContext context) {
     var user = Provider.of<UserModel>(context, listen: true);
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              child: _UserInfo(
-                  profileImg: user.profileImg,
-                  name: user.name,
-                  username: '@${user.username}'),
-            ),
-          ],
+      body: Container(
+        color: Color(0x304FB7B6),
+        child: SafeArea(
+          child: Stack(
+            children: <Widget>[
+              Container(
+                child: _UserInfo(
+                    profileImg: user.profileImg ?? '',
+                    name: user.name ?? '',
+                    username: '@${user.username ?? ''}'),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -47,7 +51,8 @@ class _UserInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        padding: EdgeInsets.all(40),
+        color: Color(0x304FB7B6),
+        padding: EdgeInsets.fromLTRB(40, 5, 40, 15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -55,16 +60,25 @@ class _UserInfo extends StatelessWidget {
             Container(
               width: 50,
               height: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: DecorationImage(
-                  fit: BoxFit.fill,
-                  image: NetworkImage(profileImg),
+              child: CachedNetworkImage(
+                imageUrl: profileImg,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: imageProvider,
+                    ),
+                  ),
                 ),
+                placeholder: (context, url) => Icon(Icons.account_circle,
+                    size: 50, color: Colors.grey[600]),
+                placeholderFadeInDuration: Duration.zero,
               ),
             ),
             Expanded(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Container(
                     margin: EdgeInsets.only(left: 15),
@@ -72,7 +86,7 @@ class _UserInfo extends StatelessWidget {
                     child: Text(
                       name,
                       style: TextStyle(
-                        color: Colors.grey[700],
+                        color: Color(0xFF1A6978),
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                         letterSpacing: 0.2,
