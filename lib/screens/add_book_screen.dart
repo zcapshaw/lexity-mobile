@@ -8,7 +8,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/screens/home_screen.dart';
+import 'package:lexity_mobile/screens/main_screen.dart';
 
 part 'add_book_screen.g.dart';
 
@@ -25,7 +25,7 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
-  var user = UserModel();
+  var user;
 
   @override
   initState() {
@@ -53,7 +53,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     if (res.statusCode == 200) {
       print('successfully added ${widget.bookId}');
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
       print(res.statusCode);
       print(res.reasonPhrase);
