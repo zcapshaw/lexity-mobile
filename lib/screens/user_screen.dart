@@ -215,38 +215,3 @@ class _UserInfo extends StatelessWidget {
     );
   }
 }
-
-class _userButtons extends StatelessWidget {
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Container(
-            width: MediaQuery.of(context).size.width * 0.75,
-            child: OutlineButton.icon(
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              borderSide: BorderSide(color: Colors.grey[400]),
-              label: Text(
-                'Logout',
-                style: TextStyle(
-                  color: Colors.grey[600],
-                  letterSpacing: 0.3,
-                ),
-              ),
-              icon: Icon(
-                Icons.all_out,
-                color: Color(0xFF00ACEE),
-              ),
-              onPressed: () {
-                user.logout();
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
