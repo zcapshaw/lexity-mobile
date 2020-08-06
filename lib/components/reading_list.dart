@@ -173,7 +173,7 @@ class _ReadingListState extends State<ReadingList> {
                           subtitle: snapshot.data[index].buildSubtitle(context),
                           trailing: snapshot.data[index].buildTrailing(context),
                           onTap: () {
-                            Navigator.pushNamed(context, '/bookDetails');
+                            Navigator.pushNamed(context, '/bookDetail');
                             print('tapped');
                           },
                         ),
