@@ -110,7 +110,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                       child: ToggleButtons(
                         children: <Widget>[
                           Container(
-                            width: 125,
                             child: Center(
                               child: Text(
                                 'Want to read',
@@ -119,7 +118,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                             ),
                           ),
                           Container(
-                            width: 125,
                             child: Center(
                               child: Text(
                                 'Reading',
@@ -128,7 +126,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                             ),
                           ),
                           Container(
-                            width: 125,
                             child: Center(
                               child: Text(
                                 'Finished',
@@ -157,9 +154,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                         borderColor: Colors.grey,
                         selectedBorderColor: Colors.teal,
                         selectedColor: Colors.grey[900],
-                        constraints: BoxConstraints(
-                          minHeight: 30,
-                        ),
+                        constraints:
+                            BoxConstraints(minHeight: 30, minWidth: 110),
                       ),
                     ),
                   ),
