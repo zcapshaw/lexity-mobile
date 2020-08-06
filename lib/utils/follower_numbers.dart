@@ -6,13 +6,13 @@ class FollowerNumbers {
       if (length <= 3) {
         newNumber = wholeNumber;
       } else {
-        newNumber = addNotation(wholeNumber, length);
+        newNumber = _addNotation(wholeNumber, length);
       }
     }
     return newNumber;
   }
 
-  static String addNotation(String largeNumber, int length) {
+  static String _addNotation(String largeNumber, int length) {
     String notationNumber = '0';
     double size = length / 3;
     if (size <= 2) {

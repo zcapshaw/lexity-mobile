@@ -14,7 +14,6 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
-    print(FollowerNumbers.converter('1234567890'));
     var user = Provider.of<UserModel>(context, listen: true);
     return Scaffold(
       body: Container(
@@ -24,11 +23,12 @@ class _UserScreenState extends State<UserScreen> {
             children: <Widget>[
               Container(
                 child: _UserInfo(
-                    profileImg: user.profileImg ?? '',
-                    name: user.name ?? '',
-                    username: '@${user.username ?? ''}',
-                    following: user.friends ?? '0',
-                    followers: user.followers ?? '0'),
+                  profileImg: user.profileImg ?? '',
+                  name: user.name ?? '',
+                  username: '@${user.username ?? ''}',
+                  following: FollowerNumbers.converter(user.friends),
+                  followers: FollowerNumbers.converter(user.followers),
+                ),
               ),
             ],
           ),
@@ -147,7 +147,7 @@ class _UserInfo extends StatelessWidget {
                           style: TextStyle(
                             color: Color(0xFF1A6978),
                             fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                            fontSize: 13,
                             height: 1.5,
                           ),
                           children: <TextSpan>[
@@ -172,7 +172,7 @@ class _UserInfo extends StatelessWidget {
                           style: TextStyle(
                             color: Color(0xFF1A6978),
                             fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                            fontSize: 13,
                             height: 1.5,
                           ),
                           children: <TextSpan>[
