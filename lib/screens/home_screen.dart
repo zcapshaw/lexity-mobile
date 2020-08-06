@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/components/reading_list.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -13,7 +11,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<UserModel>(context, listen: false);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
