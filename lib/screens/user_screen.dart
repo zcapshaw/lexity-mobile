@@ -11,10 +11,12 @@ class UserScreen extends StatefulWidget {
   _UserScreenState createState() => _UserScreenState();
 }
 
+var user; //declare global variable
+
 class _UserScreenState extends State<UserScreen> {
   @override
   Widget build(BuildContext context) {
-    var user = Provider.of<UserModel>(context, listen: true);
+    user = Provider.of<UserModel>(context, listen: true);
     return Scaffold(
       body: Container(
         color: Color(0xFFC3E0E0),
@@ -30,6 +32,23 @@ class _UserScreenState extends State<UserScreen> {
                   followers: FollowerNumbers.converter(user.followers),
                 ),
               ),
+              Container(
+                alignment: Alignment.center,
+                child: OutlineButton(
+                  borderSide: BorderSide(
+                    color: Color(0xFF1A6978),
+                  ),
+                  onPressed: () => user.logout(),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Color(0xFF1A6978),
+                      fontSize: 16,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -39,11 +58,11 @@ class _UserScreenState extends State<UserScreen> {
 }
 
 class _UserInfo extends StatelessWidget {
-  String profileImg;
-  String name;
-  String username;
-  String following;
-  String followers;
+  final String profileImg;
+  final String name;
+  final String username;
+  final String following;
+  final String followers;
 
   _UserInfo(
       {this.profileImg,
@@ -192,6 +211,41 @@ class _UserInfo extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _userButtons extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width * 0.75,
+            child: OutlineButton.icon(
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              borderSide: BorderSide(color: Colors.grey[400]),
+              label: Text(
+                'Logout',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  letterSpacing: 0.3,
+                ),
+              ),
+              icon: Icon(
+                Icons.all_out,
+                color: Color(0xFF00ACEE),
+              ),
+              onPressed: () {
+                user.logout();
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
