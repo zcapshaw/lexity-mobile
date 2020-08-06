@@ -16,7 +16,7 @@ class ReadingList extends StatefulWidget {
 
 class _ReadingListState extends State<ReadingList> {
   List<ReadingListItem> readingList;
-  var user = UserModel();
+  var user;
 
   @override
   initState() {
