@@ -8,13 +8,14 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
-bool authenticated = false; // maintain local authenticated state
+bool authenticated; // maintain local authenticated state
 
 void authNav(context) {
   var user = Provider.of<UserModel>(context, listen: true);
-  if (authenticated != user.authN) {
+  if (authenticated != user.authN && user.createComplete == true) {
     authenticated = user.authN;
     print('User authenticated: ${user.authN}');
+    print(user.createComplete);
     if (user.createComplete && user.authN) {
       // SchedulerBinding allows for frame transitions AFTER all current transitions are done
       // It's essentially used to prevent conflict errors by awaiting transitions in progress

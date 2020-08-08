@@ -36,7 +36,7 @@ class UserModel extends ChangeNotifier {
   Future<void> _init() async {
     appUser = await User.create();
     print(
-        'id: ${appUser.id}, token: ${appUser.accessToken}, authN: ${appUser.authN}');
+        'id: ${appUser.id}, token: ${appUser.accessToken}, authN: ${appUser.authN}, createComplete: ${appUser.createComplete}');
     notifyListeners();
   }
 
