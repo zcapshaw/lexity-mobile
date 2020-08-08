@@ -2,12 +2,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 
+import 'package:lexity_mobile/utils/parse_bool.dart';
+
 class UserModel extends ChangeNotifier {
   final storage = new FlutterSecureStorage(); // Create storage
   User appUser = new User();
 
   UserModel() {
-    // _deleteAll(); // used to temporarily clear storage during testing
+    _deleteAll(); // used to temporarily clear storage during testing
     _init();
   }
 
@@ -148,16 +150,5 @@ class User {
 
     // Return the fully initialized object
     return appUser;
-  }
-}
-
-// Quick class to convert string to bool
-extension BoolParsing on String {
-  bool parseBool() {
-    if (this != null) {
-      return this.toLowerCase() == 'true';
-    } else {
-      return false;
-    }
   }
 }

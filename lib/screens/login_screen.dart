@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:lexity_mobile/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +7,9 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
+
+import 'package:lexity_mobile/models/user.dart';
+import 'package:lexity_mobile/utils/parse_bool.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -66,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
           username: decoded['username'],
           profileImg: decoded['profileImg'],
           email: decoded['email'],
-          verified: decoded['verified'],
+          verified: decoded['verified'].parseBool(),
           bio: decoded['bio'],
           website: decoded['website'],
           joined: decoded['joined'].toString(),
