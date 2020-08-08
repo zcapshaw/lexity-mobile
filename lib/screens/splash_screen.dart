@@ -8,22 +8,27 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
+bool authenticated = false; // maintain local authenticated state
+
 void authNav(context) {
   var user = Provider.of<UserModel>(context, listen: true);
-  print('User authenticated: ${user.authN}');
-  if (user.createComplete && user.authN) {
-    // SchedulerBinding allows for frame transitions AFTER all current transitions are done
-    // It's essentially used to prevent conflict errors by awaiting transitions in progress
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      Navigator.of(context).pushNamed('/');
-    });
-  } else if (user.createComplete && !user.authN) {
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-      // When authN == false, remove all pages in stack except /splash
-      // SplashPage is where authN conditional routing logic is held
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('/login', ModalRoute.withName('/splash'));
-    });
+  if (authenticated != user.authN) {
+    authenticated = user.authN;
+    print('User authenticated: ${user.authN}');
+    if (user.createComplete && user.authN) {
+      // SchedulerBinding allows for frame transitions AFTER all current transitions are done
+      // It's essentially used to prevent conflict errors by awaiting transitions in progress
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        Navigator.of(context).pushNamed('/');
+      });
+    } else if (user.createComplete && !user.authN) {
+      SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+        // When authN == false, remove all pages in stack except /splash
+        // SplashPage is where authN conditional routing logic is held
+        Navigator.of(context)
+            .pushNamedAndRemoveUntil('/login', ModalRoute.withName('/splash'));
+      });
+    }
   }
 }
 
