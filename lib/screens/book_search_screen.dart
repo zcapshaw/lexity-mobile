@@ -4,7 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+
 import 'package:lexity_mobile/screens/add_book_screen.dart';
+import 'package:lexity_mobile/models/user.dart';
 
 class BookSearchScreen extends StatefulWidget {
   @override
@@ -14,17 +17,22 @@ class BookSearchScreen extends StatefulWidget {
 class _BookSearchScreenState extends State<BookSearchScreen> {
   final String illustration = 'assets/undraw_reading_time_gvg0.svg';
   String queryText = '';
+  var user;
+
+  @override
+  initState() {
+    super.initState();
+    // assign user for access to UserModel methods
+    user = Provider.of<UserModel>(context, listen: false);
+  }
 
   //This async function returns a List of BookTiles from the API response
   Future<List<BookTile>> _fetchResults() async {
-    final String user = 'Users/74763';
-    final userJwt = DotEnv().env['USER_JWT'];
-
     //fetch google books results based on queryText
     final http.Response data = await http.get(
-        'https://stellar-aurora-280316.uc.r.appspot.com/search/private/books?userId=$user&searchText=$queryText',
+        'https://stellar-aurora-280316.uc.r.appspot.com/search/private/books?userId=${user.id}&searchText=$queryText',
         headers: {
-          'access-token': '$userJwt',
+          'access-token': '${user.accessToken}',
         });
 
     //declare an empty list of BookTiles

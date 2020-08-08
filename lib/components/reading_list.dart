@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:provider/provider.dart';
 import 'swipe_background.dart';
 import 'package:lexity_mobile/models/reading_list_item.dart';
+import 'package:lexity_mobile/models/user.dart';
 
 class ReadingList extends StatefulWidget {
   @override
@@ -15,16 +16,21 @@ class ReadingList extends StatefulWidget {
 
 class _ReadingListState extends State<ReadingList> {
   List<ReadingListItem> readingList;
+  var user;
+
+  @override
+  initState() {
+    super.initState();
+    // assign user for access to UserModel methods
+    user = Provider.of<UserModel>(context, listen: false);
+  }
 
   //Construct a List of ListItems from the API response
   Future<List<ReadingListItem>> _getReadingList() async {
-    final String user = 'Users/74763';
-    final userJwt = DotEnv().env['USER_JWT'];
-
     final http.Response data = await http.get(
-        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=$user',
+        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=${user.id}',
         headers: {
-          'access-token': '$userJwt',
+          'access-token': '${user.accessToken}',
         });
 
     if (data.statusCode == 200) {
@@ -65,13 +71,10 @@ class _ReadingListState extends State<ReadingList> {
   }
 
   Future<void> _deleteBook(listId) async {
-    final String user = 'Users/74763';
-    final userJwt = DotEnv().env['USER_JWT'];
-
     final http.Response res = await http.delete(
-        'https://stellar-aurora-280316.uc.r.appspot.com/list/delete/?userId=$user&listId=$listId',
+        'https://stellar-aurora-280316.uc.r.appspot.com/list/delete/?userId=${user.id}&listId=$listId',
         headers: {
-          'access-token': '$userJwt',
+          'access-token': '${user.accessToken}',
         });
     if (res.statusCode == 200) {
       print('successfully deleted book');

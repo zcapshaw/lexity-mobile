@@ -4,7 +4,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
+import 'package:provider/provider.dart';
 
+import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/screens/home_screen.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:lexity_mobile/components/list_tile_header_text.dart';
@@ -22,29 +24,32 @@ class AddBookScreen extends StatefulWidget {
 }
 
 class _AddBookScreenState extends State<AddBookScreen> {
-  //
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
   String noteText = '';
+  var user;
+
+  @override
+  initState() {
+    super.initState();
+    // assign user for access to UserModel methods
+    user = Provider.of<UserModel>(context, listen: false);
+  }
 
   void _saveListItem() async {
-    final String userId = 'Users/74763';
-    final userJwt = DotEnv().env['USER_JWT'];
-
-    final Note note = Note(noteText);
-    final jsonNote = _$NoteToJson(note);
-
     final String type = listType;
     final List labels = [];
+    final Note note = Note(noteText);
+    final jsonNote = _$NoteToJson(note);
     final List notes = [jsonNote];
 
-    final ListItem item = ListItem(userId, widget.bookId, type, labels, notes);
+    final ListItem item = ListItem(user.id, widget.bookId, type, labels, notes);
     final jsonItem = _$ListItemToJson(item);
 
     final http.Response res = await http.post(
       'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
       headers: {
-        'access-token': '$userJwt',
+        'access-token': '${user.accessToken}',
         'Content-Type': 'application/json',
       },
       body: jsonEncode(jsonItem),
