@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
 
 import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/utils/parse_bool.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -68,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
           username: decoded['username'],
           profileImg: decoded['profileImg'],
           email: decoded['email'],
-          verified: decoded['verified'].parseBool(),
+          verified: decoded['verified'],
           bio: decoded['bio'],
           website: decoded['website'],
           joined: decoded['joined'].toString(),
