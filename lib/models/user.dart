@@ -11,13 +11,45 @@ class UserModel extends ChangeNotifier {
     _init();
   }
 
-  void addAuth(String id, String accessToken, bool authN) {
-    appUser.id = id;
-    appUser.accessToken = accessToken;
+  void addOrUpdateUser(bool authN,
+      {String id,
+      String accessToken,
+      String name,
+      String username,
+      String profileImg,
+      String email,
+      bool verified,
+      String bio,
+      String website,
+      String joined,
+      String followers,
+      String friends}) {
     appUser.authN = authN;
+    appUser.id = id ?? appUser.id;
+    appUser.accessToken = accessToken ?? appUser.accessToken;
+    appUser.name = name ?? appUser.name;
+    appUser.username = username ?? appUser.username;
+    appUser.profileImg = profileImg ?? appUser.profileImg;
+    appUser.email = email ?? appUser.email;
+    appUser.verified = verified ?? appUser.verified;
+    appUser.bio = bio ?? appUser.bio;
+    appUser.website = website ?? appUser.website;
+    appUser.joined = joined ?? appUser.joined;
+    appUser.followers = followers ?? appUser.followers;
+    appUser.friends = friends ?? appUser.friends;
     _writeStorage('userId', id);
     _writeStorage('accessToken', accessToken);
     _writeStorage('authN', authN.toString());
+    _writeStorage('name', name);
+    _writeStorage('username', username);
+    _writeStorage('profileImg', profileImg);
+    _writeStorage('email', email);
+    _writeStorage('verified', verified.toString());
+    _writeStorage('bio', bio);
+    _writeStorage('website', website);
+    _writeStorage('joined', joined.toString());
+    _writeStorage('followers', followers.toString());
+    _writeStorage('friends', friends.toString());
     notifyListeners();
   }
 
@@ -27,10 +59,21 @@ class UserModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // create getters
+  bool get createComplete => appUser.createComplete ?? false;
   String get id => appUser.id;
   String get accessToken => appUser.accessToken;
   bool get authN => appUser.authN ?? false;
-  bool get createComplete => appUser.createComplete ?? false;
+  String get name => appUser.name;
+  String get username => appUser.username;
+  String get profileImg => appUser.profileImg;
+  String get email => appUser.email;
+  bool get verified => appUser.verified;
+  String get bio => appUser.bio;
+  String get website => appUser.website;
+  String get joined => appUser.joined;
+  String get followers => appUser.followers;
+  String get friends => appUser.friends;
 
   // initialize the new user from values in local secure storage
   Future<void> _init() async {
@@ -50,17 +93,27 @@ class UserModel extends ChangeNotifier {
 }
 
 class User {
+  bool createComplete;
   String id;
   String accessToken;
   bool authN;
-  bool createComplete;
+  String name;
+  String username;
+  String profileImg;
+  String email;
+  bool verified;
+  String bio;
+  String website;
+  String joined;
+  String followers;
+  String friends;
 
   // Default constructor
   User() {
+    createComplete = false;
     id = '';
     accessToken = '';
     authN = null;
-    createComplete = false;
   }
 
   // Private constructor
@@ -78,10 +131,20 @@ class User {
     // Do initialization that requires async
     final storage = new FlutterSecureStorage(); // Create storage
     Map<String, String> allValues = await storage.readAll();
+    appUser.createComplete = true;
     appUser.id = allValues['userId'];
     appUser.accessToken = allValues['accessToken'];
     appUser.authN = allValues['authN'].parseBool();
-    appUser.createComplete = true;
+    appUser.name = allValues['name'];
+    appUser.username = allValues['username'];
+    appUser.profileImg = allValues['profileImg'];
+    appUser.email = allValues['email'];
+    appUser.verified = allValues['verified'].parseBool();
+    appUser.bio = allValues['bio'];
+    appUser.website = allValues['website'];
+    appUser.joined = allValues['joined'];
+    appUser.followers = allValues['followers'];
+    appUser.friends = allValues['friends'];
 
     // Return the fully initialized object
     return appUser;

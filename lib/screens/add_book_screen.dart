@@ -10,6 +10,7 @@ import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/screens/home_screen.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:lexity_mobile/components/list_tile_header_text.dart';
+import 'package:lexity_mobile/screens/main_screen.dart';
 
 part 'add_book_screen.g.dart';
 
@@ -57,7 +58,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     if (res.statusCode == 200) {
       print('successfully added ${widget.bookId}');
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => HomeScreen()));
+          context, MaterialPageRoute(builder: (context) => MainScreen()));
     } else {
       print(res.statusCode);
       print(res.reasonPhrase);
