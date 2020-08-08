@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:lexity_mobile/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,14 +8,17 @@ import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:uni_links/uni_links.dart';
 
+import 'package:lexity_mobile/models/user.dart';
+
 class LoginScreen extends StatefulWidget {
+  LoginScreen({Key key}) : super(key: key);
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   StreamSubscription _sub; // subscribe to stream of incoming lexity:// URIs
-  var user = UserModel(); // global user for use in class methods
+  var user; // global user for use in class methods
   String twitterButtonText = 'SIGN UP WITH TWITTER';
   String appleButtonText = 'SIGN UP WITH APPLE';
   String sentenceOne = 'Already have an account? ';
@@ -49,6 +51,35 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _retrieveAndPopulateUser(
+      String userId, String accessToken) async {
+    final http.Response res = await http.get(
+        'https://stellar-aurora-280316.uc.r.appspot.com/user/info/?userId=$userId',
+        headers: {
+          'access-token': '$accessToken',
+        });
+    if (res.statusCode == 200) {
+      final Map decoded = jsonDecode(res.body);
+      user.addOrUpdateUser(true,
+          id: userId,
+          accessToken: accessToken,
+          name: decoded['name'],
+          username: decoded['username'],
+          profileImg: decoded['profileImg'],
+          email: decoded['email'],
+          verified: decoded['verified'],
+          bio: decoded['bio'],
+          website: decoded['website'],
+          joined: decoded['joined'].toString(),
+          followers: decoded['followers'].toString(),
+          friends: decoded['friends'].toString());
+    } else {
+      print('Error loaded user from database - status: ${res.statusCode}');
+      print(res.reasonPhrase);
+      print(res.body);
+    }
+  }
+
   void _signUpWithTwitter() async {
     final http.Response res = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/auth/twitter/signin');
@@ -56,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final Map decoded = jsonDecode(res.body);
       _launchInWebViewOrVC(decoded['url']);
     } else {
-      print(res.statusCode);
+      print('Error with Twitter signin - status: ${res.statusCode}');
       print(res.reasonPhrase);
       print(res.body);
     }
@@ -64,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Temporary for quick quick auth testing
   void _signUpWithApple() async {
-    user.addAuth(user.id, user.accessToken, true);
+    _retrieveAndPopulateUser(user.id, user.accessToken);
   }
 
   // TODO: need setup app linking for Android as well
@@ -73,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final accessToken = uri.queryParameters['access_token'];
       final userId = uri.queryParameters['user_id'];
       if (accessToken.isNotEmpty && userId.isNotEmpty) {
-        user.addAuth(userId, accessToken, true);
+        _retrieveAndPopulateUser(userId, accessToken);
       } else {
         // TODO: Consider showing a SnackBar with login error to user
         print('Could not authenticate user');
