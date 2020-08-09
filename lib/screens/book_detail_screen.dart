@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -48,39 +50,64 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+    double coverArtHeight = screenHeight * 0.4;
+
     return Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
-          title: Text(
-            widget.bookId,
-            style: Theme.of(context).textTheme.subtitle1,
-          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
         ),
-        body: SafeArea(
-          child: Container(
-            child: FutureBuilder(
-              future: _getListItemDetail(),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.hasData) {
-                  return Center(
-                      child: Column(
-                    children: <Widget>[
-                      Image.network(snapshot.data.thumbnail),
-                      Text(snapshot.data.title),
-                    ],
-                  ));
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Oops. Something went wrong'));
-                } else {
-                  return Expanded(
-                    child: Container(
-                      child: Center(
-                        child: CircularProgressIndicator(),
+        body: Container(
+          child: FutureBuilder(
+            future: _getListItemDetail(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                return Column(
+                  children: <Widget>[
+                    Container(
+                      height: coverArtHeight,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              snapshot.data.thumbnail,
+                            )),
+                      ),
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                        child: FractionallySizedBox(
+                          alignment: Alignment.bottomCenter,
+                          heightFactor: 0.85,
+                          widthFactor: 1.0,
+                          child: Container(
+                            child: Image.network(
+                              snapshot.data.thumbnail,
+                              fit: BoxFit.contain,
+                              height: double.infinity,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  );
-                }
-              },
-            ),
+                    Expanded(
+                      child: Container(color: Colors.white),
+                    )
+                  ],
+                );
+              } else if (snapshot.hasError) {
+                return Center(child: Text('Oops. Something went wrong'));
+              } else {
+                return Expanded(
+                  child: Container(
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                );
+              }
+            },
           ),
         ));
   }
