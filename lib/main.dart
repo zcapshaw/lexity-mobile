@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lexity_mobile/screens/book_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lexity_mobile/screens/book_search_screen.dart';
+
+import 'screens/book_search_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -70,7 +70,6 @@ class MyApp extends StatelessWidget {
           '/login': (context) => LoginScreen(),
           '/splash': (context) => SplashScreen(),
           '/bookSearch': (context) => BookSearchScreen(),
-          '/bookDetail': (context) => BookDetailScreen(),
         });
   }
 }

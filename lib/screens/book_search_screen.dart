@@ -57,7 +57,11 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         title = '$title: $subtitle';
 
         //construct a Book object and add it to the books array
-        Book book = Book(title, author, cover, b['googleId']);
+        Book book = Book(
+            title: title,
+            author: author,
+            thumbnail: cover,
+            googleId: b['googleId']);
         books.add(book);
       }
 
