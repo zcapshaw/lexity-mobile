@@ -11,7 +11,7 @@ class UserScreen extends StatefulWidget {
   _UserScreenState createState() => _UserScreenState();
 }
 
-var user; //declare global variable
+UserModel user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
   @override

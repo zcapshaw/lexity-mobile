@@ -1,23 +1,20 @@
-import 'home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/screens/home_screen.dart';
-import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:lexity_mobile/components/list_tile_header_text.dart';
 import 'package:lexity_mobile/screens/main_screen.dart';
+import 'package:lexity_mobile/models/book.dart';
 
 part 'add_book_screen.g.dart';
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
 
-  final BookTile book;
+  final Book book;
   final String bookId;
 
   @override
@@ -28,7 +25,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
   String noteText = '';
-  var user;
+  UserModel user;
 
   @override
   initState() {

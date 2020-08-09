@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/screens/add_book_screen.dart';
 import 'package:lexity_mobile/models/user.dart';
+import 'package:lexity_mobile/models/book.dart';
 
 class BookSearchScreen extends StatefulWidget {
   @override
@@ -17,7 +17,7 @@ class BookSearchScreen extends StatefulWidget {
 class _BookSearchScreenState extends State<BookSearchScreen> {
   final String illustration = 'assets/undraw_reading_time_gvg0.svg';
   String queryText = '';
-  var user;
+  UserModel user;
 
   @override
   initState() {
@@ -26,8 +26,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     user = Provider.of<UserModel>(context, listen: false);
   }
 
-  //This async function returns a List of BookTiles from the API response
-  Future<List<BookTile>> _fetchResults() async {
+  //This async function returns a List of Books from the API response
+  Future<List<Book>> _fetchResults() async {
     //fetch google books results based on queryText
     final http.Response data = await http.get(
         'https://stellar-aurora-280316.uc.r.appspot.com/search/private/books?userId=${user.id}&searchText=$queryText',
@@ -35,14 +35,14 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
           'access-token': '${user.accessToken}',
         });
 
-    //declare an empty list of BookTiles
-    List<BookTile> books = [];
+    //declare an empty list of Books
+    List<Book> books = [];
 
     if (data.statusCode == 200) {
       //decode JSON from API and store in a new variable
       var jsonData = json.decode(data.body);
 
-      //Populate the books array by looping over jsonData and creating a BookTile for each element
+      //Populate the books array by looping over jsonData and creating a Book for each element
       for (var b in jsonData) {
         //handle books that come back from Google with missing data
         final String cover = b['cover'] != null ? b['cover']['thumbnail'] : '';
@@ -56,8 +56,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
         title = '$title: $subtitle';
 
-        //construct a BookTile object and add it to the books array
-        BookTile book = BookTile(title, author, cover, b['googleId']);
+        //construct a Book object and add it to the books array
+        Book book = Book(title, author, cover, b['googleId']);
         books.add(book);
       }
 
@@ -208,14 +208,4 @@ class AddBookBackground extends StatelessWidget {
       ],
     );
   }
-}
-
-//TODO refactor to incorporate this with othe Book classes
-class BookTile {
-  final String title;
-  final String author;
-  final String thumbnail;
-  final String googleId;
-
-  BookTile(this.title, this.author, this.thumbnail, this.googleId);
 }

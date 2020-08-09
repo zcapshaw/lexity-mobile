@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'swipe_background.dart';
@@ -16,7 +15,7 @@ class ReadingList extends StatefulWidget {
 
 class _ReadingListState extends State<ReadingList> {
   List<ReadingListItem> readingList;
-  var user;
+  UserModel user;
 
   @override
   initState() {
