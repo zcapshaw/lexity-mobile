@@ -105,7 +105,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  ListTileHeaderText('Add to list'),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: ListTileHeaderText('Add to list'),
+                  ),
                   Container(
                     margin: EdgeInsets.only(top: 20),
                     child: Center(
@@ -212,19 +215,17 @@ class AddNoteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(left: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ListTileHeaderText('Add a note'),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Jot down any thoughts here'),
-              maxLines: null,
-              onChanged: (text) => onTextChange(text),
-            ),
+          TextField(
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Jot down any thoughts here'),
+            maxLines: null,
+            onChanged: (text) => onTextChange(text),
           ),
         ],
       ),

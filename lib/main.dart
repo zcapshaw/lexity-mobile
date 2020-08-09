@@ -35,6 +35,11 @@ class MyApp extends StatelessWidget {
                 color: Colors.grey[700],
               )),
           textTheme: TextTheme(
+            headline1: GoogleFonts.ibmPlexSerif(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+              fontSize: 36,
+            ),
             headline3: GoogleFonts.ibmPlexSerif(
               fontWeight: FontWeight.w600,
               color: Colors.grey[700],
