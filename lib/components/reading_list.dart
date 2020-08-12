@@ -172,7 +172,7 @@ class _ReadingListState extends State<ReadingList> {
                         },
                         child: ListTile(
                           leading: snapshot.data[index].buildLeading(context),
-                          title: Text('test'),
+                          title: snapshot.data[index].buildTitle(context),
                           subtitle: snapshot.data[index].buildSubtitle(context),
                           trailing: snapshot.data[index].buildTrailing(context),
                           onTap: () {
