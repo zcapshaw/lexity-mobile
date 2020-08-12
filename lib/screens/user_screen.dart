@@ -25,9 +25,9 @@ class _UserScreenState extends State<UserScreen> {
             children: <Widget>[
               Container(
                 child: _UserInfo(
-                  profileImg: user.profileImg ?? '',
-                  name: user.name ?? '',
-                  username: '@${user.username ?? ''}',
+                  profileImg: user.profileImg,
+                  name: user.name,
+                  username: '@${user.username}',
                   following: FollowerNumbers.converter(user.friends),
                   followers: FollowerNumbers.converter(user.followers),
                 ),

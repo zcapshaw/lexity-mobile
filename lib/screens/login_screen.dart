@@ -70,9 +70,9 @@ class _LoginScreenState extends State<LoginScreen> {
           verified: decoded['verified'],
           bio: decoded['bio'],
           website: decoded['website'],
-          joined: decoded['joined'].toString(),
-          followers: decoded['followers'].toString(),
-          friends: decoded['friends'].toString());
+          joined: decoded['joined'],
+          followers: decoded['followers'],
+          friends: decoded['friends']);
     } else {
       print('Error loaded user from database - status: ${res.statusCode}');
       print(res.reasonPhrase);

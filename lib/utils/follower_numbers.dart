@@ -1,12 +1,13 @@
 class FollowerNumbers {
-  static String converter(String wholeNumber) {
-    int length = wholeNumber?.length;
+  static String converter(int number) {
+    String stringNum = number.toString();
+    int length = stringNum?.length;
     String newNumber = '0';
     if (length != null) {
       if (length <= 3) {
-        newNumber = wholeNumber;
+        newNumber = stringNum;
       } else {
-        newNumber = _addNotation(wholeNumber, length);
+        newNumber = _addNotation(stringNum, length);
       }
     }
     return newNumber;

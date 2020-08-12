@@ -23,9 +23,9 @@ class UserModel extends ChangeNotifier {
       bool verified,
       String bio,
       String website,
-      String joined,
-      String followers,
-      String friends}) {
+      int joined,
+      int followers,
+      int friends}) {
     appUser.authN = authN;
     appUser.id = id ?? appUser.id;
     appUser.accessToken = accessToken ?? appUser.accessToken;
@@ -73,9 +73,9 @@ class UserModel extends ChangeNotifier {
   bool get verified => appUser.verified;
   String get bio => appUser.bio;
   String get website => appUser.website;
-  String get joined => appUser.joined;
-  String get followers => appUser.followers;
-  String get friends => appUser.friends;
+  int get joined => appUser.joined;
+  int get followers => appUser.followers;
+  int get friends => appUser.friends;
 
   // initialize the new user from values in local secure storage
   Future<void> _init() async {
@@ -106,9 +106,9 @@ class User {
   bool verified;
   String bio;
   String website;
-  String joined;
-  String followers;
-  String friends;
+  int joined;
+  int followers;
+  int friends;
 
   // Default constructor
   User() {
@@ -137,16 +137,16 @@ class User {
     appUser.id = allValues['userId'];
     appUser.accessToken = allValues['accessToken'];
     appUser.authN = allValues['authN'].parseBool();
-    appUser.name = allValues['name'];
-    appUser.username = allValues['username'];
-    appUser.profileImg = allValues['profileImg'];
-    appUser.email = allValues['email'];
+    appUser.name = allValues['name'] ?? '';
+    appUser.username = allValues['username'] ?? '';
+    appUser.profileImg = allValues['profileImg'] ?? '';
+    appUser.email = allValues['email'] ?? '';
     appUser.verified = allValues['verified'].parseBool();
-    appUser.bio = allValues['bio'];
-    appUser.website = allValues['website'];
-    appUser.joined = allValues['joined'];
-    appUser.followers = allValues['followers'];
-    appUser.friends = allValues['friends'];
+    appUser.bio = allValues['bio'] ?? '';
+    appUser.website = allValues['website'] ?? '';
+    appUser.joined = int.parse(allValues['joined'] ?? '0');
+    appUser.followers = int.parse(allValues['followers'] ?? '0');
+    appUser.friends = int.parse(allValues['friends'] ?? '0');
 
     // Return the fully initialized object
     return appUser;
