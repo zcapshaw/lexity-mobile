@@ -18,7 +18,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   StreamSubscription _sub; // subscribe to stream of incoming lexity:// URIs
-  var user; // global user for use in class methods
+  UserModel user; // global user for use in class methods
   String twitterButtonText = 'SIGN UP WITH TWITTER';
   String appleButtonText = 'SIGN UP WITH APPLE';
   String sentenceOne = 'Already have an account? ';

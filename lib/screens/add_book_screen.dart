@@ -1,23 +1,20 @@
-import 'home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/screens/home_screen.dart';
-import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:lexity_mobile/components/list_tile_header_text.dart';
 import 'package:lexity_mobile/screens/main_screen.dart';
+import 'package:lexity_mobile/models/book.dart';
 
 part 'add_book_screen.g.dart';
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
 
-  final BookTile book;
+  final Book book;
   final String bookId;
 
   @override
@@ -28,7 +25,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
   String noteText = '';
-  var user;
+  UserModel user;
 
   @override
   initState() {
@@ -108,7 +105,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  ListTileHeaderText('Add to list'),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: ListTileHeaderText('Add to list'),
+                  ),
                   Container(
                     margin: EdgeInsets.only(top: 20),
                     child: Center(
@@ -215,19 +215,17 @@ class AddNoteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: EdgeInsets.only(left: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ListTileHeaderText('Add a note'),
-          Padding(
-            padding: const EdgeInsets.only(left: 20.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Jot down any thoughts here'),
-              maxLines: null,
-              onChanged: (text) => onTextChange(text),
-            ),
+          TextField(
+            decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: 'Jot down any thoughts here'),
+            maxLines: null,
+            onChanged: (text) => onTextChange(text),
           ),
         ],
       ),

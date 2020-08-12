@@ -11,7 +11,7 @@ class SplashScreen extends StatefulWidget {
 bool authenticated; // maintain local authenticated state
 
 void authNav(context) {
-  var user = Provider.of<UserModel>(context, listen: true);
+  UserModel user = Provider.of<UserModel>(context, listen: true);
   if (authenticated != user.authN && user.createComplete == true) {
     authenticated = user.authN;
     print('User authenticated: ${user.authN}');

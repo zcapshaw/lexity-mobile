@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lexity_mobile/screens/book_detail_screen.dart';
 import 'package:provider/provider.dart';
 import 'swipe_background.dart';
 import 'package:lexity_mobile/models/reading_list_item.dart';
@@ -16,7 +16,7 @@ class ReadingList extends StatefulWidget {
 
 class _ReadingListState extends State<ReadingList> {
   List<ReadingListItem> readingList;
-  var user;
+  UserModel user;
 
   @override
   initState() {
@@ -42,8 +42,8 @@ class _ReadingListState extends State<ReadingList> {
         HeadingItem('Reading ($readingCount)'),
       ];
       for (var b in readingJson) {
-        BookItem book =
-            BookItem(b['title'], b['authors'][0], b['cover'], b['listId']);
+        BookItem book = BookItem(
+            b['title'], b['authors'][0], b['cover'], b['listId'], b['bookId']);
         readingList.add(book);
       }
 
@@ -55,8 +55,8 @@ class _ReadingListState extends State<ReadingList> {
         HeadingItem('Want to read ($toReadCount)'),
       ];
       for (var b in toReadJson) {
-        BookItem book =
-            BookItem(b['title'], b['authors'][0], b['cover'], b['listId']);
+        BookItem book = BookItem(
+            b['title'], b['authors'][0], b['cover'], b['listId'], b['bookId']);
         toRead.add(book);
       }
 
@@ -116,7 +116,6 @@ class _ReadingListState extends State<ReadingList> {
 
   @override
   Widget build(BuildContext context) {
-    _getReadingList();
     return Container(
       child: FutureBuilder(
         future: _getReadingList(),
@@ -172,6 +171,16 @@ class _ReadingListState extends State<ReadingList> {
                           title: snapshot.data[index].buildTitle(context),
                           subtitle: snapshot.data[index].buildSubtitle(context),
                           trailing: snapshot.data[index].buildTrailing(context),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BookDetailScreen(
+                                  bookId: snapshot.data[index].bookId,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       Divider(

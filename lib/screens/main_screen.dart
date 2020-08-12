@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:lexity_mobile/screens/home_screen.dart';
-import 'package:lexity_mobile/screens/book_search_screen.dart';
 import 'package:lexity_mobile/screens/user_screen.dart';
 
 class MainScreen extends StatefulWidget {

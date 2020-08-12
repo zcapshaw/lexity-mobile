@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lexity_mobile/screens/book_search_screen.dart';
+
+import 'screens/book_search_screen.dart';
 import 'screens/main_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
@@ -35,6 +35,11 @@ class MyApp extends StatelessWidget {
                 color: Colors.grey[700],
               )),
           textTheme: TextTheme(
+            headline1: GoogleFonts.ibmPlexSerif(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey[700],
+              fontSize: 36,
+            ),
             headline3: GoogleFonts.ibmPlexSerif(
               fontWeight: FontWeight.w600,
               color: Colors.grey[700],
