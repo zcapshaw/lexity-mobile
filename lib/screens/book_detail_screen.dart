@@ -1,9 +1,10 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 
 import '../models/book.dart';
 import '../models/user.dart';
@@ -19,6 +20,7 @@ class BookDetailScreen extends StatefulWidget {
 
 class _BookDetailScreenState extends State<BookDetailScreen> {
   UserModel user;
+  String htmlDescription = '';
 
   @override
   initState() {
@@ -38,19 +40,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     if (data.statusCode == 200) {
       var bookJson = jsonDecode(data.body);
-      print(bookJson);
+
+      htmlDescription = bookJson['description'];
 
       book = Book(
         title: bookJson['title'],
         author: bookJson['authors'][0],
         thumbnail: bookJson['cover'],
-        description: bookJson['description'],
+        // description: bookJson['description'],
       );
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
     }
-
     return book;
   }
 
@@ -100,31 +102,34 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 20, horizontal: 30),
-                          width: double.infinity,
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                snapshot.data.title,
-                                style: Theme.of(context).textTheme.headline1,
-                              ),
-                              ListTileHeaderText(snapshot.data.author),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                child: Divider(),
-                              ),
-                              ListTileHeaderText('Description'),
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10.0),
-                                child: Text(snapshot.data.description),
-                              ),
-                            ],
-                          ),
+                      Container(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                        width: double.infinity,
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Text(
+                              snapshot.data.title,
+                              style: Theme.of(context).textTheme.headline1,
+                            ),
+                            ListTileHeaderText(snapshot.data.author),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Divider(),
+                            ),
+                            ListTileHeaderText('Description'),
+                            Html(
+                              data: htmlDescription,
+                              style: {
+                                "p": Style(
+                                  padding: EdgeInsets.only(top: 10),
+                                  margin: EdgeInsets.only(top: 10),
+                                )
+                              },
+                            ),
+                          ],
                         ),
                       )
                     ],
@@ -133,11 +138,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Oops. Something went wrong'));
               } else {
-                return Expanded(
-                  child: Container(
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
+                return Container(
+                  child: Center(
+                    child: CircularProgressIndicator(),
                   ),
                 );
               }
