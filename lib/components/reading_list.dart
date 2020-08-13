@@ -42,8 +42,10 @@ class _ReadingListState extends State<ReadingList> {
         HeadingItem('Reading ($readingCount)'),
       ];
       for (var b in readingJson) {
+        String title = b['title'];
+        if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
         BookItem book = BookItem(
-            b['title'], b['authors'][0], b['cover'], b['listId'], b['bookId']);
+            title, b['authors'][0], b['cover'], b['listId'], b['bookId']);
         readingList.add(book);
       }
 
@@ -55,8 +57,10 @@ class _ReadingListState extends State<ReadingList> {
         HeadingItem('Want to read ($toReadCount)'),
       ];
       for (var b in toReadJson) {
+        String title = b['title'];
+        if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
         BookItem book = BookItem(
-            b['title'], b['authors'][0], b['cover'], b['listId'], b['bookId']);
+            title, b['authors'][0], b['cover'], b['listId'], b['bookId']);
         toRead.add(book);
       }
 
