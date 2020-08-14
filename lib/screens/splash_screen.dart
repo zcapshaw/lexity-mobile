@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:lexity_mobile/models/user.dart';
 
 class SplashScreen extends StatefulWidget {
+  SplashScreen({Key key}) : super(key: key);
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
