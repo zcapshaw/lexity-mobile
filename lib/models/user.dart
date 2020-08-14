@@ -26,7 +26,6 @@ class UserModel extends ChangeNotifier {
       int joined,
       int followers,
       int friends}) {
-    print('appUser.id=${appUser.id} and id=$id');
     appUser.authN = authN;
     appUser.id = id ?? appUser.id;
     appUser.accessToken = accessToken ?? appUser.accessToken;
@@ -40,10 +39,6 @@ class UserModel extends ChangeNotifier {
     appUser.joined = joined ?? appUser.joined;
     appUser.followers = followers ?? appUser.followers;
     appUser.friends = friends ?? appUser.friends;
-<<<<<<< HEAD
-=======
-    print('appUser.id now ${appUser.id}');
->>>>>>> 76d0e218eea755517d2925678d79d229c6cf7ce1
     _writeStorage('userId', appUser.id);
     _writeStorage('accessToken', appUser.accessToken);
     _writeStorage('authN', appUser.authN.toString());
@@ -139,7 +134,6 @@ class User {
     final storage = new FlutterSecureStorage(); // Create storage
     Map<String, String> allValues = await storage.readAll();
     appUser.createComplete = true;
-    print('id in storage, ${allValues['userId']}');
     appUser.id = allValues['userId'];
     appUser.accessToken = allValues['accessToken'];
     appUser.authN = allValues['authN'].parseBool();
