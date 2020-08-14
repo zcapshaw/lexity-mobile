@@ -26,7 +26,6 @@ class UserModel extends ChangeNotifier {
       int joined,
       int followers,
       int friends}) {
-    print('appUser.id=${appUser.id} and id=$id');
     appUser.authN = authN;
     appUser.id = id ?? appUser.id;
     appUser.accessToken = accessToken ?? appUser.accessToken;
@@ -40,7 +39,6 @@ class UserModel extends ChangeNotifier {
     appUser.joined = joined ?? appUser.joined;
     appUser.followers = followers ?? appUser.followers;
     appUser.friends = friends ?? appUser.friends;
-    print('appUser.id now ${appUser.id}');
     _writeStorage('userId', appUser.id);
     _writeStorage('accessToken', appUser.accessToken);
     _writeStorage('authN', appUser.authN.toString());
@@ -136,7 +134,6 @@ class User {
     final storage = new FlutterSecureStorage(); // Create storage
     Map<String, String> allValues = await storage.readAll();
     appUser.createComplete = true;
-    print('id in storage, ${allValues['userId']}');
     appUser.id = allValues['userId'];
     appUser.accessToken = allValues['accessToken'];
     appUser.authN = allValues['authN'].parseBool();
@@ -147,9 +144,9 @@ class User {
     appUser.verified = allValues['verified'].parseBool();
     appUser.bio = allValues['bio'] ?? '';
     appUser.website = allValues['website'] ?? '';
-    appUser.joined = int.parse(allValues['joined'] ?? '0');
-    appUser.followers = int.parse(allValues['followers'] ?? '0');
-    appUser.friends = int.parse(allValues['friends'] ?? '0');
+    appUser.joined = int.tryParse(allValues['joined']) ?? 0;
+    appUser.followers = int.tryParse(allValues['followers']) ?? 0;
+    appUser.friends = int.tryParse(allValues['friends']) ?? 0;
 
     // Return the fully initialized object
     return appUser;
