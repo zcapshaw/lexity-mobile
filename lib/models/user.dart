@@ -9,7 +9,7 @@ class UserModel extends ChangeNotifier {
   User appUser = new User();
 
   UserModel() {
-    _deleteAll(); // used to temporarily clear storage during testing
+    //_deleteAll(); // used to temporarily clear storage during testing
     _init();
   }
 
@@ -26,6 +26,7 @@ class UserModel extends ChangeNotifier {
       int joined,
       int followers,
       int friends}) {
+    print('appUser.id=${appUser.id} and id=$id');
     appUser.authN = authN;
     appUser.id = id ?? appUser.id;
     appUser.accessToken = accessToken ?? appUser.accessToken;
@@ -39,19 +40,20 @@ class UserModel extends ChangeNotifier {
     appUser.joined = joined ?? appUser.joined;
     appUser.followers = followers ?? appUser.followers;
     appUser.friends = friends ?? appUser.friends;
-    _writeStorage('userId', id);
-    _writeStorage('accessToken', accessToken);
-    _writeStorage('authN', authN.toString());
-    _writeStorage('name', name);
-    _writeStorage('username', username);
-    _writeStorage('profileImg', profileImg);
-    _writeStorage('email', email);
-    _writeStorage('verified', verified.toString());
-    _writeStorage('bio', bio);
-    _writeStorage('website', website);
-    _writeStorage('joined', joined.toString());
-    _writeStorage('followers', followers.toString());
-    _writeStorage('friends', friends.toString());
+    print('appUser.id now ${appUser.id}');
+    _writeStorage('userId', appUser.id);
+    _writeStorage('accessToken', appUser.accessToken);
+    _writeStorage('authN', appUser.authN.toString());
+    _writeStorage('name', appUser.name);
+    _writeStorage('username', appUser.username);
+    _writeStorage('profileImg', appUser.profileImg);
+    _writeStorage('email', appUser.email);
+    _writeStorage('verified', appUser.verified.toString());
+    _writeStorage('bio', appUser.bio);
+    _writeStorage('website', appUser.website);
+    _writeStorage('joined', appUser.joined.toString());
+    _writeStorage('followers', appUser.followers.toString());
+    _writeStorage('friends', appUser.friends.toString());
     notifyListeners();
   }
 
@@ -134,6 +136,7 @@ class User {
     final storage = new FlutterSecureStorage(); // Create storage
     Map<String, String> allValues = await storage.readAll();
     appUser.createComplete = true;
+    print('id in storage, ${allValues['userId']}');
     appUser.id = allValues['userId'];
     appUser.accessToken = allValues['accessToken'];
     appUser.authN = allValues['authN'].parseBool();
