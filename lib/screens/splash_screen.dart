@@ -14,8 +14,8 @@ void authNav(context) {
   UserModel user = Provider.of<UserModel>(context, listen: true);
   if (authenticated != user.authN && user.createComplete == true) {
     authenticated = user.authN;
-    print('User authenticated: ${user.authN}');
-    print(user.createComplete);
+    print(
+        'User created: ${user.createComplete}, User authenticated: ${user.authN}');
     if (user.createComplete && user.authN) {
       // SchedulerBinding allows for frame transitions AFTER all current transitions are done
       // It's essentially used to prevent conflict errors by awaiting transitions in progress

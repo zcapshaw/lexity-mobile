@@ -129,114 +129,119 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Container(
-          margin: EdgeInsets.fromLTRB(20, 80, 20, 0),
-          child: Column(
-            children: <Widget>[
-              Container(
-                  padding: EdgeInsets.fromLTRB(70, 0, 70, 20),
-                  child: Image.asset('assets/undraw_book_lover.png')),
-              Container(
-                child: Text(
-                  'Welcome to Lexity',
-                  style: Theme.of(context).textTheme.headline4,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(0, 5, 0, 30),
-                child: Text(
-                  'Read great books. Share big ideas.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
-                    letterSpacing: 0.4,
-                    height: 1.5,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(20, 80, 20, 0),
+            child: Column(
+              children: <Widget>[
+                Container(
+                    padding: EdgeInsets.fromLTRB(70, 0, 70, 20),
+                    child: Image.asset('assets/undraw_book_lover.png')),
+                Container(
+                  child: Text(
+                    'Welcome to Lexity',
+                    style: Theme.of(context).textTheme.headline4,
                   ),
                 ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.75,
-                child: OutlineButton.icon(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  borderSide: BorderSide(color: Colors.grey[400]),
-                  label: Text(
-                    twitterButtonText,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  icon: FaIcon(
-                    FontAwesomeIcons.twitter,
-                    color: Color(0xFF00ACEE),
-                  ),
-                  onPressed: () {
-                    _signUpWithTwitter();
-                  },
-                ),
-              ),
-              Container(
-                width: MediaQuery.of(context).size.width * 0.75,
-                margin: EdgeInsets.only(top: 5),
-                child: OutlineButton.icon(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  borderSide: BorderSide(color: Colors.grey[400]),
-                  label: Text(
-                    appleButtonText,
-                    style: TextStyle(
-                      color: Colors.grey[600],
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                  icon: FaIcon(
-                    FontAwesomeIcons.apple,
-                    color: Color(0xFF000000),
-                  ),
-                  onPressed: () {
-                    _signUpWithApple();
-                  },
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.only(top: 20),
-                child: GestureDetector(
-                  onTap: () {
-                    _toggleSignin();
-                  },
-                  child: RichText(
+                Container(
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 30),
+                  child: Text(
+                    'Read great books. Share big ideas.',
                     textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: sentenceOne,
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                      fontSize: 16,
+                      letterSpacing: 0.4,
+                      height: 1.5,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  child: OutlineButton.icon(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    borderSide: BorderSide(color: Colors.grey[400]),
+                    label: Text(
+                      twitterButtonText,
                       style: TextStyle(
                         color: Colors.grey[600],
-                        fontSize: 16,
-                        letterSpacing: 0.4,
-                        height: 1.5,
+                        letterSpacing: 0.3,
                       ),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: sentenceTwo,
-                          style:
-                              TextStyle(decoration: TextDecoration.underline),
+                    ),
+                    icon: FaIcon(
+                      FontAwesomeIcons.twitter,
+                      color: Color(0xFF00ACEE),
+                    ),
+                    onPressed: () {
+                      _signUpWithTwitter();
+                    },
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  margin: EdgeInsets.only(top: 5),
+                  child: OutlineButton.icon(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                    borderSide: BorderSide(color: Colors.grey[400]),
+                    label: Text(
+                      appleButtonText,
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    icon: FaIcon(
+                      FontAwesomeIcons.apple,
+                      color: Color(0xFF000000),
+                    ),
+                    onPressed: () {
+                      _signUpWithApple();
+                    },
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      _toggleSignin();
+                    },
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text: sentenceOne,
+                        style: TextStyle(
+                          color: Colors.grey[600],
+                          fontSize: 16,
+                          letterSpacing: 0.4,
+                          height: 1.5,
                         ),
-                      ],
+                        children: <TextSpan>[
+                          TextSpan(
+                            text: sentenceTwo,
+                            style:
+                                TextStyle(decoration: TextDecoration.underline),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      bottomSheet: Container(
-        color: Colors.white,
-        child: Image.asset(
-          'assets/signin_bottom.png',
-          width: MediaQuery.of(context).size.width,
+        bottomSheet: Container(
+          color: Colors.white,
+          child: Image.asset(
+            'assets/signin_bottom.png',
+            width: MediaQuery.of(context).size.width,
+          ),
         ),
       ),
     );
