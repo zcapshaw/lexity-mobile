@@ -159,9 +159,9 @@ class _ReadingListState extends State<ReadingList> {
                         key: UniqueKey(),
                         confirmDismiss: (direction) =>
                             _promptUser(direction, snapshot.data[index]),
-                        background: SwipeBackground(),
+                        background: SwipeLeftBackground(),
                         //TODO: Remove this when we add more swipe actions
-                        direction: DismissDirection.endToStart,
+                        secondaryBackground: SwipeLeftBackground(),
                         onDismissed: (direction) {
                           setState(() {
                             readingList.remove(snapshot.data[index]);
