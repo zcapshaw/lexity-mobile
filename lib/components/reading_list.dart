@@ -44,8 +44,8 @@ class _ReadingListState extends State<ReadingList> {
       for (var b in readingJson) {
         String title = b['title'];
         if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-        BookItem book = BookItem(
-            title, b['authors'][0], b['cover'], b['listId'], b['bookId']);
+        BookItem book = BookItem(title, b['authors'][0], b['cover'],
+            b['listId'], b['bookId'], b['type']);
         readingList.add(book);
       }
 
@@ -59,8 +59,8 @@ class _ReadingListState extends State<ReadingList> {
       for (var b in toReadJson) {
         String title = b['title'];
         if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-        BookItem book = BookItem(
-            title, b['authors'][0], b['cover'], b['listId'], b['bookId']);
+        BookItem book = BookItem(title, b['authors'][0], b['cover'],
+            b['listId'], b['bookId'], b['type']);
         toRead.add(book);
       }
 
@@ -159,8 +159,8 @@ class _ReadingListState extends State<ReadingList> {
                         key: UniqueKey(),
                         confirmDismiss: (direction) =>
                             _promptUser(direction, snapshot.data[index]),
-                        background: SwipeLeftBackground(),
-                        //TODO: Remove this when we add more swipe actions
+                        background: SwipeRightBackground(
+                            type: snapshot.data[index].type),
                         secondaryBackground: SwipeLeftBackground(),
                         onDismissed: (direction) {
                           setState(() {

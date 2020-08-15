@@ -9,7 +9,7 @@ class SwipeLeftBackground extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(right: 12),
+            padding: EdgeInsets.only(right: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
@@ -33,33 +33,30 @@ class SwipeLeftBackground extends StatelessWidget {
 }
 
 class SwipeRightBackground extends StatelessWidget {
-  final String action;
+  final String type;
 
-  SwipeRightBackground({this.action});
+  SwipeRightBackground({this.type});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-
-      color: if(action == 'COMPLETE') {
-        Colors.redAccent[200];
-      } else {
-        Colors.blueAccent[200]
-      },
+      color: Colors.teal[500],
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 12),
+            padding: EdgeInsets.only(left: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Icon(
-                  Icons.delete_outline,
+                  this.type == 'READING'
+                      ? Icons.check
+                      : Icons.play_circle_filled,
                   color: Colors.white,
                 ),
                 Text(
-                  'Delete',
+                  this.type == 'READING' ? 'Complete' : 'Start',
                   style: TextStyle(
                     color: Colors.white,
                   ),

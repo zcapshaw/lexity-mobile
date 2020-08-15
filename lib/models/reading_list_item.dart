@@ -43,9 +43,11 @@ class BookItem implements ReadingListItem {
   final String cover;
   final String listId;
   final String bookId;
+  final String type;
   final IconData icon = Icons.reorder;
 
-  BookItem(this.title, this.subtitle, this.cover, this.listId, this.bookId);
+  BookItem(this.title, this.subtitle, this.cover, this.listId, this.bookId,
+      this.type);
 
   Widget buildTitle(BuildContext context) => Text(title);
   Widget buildSubtitle(BuildContext context) => Text(subtitle);
