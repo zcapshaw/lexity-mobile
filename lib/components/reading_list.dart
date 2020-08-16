@@ -74,6 +74,51 @@ class _ReadingListState extends State<ReadingList> {
     return readingList;
   }
 
+  void _updateType(readingListItem) async {
+    String newType;
+    switch (readingListItem.type) {
+      case 'READING':
+        {
+          newType = 'READ';
+        }
+        break;
+      case 'TO_READ':
+        {
+          newType = 'READING';
+        }
+        break;
+      default:
+        {
+          newType = 'TO_READ';
+        }
+        break;
+    }
+    final jsonItem = jsonEncode({
+      'userId': user.id,
+      'bookId': readingListItem.bookId,
+      'type': newType,
+      'notes': [{}], // Temp while updating backend - should not be required
+      'labels': [], // Temp while updating backend - should not be required
+    });
+    print(jsonItem);
+    final http.Response res = await http.post(
+      'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
+      headers: {
+        'access-token': '${user.accessToken}',
+        'Content-Type': 'application/json',
+      },
+      body: jsonItem,
+    );
+    if (res.statusCode == 200) {
+      setState(() {});
+      print('successfully update to type $newType');
+    } else {
+      print(res.statusCode);
+      print(res.reasonPhrase);
+      print(res.body);
+    }
+  }
+
   Future<void> _deleteBook(listId) async {
     final http.Response res = await http.delete(
         'https://stellar-aurora-280316.uc.r.appspot.com/list/delete/?userId=${user.id}&listId=$listId',
@@ -157,18 +202,27 @@ class _ReadingListState extends State<ReadingList> {
                     children: <Widget>[
                       Dismissible(
                         key: UniqueKey(),
-                        confirmDismiss: (direction) =>
-                            _promptUser(direction, snapshot.data[index]),
+                        confirmDismiss: (direction) {
+                          if (direction == DismissDirection.startToEnd) {
+                            return Future<bool>.value(true);
+                          } else if (direction == DismissDirection.endToStart) {
+                            _promptUser(direction, snapshot.data[index]);
+                          }
+                        },
                         background: SwipeRightBackground(
                             type: snapshot.data[index].type),
                         secondaryBackground: SwipeLeftBackground(),
                         onDismissed: (direction) {
-                          setState(() {
-                            readingList.remove(snapshot.data[index]);
-                          });
-                          Scaffold.of(context).showSnackBar(SnackBar(
-                              backgroundColor: Colors.grey[600],
-                              content: Text("Book deleted from list.")));
+                          if (direction == DismissDirection.startToEnd) {
+                            _updateType(snapshot.data[index]);
+                          } else if (direction == DismissDirection.endToStart) {
+                            setState(() {
+                              readingList.remove(snapshot.data[index]);
+                            });
+                            Scaffold.of(context).showSnackBar(SnackBar(
+                                backgroundColor: Colors.grey[600],
+                                content: Text("Book deleted from list.")));
+                          }
                         },
                         child: ListTile(
                           leading: snapshot.data[index].buildLeading(context),
