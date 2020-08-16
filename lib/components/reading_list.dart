@@ -110,6 +110,7 @@ class _ReadingListState extends State<ReadingList> {
       body: jsonItem,
     );
     if (res.statusCode == 200) {
+      // Calling setState will rebuild <Future> widget and trigger backend list query
       setState(() {});
       print('successfully update to type $newType');
     } else {
