@@ -144,9 +144,15 @@ class User {
     appUser.verified = allValues['verified'].parseBool();
     appUser.bio = allValues['bio'] ?? '';
     appUser.website = allValues['website'] ?? '';
-    appUser.joined = int.tryParse(allValues['joined']) ?? 0;
-    appUser.followers = int.tryParse(allValues['followers']) ?? 0;
-    appUser.friends = int.tryParse(allValues['friends']) ?? 0;
+    appUser.joined = allValues['joined'] == null
+        ? 0
+        : int.tryParse(allValues['joined']) ?? 0;
+    appUser.followers = allValues['followers'] == null
+        ? 0
+        : int.tryParse(allValues['followers']) ?? 0;
+    appUser.friends = allValues['friends'] == null
+        ? 0
+        : int.tryParse(allValues['friends']) ?? 0;
 
     // Return the fully initialized object
     return appUser;
