@@ -207,16 +207,17 @@ class _ReadingListState extends State<ReadingList> {
                           if (direction == DismissDirection.startToEnd) {
                             return Future<bool>.value(true);
                           } else if (direction == DismissDirection.endToStart) {
-                            _promptUser(direction, snapshot.data[index]);
+                            return _promptUser(direction, snapshot.data[index]);
                           }
                         },
                         background: SwipeRightBackground(
                             type: snapshot.data[index].type),
                         secondaryBackground: SwipeLeftBackground(),
                         onDismissed: (direction) {
+                          print(direction);
                           if (direction == DismissDirection.startToEnd) {
                             _updateType(snapshot.data[index]);
-                          } else if (direction == DismissDirection.endToStart) {
+                          } else {
                             setState(() {
                               readingList.remove(snapshot.data[index]);
                             });
