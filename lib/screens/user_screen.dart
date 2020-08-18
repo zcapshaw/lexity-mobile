@@ -148,6 +148,13 @@ class _UserInfo extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Container(
+                    height: 50, // same height as profile image
+                    child: GestureDetector(
+                      onTap: () => {},
+                      child: Icon(Icons.menu),
+                    ),
+                  ),
                 ],
               ),
             ),
