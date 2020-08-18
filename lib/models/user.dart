@@ -9,7 +9,7 @@ class UserModel extends ChangeNotifier {
   User appUser = new User();
 
   UserModel() {
-    _deleteAll(); // used to temporarily clear storage during testing
+    //_deleteAll(); // used to temporarily clear storage during testing
     _init();
   }
 
@@ -39,19 +39,19 @@ class UserModel extends ChangeNotifier {
     appUser.joined = joined ?? appUser.joined;
     appUser.followers = followers ?? appUser.followers;
     appUser.friends = friends ?? appUser.friends;
-    _writeStorage('userId', id);
-    _writeStorage('accessToken', accessToken);
-    _writeStorage('authN', authN.toString());
-    _writeStorage('name', name);
-    _writeStorage('username', username);
-    _writeStorage('profileImg', profileImg);
-    _writeStorage('email', email);
-    _writeStorage('verified', verified.toString());
-    _writeStorage('bio', bio);
-    _writeStorage('website', website);
-    _writeStorage('joined', joined.toString());
-    _writeStorage('followers', followers.toString());
-    _writeStorage('friends', friends.toString());
+    _writeStorage('userId', appUser.id);
+    _writeStorage('accessToken', appUser.accessToken);
+    _writeStorage('authN', appUser.authN.toString());
+    _writeStorage('name', appUser.name);
+    _writeStorage('username', appUser.username);
+    _writeStorage('profileImg', appUser.profileImg);
+    _writeStorage('email', appUser.email);
+    _writeStorage('verified', appUser.verified.toString());
+    _writeStorage('bio', appUser.bio);
+    _writeStorage('website', appUser.website);
+    _writeStorage('joined', appUser.joined.toString());
+    _writeStorage('followers', appUser.followers.toString());
+    _writeStorage('friends', appUser.friends.toString());
     notifyListeners();
   }
 
@@ -144,9 +144,15 @@ class User {
     appUser.verified = allValues['verified'].parseBool();
     appUser.bio = allValues['bio'] ?? '';
     appUser.website = allValues['website'] ?? '';
-    appUser.joined = int.parse(allValues['joined'] ?? '0');
-    appUser.followers = int.parse(allValues['followers'] ?? '0');
-    appUser.friends = int.parse(allValues['friends'] ?? '0');
+    appUser.joined = allValues['joined'] == null
+        ? 0
+        : int.tryParse(allValues['joined']) ?? 0;
+    appUser.followers = allValues['followers'] == null
+        ? 0
+        : int.tryParse(allValues['followers']) ?? 0;
+    appUser.friends = allValues['friends'] == null
+        ? 0
+        : int.tryParse(allValues['friends']) ?? 0;
 
     // Return the fully initialized object
     return appUser;
