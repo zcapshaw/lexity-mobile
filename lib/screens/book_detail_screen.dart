@@ -21,6 +21,7 @@ class BookDetailScreen extends StatefulWidget {
 class _BookDetailScreenState extends State<BookDetailScreen> {
   UserModel user;
   String htmlDescription = '';
+  List notes = ['test', 'another test'];
 
   @override
   initState() {
@@ -42,6 +43,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       var bookJson = jsonDecode(data.body) as Map;
 
       htmlDescription = bookJson['description'];
+      print(bookJson['notes']);
 
       //Grabs the first key from the categories object and strips off parens and capitalizes text
       String genre = bookJson['categories'][0]
@@ -127,7 +129,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Chip(
                                 label: Text(snapshot.data.genre),
-                                backgroundColor: Colors.teal,
+                                backgroundColor: Colors.teal[700],
                                 labelPadding:
                                     EdgeInsets.symmetric(horizontal: 10),
                                 labelStyle: TextStyle(
@@ -156,6 +158,16 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 )
                               },
                             ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 10.0),
+                              child: Divider(),
+                            ),
+                            ListTileHeaderText('Notes'),
+                            Column(
+                              children: <Widget>[
+                                for (var note in notes) Text(note),
+                              ],
+                            ),
                           ],
                         ),
                       )
@@ -174,5 +186,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             },
           ),
         ));
+  }
+}
+
+class NoteView extends StatelessWidget {
+  final String comment;
+  final String created;
+
+  const NoteView({this.comment, this.created});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: Text(comment),
+    );
   }
 }
