@@ -32,23 +32,6 @@ class _UserScreenState extends State<UserScreen> {
                   followers: FollowerNumbers.converter(user.followers),
                 ),
               ),
-              Container(
-                alignment: Alignment.center,
-                child: OutlineButton(
-                  borderSide: BorderSide(
-                    color: Color(0xFF1A6978),
-                  ),
-                  onPressed: () => user.logout(),
-                  child: Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: Color(0xFF1A6978),
-                      fontSize: 16,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
-                ),
-              ),
             ],
           ),
         ),
@@ -148,6 +131,25 @@ class _UserInfo extends StatelessWidget {
                       ],
                     ),
                   ),
+                  Container(
+                    height: 50, // same height as profile image
+                    child: GestureDetector(
+                      onTap: () => {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              topRight: Radius.circular(10.0),
+                            ),
+                          ),
+                          builder: (BuildContext context) => _UserMenu(),
+                        )
+                      },
+                      child: Icon(Icons.menu),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -211,6 +213,45 @@ class _UserInfo extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _UserMenu extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.topCenter,
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Icon(
+              Icons.maximize,
+              size: 36,
+              color: Colors.grey[700],
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.75,
+            child: OutlineButton(
+              padding: EdgeInsets.symmetric(vertical: 15),
+              borderSide: BorderSide(
+                color: Color(0xFF1A6978),
+              ),
+              onPressed: () => user.logout(),
+              child: Text(
+                'Logout',
+                style: TextStyle(
+                  color: Color(0xFF1A6978),
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
