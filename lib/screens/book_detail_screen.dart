@@ -55,6 +55,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
       book = Book(
         title: bookJson['title'],
+        subtitle: bookJson['subtitle'],
         author: bookJson['authors'][0],
         thumbnail: bookJson['cover'],
         genre: genre,
@@ -120,11 +121,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              snapshot.data.title,
-                              style: Theme.of(context).textTheme.headline1,
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10.0),
+                              child: Text(
+                                snapshot.data.subtitle == null
+                                    ? '${snapshot.data.title}'
+                                    : '${snapshot.data.title}: ${snapshot.data.subtitle}',
+                                style: Theme.of(context).textTheme.headline1,
+                              ),
                             ),
-                            ListTileHeaderText(snapshot.data.author),
+                            Text(snapshot.data.author,
+                                style: Theme.of(context).textTheme.subtitle1),
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Chip(

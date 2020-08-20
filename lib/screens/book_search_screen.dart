@@ -46,15 +46,19 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       for (var b in jsonData) {
         //handle books that come back from Google with missing data
         final String cover = b['cover'] != null ? b['cover']['thumbnail'] : '';
-        final String subtitle = b['subtitle'] != null ? b['subtitle'] : '';
-        String title = b['title'] != null ? b['title'] : '';
+        final String subtitle = b['subtitle'] ?? '';
+        String title = b['title'] ?? '';
         String author = b['authors'] != null ? b['authors'][0] : '';
 
         if (b['inUserList']) {
           author = '$author • On my list';
         }
 
-        title = '$title: $subtitle';
+        if (subtitle == '') {
+          title = '$title';
+        } else {
+          title = '$title: $subtitle';
+        }
 
         //construct a Book object and add it to the books array
         Book book = Book(
