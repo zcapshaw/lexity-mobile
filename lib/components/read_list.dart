@@ -15,7 +15,7 @@ class ReadList extends StatefulWidget {
 }
 
 class _ReadListState extends State<ReadList> {
-  List<ReadingListItem> readList = []; // declare read list
+  List<ReadingListItem> readList; // declare read list
   UserModel user;
 
   @override
@@ -36,7 +36,9 @@ class _ReadListState extends State<ReadList> {
     if (data.statusCode == 200) {
       var readJson = jsonDecode(data.body)['READ'];
       int readCount = readJson.length;
-
+      readList = [
+        HeadingItem('Books Read ($readCount)'),
+      ];
       for (var b in readJson) {
         String title = b['title'];
         if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
@@ -116,6 +118,21 @@ class _ReadListState extends State<ReadList> {
             child: ListView.builder(
                 itemCount: snapshot.data.length,
                 itemBuilder: (BuildContext context, int index) {
+                  if (snapshot.data[index] is HeadingItem) {
+                    return Column(
+                      children: <Widget>[
+                        ListTile(
+                          leading: snapshot.data[index].buildLeading(context),
+                          title: snapshot.data[index].buildTitle(context),
+                          subtitle: snapshot.data[index].buildSubtitle(context),
+                          trailing: snapshot.data[index].buildTrailing(context),
+                        ),
+                        Divider(
+                          height: 0,
+                        ),
+                      ],
+                    );
+                  }
                   return Column(
                     children: <Widget>[
                       Dismissible(
@@ -127,7 +144,9 @@ class _ReadListState extends State<ReadList> {
                         },
                         background: SwipeLeftBackground(),
                         onDismissed: (direction) {
-                          readList.remove(snapshot.data[index]);
+                          setState(() {
+                            readList.remove(snapshot.data[index]);
+                          });
                           Scaffold.of(context).showSnackBar(SnackBar(
                               backgroundColor: Colors.grey[600],
                               content: Text("Book deleted from list.")));
