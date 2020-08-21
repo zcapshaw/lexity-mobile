@@ -5,9 +5,10 @@ part 'note.g.dart';
 @JsonSerializable()
 class Note {
   //TODO: add sourceName as optional parameter
-  Note(this.comment);
+  Note({this.comment, this.created});
 
   String comment;
+  int created;
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 

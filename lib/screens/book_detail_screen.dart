@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:time_formatter/time_formatter.dart';
 
 import '../models/book.dart';
 import '../models/user.dart';
@@ -43,16 +44,21 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     if (data.statusCode == 200) {
       var bookJson = jsonDecode(data.body) as Map;
       var notesJson = bookJson['notes'];
+      print(notesJson);
 
       htmlDescription = bookJson['description'];
 
       List<Note> notesArray = [];
       for (var n in notesJson) {
-        Note note = Note(n['comment']);
+        Note note = Note(comment: n['comment'] ?? '', created: n['created']);
         notesArray.add(note);
       }
 
-      notes.addAll(notesArray);
+      // adds notes to the list
+      // the isEmpty check protects against repeatedly adding dupe notes to the list every time this function is called
+      if (notes.isEmpty) {
+        notes.addAll(notesArray);
+      }
 
       //Grabs the first key from the categories object and strips off parens and capitalizes text
       String genre = bookJson['categories'][0]
@@ -179,10 +185,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Divider(),
                             ),
-                            ListTileHeaderText('Notes'),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8.0),
+                              child: ListTileHeaderText('Notes'),
+                            ),
                             Column(
                               children: <Widget>[
-                                for (var note in notes) Text(note.comment),
+                                for (var note in notes)
+                                  NoteView(
+                                    comment: note.comment,
+                                    created: formatTime(note.created),
+                                  ),
                               ],
                             ),
                           ],
@@ -215,7 +228,27 @@ class NoteView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text(comment),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Text(
+                created,
+                style: Theme.of(context).textTheme.caption,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Text(
+                comment,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

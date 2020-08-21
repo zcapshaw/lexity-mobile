@@ -8,10 +8,12 @@ part of 'note.dart';
 
 Note _$NoteFromJson(Map<String, dynamic> json) {
   return Note(
-    json['comment'] as String,
+    comment: json['comment'] as String,
+    created: json['created'] as int,
   );
 }
 
 Map<String, dynamic> _$NoteToJson(Note instance) => <String, dynamic>{
       'comment': instance.comment,
+      'created': instance.created,
     };

@@ -8,11 +8,11 @@ part of 'add_book_screen.dart';
 
 ListItem _$ListItemFromJson(Map<String, dynamic> json) {
   return ListItem(
-    json['userId'] as String,
-    json['bookId'] as String,
-    json['type'] as String,
-    json['labels'] as List,
-    json['notes'] as List,
+    userId: json['userId'] as String,
+    bookId: json['bookId'] as String,
+    type: json['type'] as String,
+    labels: json['labels'] as List,
+    notes: json['notes'] as List,
   );
 }
 
