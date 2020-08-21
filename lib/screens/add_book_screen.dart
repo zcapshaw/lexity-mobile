@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/models/user.dart';
+import 'package:lexity_mobile/models/note.dart';
 import 'package:lexity_mobile/components/list_tile_header_text.dart';
 import 'package:lexity_mobile/screens/main_screen.dart';
 import 'package:lexity_mobile/models/book.dart';
@@ -38,7 +39,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final String type = listType;
     final List labels = [];
     final Note note = Note(noteText);
-    final jsonNote = _$NoteToJson(note);
+    final jsonNote = note.toJson();
     final List notes = [jsonNote];
 
     final ListItem item = ListItem(user.id, widget.bookId, type, labels, notes);
@@ -195,16 +196,6 @@ class ListItem {
   List notes;
 
   Map<String, dynamic> toJson() => _$ListItemToJson(this);
-}
-
-@JsonSerializable()
-class Note {
-  //TODO: add sourceName as optional parameter
-  Note(this.comment);
-
-  String comment;
-
-  Map<String, dynamic> toJson() => _$NoteToJson(this);
 }
 
 class AddNoteTile extends StatelessWidget {

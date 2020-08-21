@@ -23,13 +23,3 @@ Map<String, dynamic> _$ListItemToJson(ListItem instance) => <String, dynamic>{
       'labels': instance.labels,
       'notes': instance.notes,
     };
-
-Note _$NoteFromJson(Map<String, dynamic> json) {
-  return Note(
-    json['comment'] as String,
-  );
-}
-
-Map<String, dynamic> _$NoteToJson(Note instance) => <String, dynamic>{
-      'comment': instance.comment,
-    };
