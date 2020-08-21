@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import 'package:lexity_mobile/components/read_list.dart';
-import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/utils/follower_numbers.dart';
+import '../components/read_list.dart';
+import '../models/user.dart';
+import '../utils/follower_numbers.dart';
+import '../components/book_list_bloc.dart';
 
 class UserScreen extends StatefulWidget {
   UserScreen({Key key}) : super(key: key);
@@ -16,27 +17,38 @@ UserModel user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
   final readList = ReadList();
+
+  @override
+  void dispose() {
+    super.dispose();
+    // opting not to close the stream which is shared by user_screen and read_list
+    // bookListBloc.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<UserModel>(context, listen: true);
     return Scaffold(
       body: Container(
-        //color: Color(0xFFC3E0E0),
+        color: Color(0xFFC3E0E0),
         child: SafeArea(
-          child: Column(
-            children: <Widget>[
-              Container(
-                child: _UserInfo(
-                  profileImg: user.profileImg,
-                  name: user.name,
-                  username: '@${user.username}',
-                  following: FollowerNumbers.converter(user.friends),
-                  followers: FollowerNumbers.converter(user.followers),
-                  booksRead: FollowerNumbers.converter(0),
+          child: Container(
+            color: Colors.white,
+            child: Column(
+              children: <Widget>[
+                Container(
+                  child: _UserInfo(
+                    profileImg: user.profileImg,
+                    name: user.name,
+                    username: '@${user.username}',
+                    following: FollowerNumbers.converter(user.friends),
+                    followers: FollowerNumbers.converter(user.followers),
+                    booksRead: FollowerNumbers.converter(0),
+                  ),
                 ),
-              ),
-              readList,
-            ],
+                readList,
+              ],
+            ),
           ),
         ),
       ),
@@ -59,7 +71,6 @@ class _UserInfo extends StatelessWidget {
       this.following,
       this.followers,
       this.booksRead});
-
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -215,26 +226,32 @@ class _UserInfo extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: booksRead.toString(),
-                      style: TextStyle(
-                        color: Color(0xFF1A6978),
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                        height: 1.5,
-                      ),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: ' Books',
-                          style: TextStyle(
-                              color: Colors.grey[800],
-                              fontWeight: FontWeight.w400),
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: StreamBuilder(
+                      stream: bookListBloc.readCount, // Stream getter
+                      initialData: 0,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<dynamic> snapshot) {
+                        return RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: FollowerNumbers.converter(snapshot.data),
+                            style: TextStyle(
+                              color: Color(0xFF1A6978),
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                              height: 1.5,
+                            ),
+                            children: <TextSpan>[
+                              TextSpan(
+                                text: snapshot.data == 1 ? ' Book' : ' Books',
+                                style: TextStyle(
+                                    color: Colors.grey[800],
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
                 ),
               ],
             ),

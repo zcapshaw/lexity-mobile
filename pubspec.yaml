@@ -39,6 +39,7 @@ dependencies:
   cached_network_image: ^2.2.0+1
   flutter_html: ^1.0.0
   time_formatter: ^1.0.0+5
+  rxdart: ^0.24.1
 
 dev_dependencies:
   json_serializable: ^3.3.0

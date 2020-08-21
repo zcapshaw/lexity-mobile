@@ -3,13 +3,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
-import 'package:lexity_mobile/screens/book_detail_screen.dart';
 import 'package:provider/provider.dart';
+
+import '../screens/book_detail_screen.dart';
 import 'swipe_background.dart';
-import 'package:lexity_mobile/models/reading_list_item.dart';
-import 'package:lexity_mobile/models/user.dart';
+import '../models/reading_list_item.dart';
+import '../models/user.dart';
+import 'book_list_bloc.dart';
 
 class ReadList extends StatefulWidget {
+  //final ValueNotifier<int> booksReadCount = ValueNotifier(readCount);
+
   @override
   _ReadListState createState() => _ReadListState();
 }
@@ -21,6 +25,7 @@ class _ReadListState extends State<ReadList> {
   @override
   initState() {
     super.initState();
+
     // assign user for access to UserModel methods
     user = Provider.of<UserModel>(context, listen: false);
   }
@@ -36,9 +41,9 @@ class _ReadListState extends State<ReadList> {
     if (data.statusCode == 200) {
       var readJson = jsonDecode(data.body)['READ'];
       int readCount = readJson.length;
-      readList = [
-        HeadingItem('Books Read ($readCount)'),
-      ];
+      bookListBloc.updateReadCount(readCount);
+
+      readList = [];
       for (var b in readJson) {
         String title = b['title'];
         if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
