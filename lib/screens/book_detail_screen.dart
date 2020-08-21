@@ -8,6 +8,7 @@ import 'package:flutter_html/style.dart';
 
 import '../models/book.dart';
 import '../models/user.dart';
+import '../models/note.dart';
 import '../components/list_tile_header_text.dart';
 
 class BookDetailScreen extends StatefulWidget {
@@ -21,7 +22,7 @@ class BookDetailScreen extends StatefulWidget {
 class _BookDetailScreenState extends State<BookDetailScreen> {
   UserModel user;
   String htmlDescription = '';
-  List notes = ['test', 'another test'];
+  List<Note> notes = [];
 
   @override
   initState() {
@@ -41,9 +42,17 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     if (data.statusCode == 200) {
       var bookJson = jsonDecode(data.body) as Map;
+      var notesJson = bookJson['notes'];
 
       htmlDescription = bookJson['description'];
-      print(bookJson['notes']);
+
+      List<Note> notesArray = [];
+      for (var n in notesJson) {
+        Note note = Note(n['comment']);
+        notesArray.add(note);
+      }
+
+      notes.addAll(notesArray);
 
       //Grabs the first key from the categories object and strips off parens and capitalizes text
       String genre = bookJson['categories'][0]
@@ -52,6 +61,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           .replaceAll(new RegExp('([()])'), "")
           .toUpperCase();
       print(bookJson['categories'][0].keys);
+      print(notesArray);
 
       book = Book(
         title: bookJson['title'],
@@ -172,7 +182,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ListTileHeaderText('Notes'),
                             Column(
                               children: <Widget>[
-                                for (var note in notes) Text(note),
+                                for (var note in notes) Text(note.comment),
                               ],
                             ),
                           ],
