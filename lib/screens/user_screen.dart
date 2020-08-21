@@ -17,6 +17,18 @@ UserModel user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
   final readList = ReadList();
+  int selectedIndex = 0;
+  List<bool> listStatus = [true, false];
+
+  // Allowed stateless _ToggleButtons to pass selected index
+  buttonCallback(int selected) {
+    List<bool> tempStatus = [false, false];
+    tempStatus[selected] = true;
+    setState(() {
+      listStatus = tempStatus;
+      selectedIndex = selected;
+    });
+  }
 
   @override
   void dispose() {
@@ -46,7 +58,12 @@ class _UserScreenState extends State<UserScreen> {
                     booksRead: FollowerNumbers.converter(0),
                   ),
                 ),
-                readList,
+                _ToggleButtons(
+                  selectedIndex: selectedIndex,
+                  listStatus: listStatus,
+                  callback: buttonCallback,
+                ),
+                if (selectedIndex == 0) readList,
               ],
             ),
           ),
@@ -296,6 +313,64 @@ class _UserMenu extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ToggleButtons extends StatelessWidget {
+  final int selectedIndex;
+  final List<bool> listStatus;
+  final Function(int) callback;
+
+  _ToggleButtons({this.selectedIndex, this.listStatus, this.callback});
+
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      height: 40,
+      width: MediaQuery.of(context).size.width,
+      margin: EdgeInsets.only(top: 10),
+      child: ToggleButtons(
+        children: <Widget>[
+          Container(
+            width: MediaQuery.of(context).size.width * 0.50,
+            padding: EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: listStatus[0] ? Colors.grey[800] : Colors.transparent,
+                  width: 1.5,
+                ),
+              ),
+            ),
+            child: Icon(Icons.collections_bookmark),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width * 0.50,
+            padding: EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: listStatus[1] ? Colors.grey[800] : Colors.transparent,
+                  width: 1.5,
+                ),
+              ),
+            ),
+            child: Icon(Icons.chat),
+          ),
+        ],
+        isSelected: listStatus,
+        onPressed: (int index) {
+          callback(index);
+        },
+        renderBorder: false,
+        //borderRadius: BorderRadius.circular(4),
+        fillColor: Colors.transparent,
+        //selectedBorderColor: Colors.teal,
+        selectedColor: Colors.grey[800],
+        color: Colors.grey[500],
+        constraints: BoxConstraints(minHeight: 30, minWidth: 110),
       ),
     );
   }
