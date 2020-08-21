@@ -37,6 +37,7 @@ dependencies:
   provider: ^4.3.1
   flutter_secure_storage: ^3.3.3
   cached_network_image: ^2.2.0+1
+  rxdart: ^0.24.1
 
 dev_dependencies:
   json_serializable: ^3.3.0
