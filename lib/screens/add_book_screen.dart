@@ -221,6 +221,7 @@ class AddNoteTile extends StatelessWidget {
         children: <Widget>[
           ListTileHeaderText('Add a note'),
           TextField(
+            textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: 'Jot down any thoughts here'),
