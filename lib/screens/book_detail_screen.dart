@@ -179,6 +179,27 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   ),
                                 ),
                               ),
+                            Column(
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: MaterialButton(
+                                    onPressed: () {},
+                                    color: Colors.grey[200],
+                                    textColor: Colors.white,
+                                    elevation: 0,
+                                    child: Icon(
+                                      Icons.play_arrow,
+                                      size: 24,
+                                      color: Colors.grey[700],
+                                    ),
+                                    padding: EdgeInsets.all(16),
+                                    shape: CircleBorder(),
+                                  ),
+                                ),
+                                Text('Start Reading'),
+                              ],
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Divider(),
