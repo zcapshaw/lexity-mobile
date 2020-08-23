@@ -51,7 +51,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         String author = b['authors'] != null ? b['authors'][0] : '';
 
         if (b['inUserList'] && b['userRead']) {
-          author = '$author • previously read';
+          author = '$author • Previously read';
         } else if (b['inUserList']) {
           author = '$author • On my list';
         }
