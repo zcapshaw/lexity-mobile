@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -179,25 +180,21 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   ),
                                 ),
                               ),
-                            Column(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: MaterialButton(
-                                    onPressed: () {},
-                                    color: Colors.grey[200],
-                                    textColor: Colors.white,
-                                    elevation: 0,
-                                    child: Icon(
-                                      Icons.play_arrow,
-                                      size: 24,
-                                      color: Colors.grey[700],
-                                    ),
-                                    padding: EdgeInsets.all(16),
-                                    shape: CircleBorder(),
-                                  ),
+                                ActionButton(
+                                  icon: Icons.play_arrow,
+                                  labelText: 'Start Reading',
                                 ),
-                                Text('Start Reading'),
+                                ActionButton(
+                                  icon: Icons.comment,
+                                  labelText: 'Add Note',
+                                ),
+                                ActionButton(
+                                  icon: Icons.arrow_upward,
+                                  labelText: 'Share Book',
+                                ),
                               ],
                             ),
                             Padding(
@@ -249,6 +246,38 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             },
           ),
         ));
+  }
+}
+
+class ActionButton extends StatelessWidget {
+  final IconData icon;
+  final String labelText;
+
+  const ActionButton({@required this.icon, this.labelText});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: MaterialButton(
+            onPressed: () {},
+            color: Colors.grey[200],
+            textColor: Colors.white,
+            elevation: 0,
+            child: Icon(
+              icon,
+              size: 24,
+              color: Colors.grey[700],
+            ),
+            padding: EdgeInsets.all(16),
+            shape: CircleBorder(),
+          ),
+        ),
+        Text(labelText),
+      ],
+    );
   }
 }
 
