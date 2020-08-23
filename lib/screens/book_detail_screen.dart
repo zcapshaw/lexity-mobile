@@ -106,27 +106,35 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   context: context,
                   removeTop: true,
                   child: ListView(
+                    physics: ScrollPhysics(
+                      // Scroll physics for environments that prevent the scroll
+                      // offset from reaching beyond the bounds of the content
+                      parent: ClampingScrollPhysics(),
+                    ),
                     children: <Widget>[
-                      Container(
-                        height: coverArtHeight,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                snapshot.data.thumbnail,
-                              )),
-                        ),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                          child: FractionallySizedBox(
-                            alignment: Alignment.bottomCenter,
-                            heightFactor: 0.85,
-                            widthFactor: 1.0,
-                            child: Container(
-                              child: Image.network(
-                                snapshot.data.thumbnail,
-                                fit: BoxFit.contain,
-                                height: double.infinity,
+                      ClipRect(
+                        child: Container(
+                          height: coverArtHeight,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                  snapshot.data.thumbnail,
+                                )),
+                          ),
+                          child: BackdropFilter(
+                            filter:
+                                ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                            child: FractionallySizedBox(
+                              alignment: Alignment.bottomCenter,
+                              heightFactor: 0.85,
+                              widthFactor: 1.0,
+                              child: Container(
+                                child: Image.network(
+                                  snapshot.data.thumbnail,
+                                  fit: BoxFit.contain,
+                                  height: double.infinity,
+                                ),
                               ),
                             ),
                           ),

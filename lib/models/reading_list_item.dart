@@ -49,8 +49,15 @@ class BookItem implements ReadingListItem {
   BookItem(this.title, this.subtitle, this.cover, this.listId, this.bookId,
       this.type);
 
+  Widget buildLeading(BuildContext context) => Image.network(cover);
   Widget buildTitle(BuildContext context) => Text(title);
   Widget buildSubtitle(BuildContext context) => Text(subtitle);
-  Widget buildTrailing(BuildContext context) => Icon(icon);
-  Widget buildLeading(BuildContext context) => Image.network(cover);
+  Widget buildTrailing(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Icon(icon),
+      ],
+    );
+  }
 }

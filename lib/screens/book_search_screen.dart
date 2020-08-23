@@ -50,7 +50,9 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         String title = b['title'] ?? '';
         String author = b['authors'] != null ? b['authors'][0] : '';
 
-        if (b['inUserList']) {
+        if (b['inUserList'] && b['userRead']) {
+          author = '$author • Previously read';
+        } else if (b['inUserList']) {
           author = '$author • On my list';
         }
 
@@ -68,8 +70,6 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
             googleId: b['googleId']);
         books.add(book);
       }
-
-      print(books.length);
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
