@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/models/user.dart';
+import 'package:lexity_mobile/models/note.dart';
 import 'package:lexity_mobile/components/list_tile_header_text.dart';
 import 'package:lexity_mobile/screens/main_screen.dart';
 import 'package:lexity_mobile/models/book.dart';
@@ -37,13 +38,25 @@ class _AddBookScreenState extends State<AddBookScreen> {
   void _saveListItem() async {
     final String type = listType;
     final List labels = [];
-    final Note note = Note(noteText);
-    final jsonNote = _$NoteToJson(note);
+    final Note note = Note(comment: noteText);
+    final jsonNote = note.toJson();
     final List notes = [jsonNote];
+    ListItem item;
 
-    final ListItem item = ListItem(user.id, widget.bookId, type, labels, notes);
+    //fixing a bug where empty string notes were getting created every time you add a book
+    if (noteText == '') {
+      item = ListItem(
+          userId: user.id, bookId: widget.bookId, type: type, labels: labels);
+    } else {
+      item = ListItem(
+          userId: user.id,
+          bookId: widget.bookId,
+          type: type,
+          labels: labels,
+          notes: notes);
+    }
     final jsonItem = _$ListItemToJson(item);
-
+    print(jsonItem);
     final http.Response res = await http.post(
       'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
       headers: {
@@ -185,26 +198,15 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
 @JsonSerializable()
 class ListItem {
-  ListItem(this.userId, this.bookId, this.type, this.labels, this.notes);
+  ListItem({this.userId, this.bookId, this.type, this.labels, this.notes});
 
   String userId;
   String bookId;
   String type;
   List labels;
-  //need to update the type of notes to the Note class when we add that
   List notes;
 
   Map<String, dynamic> toJson() => _$ListItemToJson(this);
-}
-
-@JsonSerializable()
-class Note {
-  //TODO: add sourceName as optional parameter
-  Note(this.comment);
-
-  String comment;
-
-  Map<String, dynamic> toJson() => _$NoteToJson(this);
 }
 
 class AddNoteTile extends StatelessWidget {

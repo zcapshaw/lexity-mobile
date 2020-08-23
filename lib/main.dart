@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
             headline1: GoogleFonts.ibmPlexSerif(
               fontWeight: FontWeight.w600,
               color: Colors.grey[700],
-              fontSize: 36,
+              fontSize: 24,
             ),
             headline3: GoogleFonts.ibmPlexSerif(
               fontWeight: FontWeight.w600,
@@ -59,6 +59,10 @@ class MyApp extends StatelessWidget {
             ),
             bodyText2: GoogleFonts.roboto(
               color: Colors.grey[700],
+            ),
+            caption: GoogleFonts.roboto(
+              color: Colors.grey[400],
+              fontSize: 12,
             ),
             subtitle1: GoogleFonts.roboto(
               color: Colors.grey[700],
