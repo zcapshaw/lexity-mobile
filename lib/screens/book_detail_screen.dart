@@ -80,26 +80,29 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                       parent: ClampingScrollPhysics(),
                     ),
                     children: <Widget>[
-                      Container(
-                        height: coverArtHeight,
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: NetworkImage(
-                                snapshot.data.thumbnail,
-                              )),
-                        ),
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                          child: FractionallySizedBox(
-                            alignment: Alignment.bottomCenter,
-                            heightFactor: 0.85,
-                            widthFactor: 1.0,
-                            child: Container(
-                              child: Image.network(
-                                snapshot.data.thumbnail,
-                                fit: BoxFit.contain,
-                                height: double.infinity,
+                      ClipRect(
+                        child: Container(
+                          height: coverArtHeight,
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                  snapshot.data.thumbnail,
+                                )),
+                          ),
+                          child: BackdropFilter(
+                            filter:
+                                ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                            child: FractionallySizedBox(
+                              alignment: Alignment.bottomCenter,
+                              heightFactor: 0.85,
+                              widthFactor: 1.0,
+                              child: Container(
+                                child: Image.network(
+                                  snapshot.data.thumbnail,
+                                  fit: BoxFit.contain,
+                                  height: double.infinity,
+                                ),
                               ),
                             ),
                           ),
