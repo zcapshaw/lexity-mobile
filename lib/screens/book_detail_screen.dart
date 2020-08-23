@@ -24,6 +24,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   UserModel user;
   String htmlDescription = '';
   List<Note> notes = [];
+  String genre;
 
   @override
   initState() {
@@ -61,13 +62,15 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       }
 
       //Grabs the first key from the categories object and strips off parens and capitalizes text
-      String genre = bookJson['categories'][0]
-          .keys
-          .toString()
-          .replaceAll(new RegExp('([()])'), "")
-          .toUpperCase();
-      print(bookJson['categories'][0].keys);
-      print(notesArray);
+      if (bookJson['categories'][0] != null) {
+        genre = bookJson['categories'][0]
+            ?.keys
+            .toString()
+            .replaceAll(new RegExp('([()])'), "")
+            .toUpperCase();
+        print(notesArray);
+      }
+      print(genre);
 
       book = Book(
         title: bookJson['title'],
@@ -148,25 +151,26 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             ),
                             Text(snapshot.data.author,
                                 style: Theme.of(context).textTheme.subtitle1),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
-                              child: Chip(
-                                label: Text(snapshot.data.genre),
-                                backgroundColor: Colors.teal[700],
-                                labelPadding:
-                                    EdgeInsets.symmetric(horizontal: 10),
-                                labelStyle: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
+                            if (genre != null)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Chip(
+                                  label: Text(snapshot.data.genre),
+                                  backgroundColor: Colors.teal[700],
+                                  labelPadding:
+                                      EdgeInsets.symmetric(horizontal: 10),
+                                  labelStyle: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Divider(),
