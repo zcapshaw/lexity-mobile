@@ -74,6 +74,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                   context: context,
                   removeTop: true,
                   child: ListView(
+                    physics: ScrollPhysics(
+                      // Scroll physics for environments that prevent the scroll
+                      // offset from reaching beyond the bounds of the content
+                      parent: ClampingScrollPhysics(),
+                    ),
                     children: <Widget>[
                       Container(
                         height: coverArtHeight,
