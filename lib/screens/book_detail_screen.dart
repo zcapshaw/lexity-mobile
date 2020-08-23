@@ -192,7 +192,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   labelText: 'Add Note',
                                 ),
                                 ActionButton(
-                                  icon: Icons.arrow_upward,
+                                  icon: CupertinoIcons.share_up,
                                   labelText: 'Share Book',
                                 ),
                               ],
@@ -262,7 +262,19 @@ class ActionButton extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: MaterialButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet<void>(
+                context: context,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
+                  ),
+                ),
+                builder: (BuildContext context) => _AddNoteWidget(),
+              );
+            },
             color: Colors.grey[200],
             textColor: Colors.white,
             elevation: 0,
@@ -310,6 +322,60 @@ class NoteView extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AddNoteWidget extends StatelessWidget {
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.topCenter,
+      padding: EdgeInsets.symmetric(vertical: 5),
+      child: Column(
+        children: <Widget>[
+          Container(
+            child: Icon(
+              Icons.maximize,
+              size: 36,
+              color: Colors.grey[700],
+            ),
+          ),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: CupertinoTextField(
+                autofocus: true,
+                autocorrect: true,
+                clearButtonMode: OverlayVisibilityMode.never,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                enableInteractiveSelection: true,
+                enableSuggestions: true,
+                maxLines: 5,
+                minLines: 2,
+                //TODO: add debouncing to onChange logic
+                onChanged: (text) {},
+                padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                placeholder: 'Jot down notes about this book',
+
+                suffix: RawMaterialButton(
+                  constraints: BoxConstraints.tightForFinite(),
+                  child: Text(
+                    'Save',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                  onPressed: () {},
+                  padding: EdgeInsets.all(15),
+                ),
+                suffixMode: OverlayVisibilityMode.editing,
+                textCapitalization: TextCapitalization.sentences,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
