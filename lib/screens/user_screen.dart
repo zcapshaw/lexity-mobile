@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../components/read_list.dart';
+import '../components/reading_list.dart';
 import '../models/user.dart';
 import '../utils/follower_numbers.dart';
 import '../components/book_list_bloc.dart';
@@ -16,7 +16,8 @@ class UserScreen extends StatefulWidget {
 UserModel user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
-  final readList = ReadList();
+  final readList = ReadingList(
+      types: ['READ'], enableHeaders: false, enableSwipeRight: false);
   int selectedIndex = 0;
   List<bool> listStatus = [true, false];
 
@@ -244,14 +245,15 @@ class _UserInfo extends StatelessWidget {
                 ),
                 Container(
                   child: StreamBuilder(
-                      stream: bookListBloc.readCount, // Stream getter
-                      initialData: 0,
+                      stream: bookListBloc.listCount, // Stream getter
+                      initialData: {},
                       builder: (BuildContext context,
                           AsyncSnapshot<dynamic> snapshot) {
                         return RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
-                            text: FollowerNumbers.converter(snapshot.data),
+                            text: FollowerNumbers.converter(
+                                snapshot.data['READ'] ?? 0),
                             style: TextStyle(
                               color: Color(0xFF1A6978),
                               fontWeight: FontWeight.w600,
