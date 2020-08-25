@@ -30,7 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: Theme.of(context).textTheme.headline3,
                 ),
               ),
-              ReadingList(),
+              ReadingList(
+                types: ['READING', 'TO_READ'],
+              ),
             ],
           ),
         ),
