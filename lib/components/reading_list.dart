@@ -50,17 +50,19 @@ class _ReadingListState extends State<ReadingList> {
 
       // Cycle through json by type, adding applicable headers
       for (String type in widget.types) {
-        int bookCount = json[type].length;
-        bookListBloc.addListCountItem(type, bookCount);
-        if (widget.enableHeaders) {
-          readingList.add(HeadingItem(_getHeaderText(type, bookCount)));
-        }
-        for (var b in json[type]) {
-          String title = b['title'];
-          if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-          BookItem book = BookItem(title, b['authors'][0], b['cover'],
-              b['listId'], b['bookId'], b['type']);
-          readingList.add(book);
+        if (json[type] != null) {
+          int bookCount = json[type].length;
+          bookListBloc.addListCountItem(type, bookCount);
+          if (widget.enableHeaders) {
+            readingList.add(HeadingItem(_getHeaderText(type, bookCount)));
+          }
+          for (var b in json[type]) {
+            String title = b['title'];
+            if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
+            BookItem book = BookItem(title, b['authors'][0], b['cover'],
+                b['listId'], b['bookId'], b['type']);
+            readingList.add(book);
+          }
         }
       }
     } else {
