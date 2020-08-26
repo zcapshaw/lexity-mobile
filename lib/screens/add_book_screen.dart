@@ -181,6 +181,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
             ),
             Divider(),
+            AddRecoTile(),
+            Divider(),
             AddNoteTile(
               onTextChange: (text) {
                 setState(() {
@@ -209,6 +211,38 @@ class ListItem {
   Map<String, dynamic> toJson() => _$ListItemToJson(this);
 }
 
+class AddRecoTile extends StatelessWidget {
+  final String recoSource;
+
+  AddRecoTile({this.recoSource = 'Who suggested this book to you?'});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ListTileHeaderText('Recommended by'),
+              Container(
+                padding: EdgeInsets.only(top: 15),
+                child: Text(recoSource,
+                    style: Theme.of(context).textTheme.subtitle2),
+              ),
+            ],
+          ),
+          Container(
+            child: Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class AddNoteTile extends StatelessWidget {
   final Function onTextChange;
 
@@ -225,11 +259,13 @@ class AddNoteTile extends StatelessWidget {
           TextField(
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Jot down any thoughts here'),
+              border: InputBorder.none,
+              hintText: 'Jot down any thoughts here',
+              hintStyle: Theme.of(context).textTheme.subtitle2,
+            ),
             maxLines: null,
             onChanged: (text) => onTextChange(text),
-          ),
+          )
         ],
       ),
     );
