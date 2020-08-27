@@ -4,11 +4,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
 
-import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/models/note.dart';
-import 'package:lexity_mobile/components/list_tile_header_text.dart';
-import 'package:lexity_mobile/screens/main_screen.dart';
-import 'package:lexity_mobile/models/book.dart';
+import '../models/user.dart';
+import '../models/note.dart';
+import '../models/book.dart';
+import '../components/list_tile_header_text.dart';
+import '../components/list_tile_text_field.dart';
+import './main_screen.dart';
+import './add_reco_screen.dart';
 
 part 'add_book_screen.g.dart';
 
@@ -26,6 +28,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
   String noteText = '';
+  String recoSource;
+  String recoText;
   UserModel user;
 
   @override
@@ -78,8 +82,24 @@ class _AddBookScreenState extends State<AddBookScreen> {
     print(jsonEncode(jsonItem));
   }
 
+  _addReco(BuildContext context, String recoSource, String recoText) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddRecoScreen(
+            userId: user.id, recoSource: recoSource, recoText: recoText),
+      ),
+    );
+
+    setState(() {
+      this.recoSource = result != null ? result['recoSource'] : recoSource;
+      this.recoText = result != null ? result['recoText'] : recoText;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(recoSource);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -181,14 +201,19 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
             ),
             Divider(),
-            AddRecoTile(),
+            AddRecoTile(
+                recoSource: recoSource ?? '',
+                recoText: recoText ?? '',
+                onPress: _addReco),
             Divider(),
-            AddNoteTile(
+            TextFieldTile(
+              headerText: 'Add a note',
+              hintText: 'Jot down any thoughts here',
+              maxLines: null,
               onTextChange: (text) {
                 setState(() {
                   noteText = text;
                 });
-                print(noteText);
               },
             ),
           ],
@@ -213,60 +238,39 @@ class ListItem {
 
 class AddRecoTile extends StatelessWidget {
   final String recoSource;
+  final String recoText;
+  final Function onPress;
+  final String initialText = 'Who suggested this book to you?';
 
-  AddRecoTile({this.recoSource = 'Who suggested this book to you?'});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              ListTileHeaderText('Recommended by'),
-              Container(
-                padding: EdgeInsets.only(top: 15),
-                child: Text(recoSource,
-                    style: Theme.of(context).textTheme.subtitle2),
-              ),
-            ],
-          ),
-          Container(
-            child: Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class AddNoteTile extends StatelessWidget {
-  final Function onTextChange;
-
-  AddNoteTile({this.onTextChange});
+  AddRecoTile({this.recoSource, this.recoText, this.onPress});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          ListTileHeaderText('Add a note'),
-          TextField(
-            textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Jot down any thoughts here',
-              hintStyle: Theme.of(context).textTheme.subtitle2,
+    return GestureDetector(
+      onTap: () => onPress(context, recoSource, recoText),
+      behavior: HitTestBehavior.opaque, // makes whole tile clickable
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ListTileHeaderText('Recommended by'),
+                Container(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Text(recoSource.length == 0 ? initialText : recoSource,
+                      style: Theme.of(context).textTheme.subtitle2),
+                ),
+              ],
             ),
-            maxLines: null,
-            onChanged: (text) => onTextChange(text),
-          )
-        ],
+            Container(
+              child:
+                  Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }
