@@ -8,13 +8,12 @@ import 'package:get_it/get_it.dart';
 import '../models/user.dart';
 import '../models/note.dart';
 import '../models/book.dart';
+import '../models/list_item.dart';
 import '../components/list_tile_header_text.dart';
 import '../components/list_tile_text_field.dart';
 import './main_screen.dart';
 import './add_reco_screen.dart';
 import '../services/list_service.dart';
-
-part 'add_book_screen.g.dart';
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
@@ -62,7 +61,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
         type: type,
         labels: labels,
         notes: notes);
-    final jsonItem = _$ListItemToJson(item);
+
+    final jsonItem = item.toJson();
 
     final response =
         await listService.addOrUpdateListItem(user.accessToken, jsonItem);
@@ -215,19 +215,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
       ),
     );
   }
-}
-
-@JsonSerializable()
-class ListItem {
-  ListItem({this.userId, this.bookId, this.type, this.labels, this.notes});
-
-  String userId;
-  String bookId;
-  String type;
-  List labels;
-  List notes;
-
-  Map<String, dynamic> toJson() => _$ListItemToJson(this);
 }
 
 class AddRecoTile extends StatelessWidget {

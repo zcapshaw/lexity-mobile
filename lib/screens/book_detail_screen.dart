@@ -7,11 +7,13 @@ import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:time_formatter/time_formatter.dart';
+import 'package:get_it/get_it.dart';
 
 import '../models/book.dart';
 import '../models/user.dart';
 import '../models/note.dart';
 import '../components/list_tile_header_text.dart';
+import '../services/list_service.dart';
 
 class BookDetailScreen extends StatefulWidget {
   const BookDetailScreen({this.bookId});
@@ -26,6 +28,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String htmlDescription = '';
   List<Note> notes = [];
   String genre;
+  ListService get listService => GetIt.I<ListService>();
 
   @override
   initState() {
@@ -87,7 +90,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return book;
   }
 
-  void _addNote() {}
+  void addNote(text) {
+    print(text);
+    // final response = await listService.addOrUpdateListItem(user.accessToken, item)
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +210,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                         ),
                                       ),
                                       builder: (BuildContext context) =>
-                                          _AddNoteWidget(),
+                                          _AddNoteWidget(
+                                        callback: addNote,
+                                      ),
                                     );
                                   },
                                 ),
@@ -336,6 +344,9 @@ class NoteView extends StatelessWidget {
 }
 
 class _AddNoteWidget extends StatefulWidget {
+  final Function callback;
+  _AddNoteWidget({@required this.callback});
+
   @override
   __AddNoteWidgetState createState() => __AddNoteWidgetState();
 }
@@ -384,7 +395,7 @@ class __AddNoteWidgetState extends State<_AddNoteWidget> {
                     'Save',
                     style: TextStyle(color: Colors.blue),
                   ),
-                  onPressed: () {},
+                  onPressed: () => widget.callback(noteText),
                   padding: EdgeInsets.all(15),
                 ),
                 suffixMode: OverlayVisibilityMode.editing,

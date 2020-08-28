@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'add_book_screen.dart';
+part of 'list_item.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
