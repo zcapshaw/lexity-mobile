@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 import '../models/user.dart';
 import '../models/note.dart';
@@ -11,6 +12,7 @@ import '../components/list_tile_header_text.dart';
 import '../components/list_tile_text_field.dart';
 import './main_screen.dart';
 import './add_reco_screen.dart';
+import '../services/list_service.dart';
 
 part 'add_book_screen.g.dart';
 
@@ -31,6 +33,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
   String recoSource;
   String recoText;
   UserModel user;
+  ListService get listService => GetIt.I<ListService>();
 
   @override
   initState() {
@@ -60,23 +63,17 @@ class _AddBookScreenState extends State<AddBookScreen> {
         labels: labels,
         notes: notes);
     final jsonItem = _$ListItemToJson(item);
-    print('Item passed to the backend: ${jsonEncode(jsonItem)}');
-    final http.Response res = await http.post(
-      'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
-      headers: {
-        'access-token': '${user.accessToken}',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(jsonItem),
-    );
-    if (res.statusCode == 200) {
+
+    final response =
+        await listService.addOrUpdateListItem(user.accessToken, jsonItem);
+
+    if (response.error) {
+      print(response.errorCode);
+      print(response.errorMessage);
+    } else {
       print('successfully added ${widget.bookId}');
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => MainScreen()));
-    } else {
-      print(res.statusCode);
-      print(res.reasonPhrase);
-      print(res.body);
     }
   }
 

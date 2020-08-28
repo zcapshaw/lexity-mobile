@@ -1,12 +1,39 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 //TODO: add all my API call functions to this service
 class ListService {
-  static const String user = 'Users/74763';
-  static String userJwt = DotEnv().env['USER_JWT'];
-
   static const API = 'https://stellar-aurora-280316.uc.r.appspot.com';
-  final headers = {
-    'user-jwt': '$userJwt',
-  };
+
+  Future<APIResponse> addOrUpdateListItem(accessToken, item) {
+    print(accessToken);
+    return http
+        .post(API + '/list/add',
+            headers: {
+              'access-token': accessToken,
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(item))
+        .then((res) {
+      if (res.statusCode == 200) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(
+          error: true,
+          errorCode: res.statusCode,
+          errorMessage: res.reasonPhrase);
+    }).catchError(
+      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+    );
+  }
+}
+
+class APIResponse<T> {
+  T data;
+  bool error;
+  int errorCode;
+  String errorMessage;
+
+  APIResponse(
+      {this.data, this.errorMessage, this.errorCode, this.error = false});
 }

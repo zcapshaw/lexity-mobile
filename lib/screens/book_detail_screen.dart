@@ -87,6 +87,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return book;
   }
 
+  void _addNote() {}
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -186,14 +188,30 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 ActionButton(
                                   icon: Icons.play_arrow,
                                   labelText: 'Start Reading',
+                                  callback: () {},
                                 ),
                                 ActionButton(
                                   icon: Icons.comment,
                                   labelText: 'Add Note',
+                                  callback: () {
+                                    showModalBottomSheet<void>(
+                                      context: context,
+                                      backgroundColor: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10.0),
+                                          topRight: Radius.circular(10.0),
+                                        ),
+                                      ),
+                                      builder: (BuildContext context) =>
+                                          _AddNoteWidget(),
+                                    );
+                                  },
                                 ),
                                 ActionButton(
                                   icon: CupertinoIcons.share_up,
                                   labelText: 'Share Book',
+                                  callback: () {},
                                 ),
                               ],
                             ),
@@ -252,8 +270,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String labelText;
+  final Function callback;
 
-  const ActionButton({@required this.icon, this.labelText});
+  const ActionButton(
+      {@required this.icon, this.labelText, @required this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -262,19 +282,7 @@ class ActionButton extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: MaterialButton(
-            onPressed: () {
-              showModalBottomSheet<void>(
-                context: context,
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0),
-                  ),
-                ),
-                builder: (BuildContext context) => _AddNoteWidget(),
-              );
-            },
+            onPressed: callback,
             color: Colors.grey[200],
             textColor: Colors.white,
             elevation: 0,
@@ -327,7 +335,14 @@ class NoteView extends StatelessWidget {
   }
 }
 
-class _AddNoteWidget extends StatelessWidget {
+class _AddNoteWidget extends StatefulWidget {
+  @override
+  __AddNoteWidgetState createState() => __AddNoteWidgetState();
+}
+
+class __AddNoteWidgetState extends State<_AddNoteWidget> {
+  String noteText = '';
+
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
@@ -356,11 +371,13 @@ class _AddNoteWidget extends StatelessWidget {
                 enableSuggestions: true,
                 maxLines: 5,
                 minLines: 2,
-                //TODO: add debouncing to onChange logic
-                onChanged: (text) {},
+                onChanged: (text) {
+                  setState(() {
+                    noteText = text;
+                  });
+                },
                 padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
                 placeholder: 'Jot down notes about this book',
-
                 suffix: RawMaterialButton(
                   constraints: BoxConstraints.tightForFinite(),
                   child: Text(
