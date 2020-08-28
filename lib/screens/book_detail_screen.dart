@@ -12,6 +12,7 @@ import 'package:get_it/get_it.dart';
 import '../models/book.dart';
 import '../models/user.dart';
 import '../models/note.dart';
+import '../models/list_item.dart';
 import '../components/list_tile_header_text.dart';
 import '../services/list_service.dart';
 
@@ -49,7 +50,6 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     if (data.statusCode == 200) {
       var bookJson = jsonDecode(data.body) as Map;
       var notesJson = bookJson['notes'];
-      print(notesJson);
 
       htmlDescription = bookJson['description'];
 
@@ -72,9 +72,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             .toString()
             .replaceAll(new RegExp('([()])'), "")
             .toUpperCase();
-        print(notesArray);
       }
-      print(genre);
 
       book = Book(
         title: bookJson['title'],
@@ -90,9 +88,22 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return book;
   }
 
-  void addNote(text) {
-    print(text);
-    // final response = await listService.addOrUpdateListItem(user.accessToken, item)
+  void addNote(text) async {
+    final Note note = Note(comment: text);
+    final List notes = [note.toJson()];
+    ListItem item =
+        ListItem(userId: user.id, bookId: widget.bookId, notes: notes);
+
+    final response =
+        await listService.addOrUpdateListItem(user.accessToken, item);
+
+    if (response.error) {
+      print(response.errorCode);
+      print(response.errorMessage);
+    } else {
+      print('successfully added note');
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -213,7 +224,13 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                           _AddNoteWidget(
                                         callback: addNote,
                                       ),
-                                    );
+                                    ).then((value) {
+                                      print('refresh state');
+                                      setState(() {
+                                        //triggers a refresh of the detail page
+                                        notes = [];
+                                      });
+                                    });
                                   },
                                 ),
                                 ActionButton(
