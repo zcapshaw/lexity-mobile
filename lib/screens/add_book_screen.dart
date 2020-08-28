@@ -27,7 +27,7 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
-  String noteText = '';
+  String noteText;
   String recoSource;
   String recoText;
   UserModel user;
@@ -43,24 +43,24 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final String type = listType;
     final List labels = [];
     final Note note = Note(comment: noteText);
-    final jsonNote = note.toJson();
-    final List notes = [jsonNote];
+    final Note reco = Note(sourceName: recoSource, comment: recoText);
+    final List notes = [note.toJson(), reco.toJson()];
     ListItem item;
 
-    //fixing a bug where empty string notes were getting created every time you add a book
-    if (noteText == '') {
-      item = ListItem(
-          userId: user.id, bookId: widget.bookId, type: type, labels: labels);
-    } else {
-      item = ListItem(
-          userId: user.id,
-          bookId: widget.bookId,
-          type: type,
-          labels: labels,
-          notes: notes);
-    }
+    // Only retain non-null notes objects with text.length > 0
+    // E.g. if there are NO notes OR recos, this will return an empty list []
+    notes.retainWhere((note) =>
+        note['comment'] != null && note['comment'].toString().length > 0 ||
+        note['sourceName'] != null && note['sourceName'].toString().length > 0);
+
+    item = ListItem(
+        userId: user.id,
+        bookId: widget.bookId,
+        type: type,
+        labels: labels,
+        notes: notes);
     final jsonItem = _$ListItemToJson(item);
-    print(jsonItem);
+    print('Item passed to the backend: ${jsonEncode(jsonItem)}');
     final http.Response res = await http.post(
       'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
       headers: {
@@ -78,8 +78,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
       print(res.reasonPhrase);
       print(res.body);
     }
-
-    print(jsonEncode(jsonItem));
   }
 
   _addReco(BuildContext context, String recoSource, String recoText) async {
@@ -99,7 +97,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(recoSource);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -242,7 +239,7 @@ class AddRecoTile extends StatelessWidget {
   final Function onPress;
   final String initialText = 'Who suggested this book to you?';
 
-  AddRecoTile({this.recoSource, this.recoText, this.onPress});
+  AddRecoTile({this.recoSource, this.recoText, @required this.onPress});
 
   @override
   Widget build(BuildContext context) {

@@ -21,8 +21,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
   @override
   void initState() {
     recoSource = widget.recoSource;
-    // if you fully remove recoSource, recoText will render as empty
-    recoText = recoSource.toString().length == 0 ? null : widget.recoText;
+    recoText = widget.recoText;
     super.initState();
   }
 
@@ -35,19 +34,26 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
           style: Theme.of(context).textTheme.subtitle1,
         ),
         actions: <Widget>[
-          FlatButton(
-            onPressed: () {
-              Navigator.pop(
-                  context, {'recoSource': recoSource, 'recoText': recoText});
-            },
-            child: Text(
-              'Done',
-              style: TextStyle(
-                color: Colors.teal[700],
-                fontWeight: FontWeight.bold,
+          // Have to use builder to generate a `context` under the Scaffold
+          Builder(builder: (BuildContext context) {
+            return FlatButton(
+              onPressed: () {
+                recoSource.length == 0 && recoText.length > 0
+                    ? Scaffold.of(context).showSnackBar(SnackBar(
+                        backgroundColor: Colors.red[300],
+                        content: Text("Reco notes require a source.")))
+                    : Navigator.pop(context,
+                        {'recoSource': recoSource, 'recoText': recoText});
+              },
+              child: Text(
+                'Done',
+                style: TextStyle(
+                  color: Colors.teal[700],
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-          ),
+            );
+          })
         ],
       ),
       body: SafeArea(
