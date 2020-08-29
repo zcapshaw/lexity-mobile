@@ -3,13 +3,24 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
-import 'package:lexity_mobile/screens/book_detail_screen.dart';
 import 'package:provider/provider.dart';
+
 import 'swipe_background.dart';
-import 'package:lexity_mobile/models/reading_list_item.dart';
-import 'package:lexity_mobile/models/user.dart';
+import '../screens/book_detail_screen.dart';
+import '../models/reading_list_item.dart';
+import '../models/user.dart';
+import 'book_list_bloc.dart';
 
 class ReadingList extends StatefulWidget {
+  final List<String> types;
+  final bool enableSwipeRight;
+  final bool enableHeaders;
+
+  ReadingList(
+      {@required this.types,
+      this.enableSwipeRight = true,
+      this.enableHeaders = true});
+
   @override
   _ReadingListState createState() => _ReadingListState();
 }
@@ -32,46 +43,57 @@ class _ReadingListState extends State<ReadingList> {
         headers: {
           'access-token': '${user.accessToken}',
         });
-
     if (data.statusCode == 200) {
       //Construct a 'readingList' array with a HeadingItem and BookItems
-      var readingJson = jsonDecode(data.body)['READING'];
-      int readingCount = readingJson.length;
+      readingList = [];
+      var json = jsonDecode(data.body);
 
-      readingList = [
-        HeadingItem('Reading ($readingCount)'),
-      ];
-      for (var b in readingJson) {
-        String title = b['title'];
-        if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-        BookItem book = BookItem(title, b['authors'][0], b['cover'],
-            b['listId'], b['bookId'], b['type']);
-        readingList.add(book);
+      // Cycle through json by type, adding applicable headers
+      for (String type in widget.types) {
+        if (json[type] != null) {
+          int bookCount = json[type].length;
+          bookListBloc.addListCountItem(type, bookCount);
+          if (widget.enableHeaders) {
+            readingList.add(HeadingItem(_getHeaderText(type, bookCount)));
+          }
+          for (var b in json[type]) {
+            String title = b['title'];
+            if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
+            BookItem book = BookItem(title, b['authors'][0], b['cover'],
+                b['listId'], b['bookId'], b['type']);
+            readingList.add(book);
+          }
+        }
       }
-
-      //Construct a 'toRead' array with a HeadingItem and BookItems
-      var toReadJson = jsonDecode(data.body)['TO_READ'];
-      int toReadCount = toReadJson.length;
-
-      List<ReadingListItem> toRead = [
-        HeadingItem('Want to read ($toReadCount)'),
-      ];
-      for (var b in toReadJson) {
-        String title = b['title'];
-        if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-        BookItem book = BookItem(title, b['authors'][0], b['cover'],
-            b['listId'], b['bookId'], b['type']);
-        toRead.add(book);
-      }
-
-      //Combine the 'readingList' and 'toRead' lists into one List to render
-      readingList.addAll(toRead);
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
     }
 
     return readingList;
+  }
+
+  // Construct Header text based on list type
+  String _getHeaderText(String type, int count) {
+    String headerText;
+    switch (type) {
+      case 'READING':
+        {
+          headerText = 'Reading ($count)';
+        }
+        break;
+      case 'TO_READ':
+        {
+          headerText = 'Want to read ($count)';
+        }
+        break;
+      default:
+        {
+          headerText = '';
+        }
+        break;
+    }
+    return headerText;
   }
 
   void _updateType(readingListItem) async {
@@ -143,9 +165,7 @@ class _ReadingListState extends State<ReadingList> {
               CupertinoDialogAction(
                 child: Text("Delete"),
                 onPressed: () {
-                  // Dismiss the dialog and
-                  // also dismiss the swiped item
-
+                  // Dismiss the dialog and also dismiss the swiped item
                   _deleteBook(book.listId);
                   Navigator.of(context).pop(true);
                 },
@@ -153,8 +173,7 @@ class _ReadingListState extends State<ReadingList> {
               CupertinoDialogAction(
                 child: Text('Cancel'),
                 onPressed: () {
-                  // Dismiss the dialog but don't
-                  // dismiss the swiped item
+                  // Dismiss the dialog but don't dismiss the swiped item
                   return Navigator.of(context).pop(false);
                 },
               )
@@ -210,11 +229,13 @@ class _ReadingListState extends State<ReadingList> {
                             return _promptUser(direction, snapshot.data[index]);
                           }
                         },
+                        direction: widget.enableSwipeRight
+                            ? DismissDirection.horizontal
+                            : DismissDirection.endToStart,
                         background: SwipeRightBackground(
                             type: snapshot.data[index].type),
                         secondaryBackground: SwipeLeftBackground(),
                         onDismissed: (direction) {
-                          print(direction);
                           if (direction == DismissDirection.startToEnd) {
                             _updateType(snapshot.data[index]);
                           } else {
