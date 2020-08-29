@@ -4,11 +4,13 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
 
-import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/models/note.dart';
-import 'package:lexity_mobile/components/list_tile_header_text.dart';
-import 'package:lexity_mobile/screens/main_screen.dart';
-import 'package:lexity_mobile/models/book.dart';
+import '../models/user.dart';
+import '../models/note.dart';
+import '../models/book.dart';
+import '../components/list_tile_header_text.dart';
+import '../components/list_tile_text_field.dart';
+import './main_screen.dart';
+import './add_reco_screen.dart';
 
 part 'add_book_screen.g.dart';
 
@@ -25,7 +27,9 @@ class AddBookScreen extends StatefulWidget {
 class _AddBookScreenState extends State<AddBookScreen> {
   List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
-  String noteText = '';
+  String noteText;
+  String recoSource;
+  String recoText;
   UserModel user;
 
   @override
@@ -39,24 +43,24 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final String type = listType;
     final List labels = [];
     final Note note = Note(comment: noteText);
-    final jsonNote = note.toJson();
-    final List notes = [jsonNote];
+    final Note reco = Note(sourceName: recoSource, comment: recoText);
+    final List notes = [note.toJson(), reco.toJson()];
     ListItem item;
 
-    //fixing a bug where empty string notes were getting created every time you add a book
-    if (noteText == '') {
-      item = ListItem(
-          userId: user.id, bookId: widget.bookId, type: type, labels: labels);
-    } else {
-      item = ListItem(
-          userId: user.id,
-          bookId: widget.bookId,
-          type: type,
-          labels: labels,
-          notes: notes);
-    }
+    // Only retain non-null notes objects with text.length > 0
+    // E.g. if there are NO notes OR recos, this will return an empty list []
+    notes.retainWhere((note) =>
+        note['comment'] != null && note['comment'].toString().length > 0 ||
+        note['sourceName'] != null && note['sourceName'].toString().length > 0);
+
+    item = ListItem(
+        userId: user.id,
+        bookId: widget.bookId,
+        type: type,
+        labels: labels,
+        notes: notes);
     final jsonItem = _$ListItemToJson(item);
-    print(jsonItem);
+    print('Item passed to the backend: ${jsonEncode(jsonItem)}');
     final http.Response res = await http.post(
       'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
       headers: {
@@ -74,8 +78,21 @@ class _AddBookScreenState extends State<AddBookScreen> {
       print(res.reasonPhrase);
       print(res.body);
     }
+  }
 
-    print(jsonEncode(jsonItem));
+  _addReco(BuildContext context, String recoSource, String recoText) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddRecoScreen(
+            userId: user.id, recoSource: recoSource, recoText: recoText),
+      ),
+    );
+
+    setState(() {
+      this.recoSource = result != null ? result['recoSource'] : recoSource;
+      this.recoText = result != null ? result['recoText'] : recoText;
+    });
   }
 
   @override
@@ -181,12 +198,19 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
             ),
             Divider(),
-            AddNoteTile(
+            AddRecoTile(
+                recoSource: recoSource ?? '',
+                recoText: recoText ?? '',
+                onPress: _addReco),
+            Divider(),
+            TextFieldTile(
+              headerText: 'Add a note',
+              hintText: 'Jot down any thoughts here',
+              maxLines: null,
               onTextChange: (text) {
                 setState(() {
                   noteText = text;
                 });
-                print(noteText);
               },
             ),
           ],
@@ -209,28 +233,41 @@ class ListItem {
   Map<String, dynamic> toJson() => _$ListItemToJson(this);
 }
 
-class AddNoteTile extends StatelessWidget {
-  final Function onTextChange;
+class AddRecoTile extends StatelessWidget {
+  final String recoSource;
+  final String recoText;
+  final Function onPress;
+  final String initialText = 'Who suggested this book to you?';
 
-  AddNoteTile({this.onTextChange});
+  AddRecoTile({this.recoSource, this.recoText, @required this.onPress});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          ListTileHeaderText('Add a note'),
-          TextField(
-            textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Jot down any thoughts here'),
-            maxLines: null,
-            onChanged: (text) => onTextChange(text),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () => onPress(context, recoSource, recoText),
+      behavior: HitTestBehavior.opaque, // makes whole tile clickable
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                ListTileHeaderText('Recommended by'),
+                Container(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Text(recoSource.length == 0 ? initialText : recoSource,
+                      style: Theme.of(context).textTheme.subtitle2),
+                ),
+              ],
+            ),
+            Container(
+              child:
+                  Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+            ),
+          ],
+        ),
       ),
     );
   }
