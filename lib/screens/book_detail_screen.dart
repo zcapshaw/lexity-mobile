@@ -132,6 +132,35 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     }
   }
 
+  void _editNote(noteId, comment) {
+    print(noteId);
+    print(comment);
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+      ),
+      builder: (BuildContext context) => _AddNoteWidget(
+        callback: (updatedText) {
+          print('callback invoked');
+          print(updatedText);
+          Navigator.pop(context);
+        },
+        initialText: comment,
+      ),
+    ).then((value) {
+      setState(() {
+        //triggers a refresh of the detail page
+        notes = [];
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -295,7 +324,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     comment: note.comment,
                                     created: formatTime(note.created),
                                     noteId: note.id,
-                                    callback: _deleteNote,
+                                    deleteCallback: _deleteNote,
+                                    editCallback: _editNote,
                                   ),
                               ],
                             ),
@@ -358,20 +388,26 @@ class NoteView extends StatelessWidget {
   final String comment;
   final String created;
   final String noteId;
-  final Function callback;
+  final Function deleteCallback;
+  final Function editCallback;
 
-  const NoteView({this.comment, this.created, this.noteId, this.callback});
+  const NoteView(
+      {this.comment,
+      this.created,
+      this.noteId,
+      this.deleteCallback,
+      this.editCallback});
 
   _handleNoteTap(BuildContext context) async {
     final action = await showCupertinoModalPopup(
         context: context, builder: (BuildContext context) => NoteActionSheet());
 
     if (action == 'delete') {
-      callback(context, noteId);
+      deleteCallback(context, noteId);
     }
 
     if (action == 'edit') {
-      print('edit $noteId');
+      editCallback(noteId, comment);
     }
   }
 
@@ -439,14 +475,28 @@ class NoteActionSheet extends StatelessWidget {
 
 class _AddNoteWidget extends StatefulWidget {
   final Function callback;
-  _AddNoteWidget({@required this.callback});
+  final String initialText;
+  _AddNoteWidget({@required this.callback, this.initialText});
 
   @override
   __AddNoteWidgetState createState() => __AddNoteWidgetState();
 }
 
 class __AddNoteWidgetState extends State<_AddNoteWidget> {
-  String noteText = '';
+  TextEditingController _textController;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController(text: widget.initialText ?? '');
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    _textController.dispose();
+    super.dispose();
+  }
 
   Widget build(BuildContext context) {
     return Container(
@@ -468,6 +518,7 @@ class __AddNoteWidgetState extends State<_AddNoteWidget> {
                 autofocus: true,
                 autocorrect: true,
                 clearButtonMode: OverlayVisibilityMode.never,
+                controller: _textController,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(10),
@@ -476,11 +527,6 @@ class __AddNoteWidgetState extends State<_AddNoteWidget> {
                 enableSuggestions: true,
                 maxLines: 5,
                 minLines: 2,
-                onChanged: (text) {
-                  setState(() {
-                    noteText = text;
-                  });
-                },
                 padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
                 placeholder: 'Jot down notes about this book',
                 suffix: RawMaterialButton(
@@ -489,7 +535,7 @@ class __AddNoteWidgetState extends State<_AddNoteWidget> {
                     'Save',
                     style: TextStyle(color: Colors.blue),
                   ),
-                  onPressed: () => widget.callback(noteText),
+                  onPressed: () => widget.callback(_textController.text),
                   padding: EdgeInsets.all(15),
                 ),
                 suffixMode: OverlayVisibilityMode.editing,
