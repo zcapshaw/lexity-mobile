@@ -29,6 +29,23 @@ class ListService {
       (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
     );
   }
+
+  Future<APIResponse> deleteNote(accessToken, userId, listId, noteId) {
+    return http.delete(
+      API + '/list/notes/delete/?userId=$userId&listId=$listId&noteId=$noteId',
+      headers: {'access-token': accessToken},
+    ).then((res) {
+      if (res.statusCode == 200) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(
+          error: true,
+          errorCode: res.statusCode,
+          errorMessage: res.reasonPhrase);
+    }).catchError(
+      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+    );
+  }
 }
 
 class APIResponse<T> {

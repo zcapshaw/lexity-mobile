@@ -29,6 +29,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String htmlDescription = '';
   List<Note> notes = [];
   String genre;
+  String listId;
   ListService get listService => GetIt.I<ListService>();
 
   @override
@@ -80,8 +81,10 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         subtitle: bookJson['subtitle'],
         author: bookJson['authors'][0],
         thumbnail: bookJson['cover'],
+        listId: bookJson['listId'],
         genre: genre,
       );
+      listId = book.listId;
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
@@ -89,7 +92,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return book;
   }
 
-  void addNote(text) async {
+  void _addNote(text) async {
     final Note note = Note(comment: text);
     final List notes = [note.toJson()];
     ListItem item =
@@ -104,6 +107,28 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     } else {
       print('successfully added note');
       Navigator.pop(context);
+    }
+  }
+
+  void _deleteNote(context, noteId) async {
+    final response =
+        await listService.deleteNote(user.accessToken, user.id, listId, noteId);
+
+    if (response.error) {
+      print(response.errorCode);
+      print(response.errorMessage);
+    } else {
+      print('successfully deleted $noteId');
+
+      setState(() {
+        //triggers a refresh of the detail page
+        notes = [];
+      });
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.grey[600],
+        content: Text('Note deleted.'),
+        duration: Duration(seconds: 1),
+      ));
     }
   }
 
@@ -223,10 +248,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                       ),
                                       builder: (BuildContext context) =>
                                           _AddNoteWidget(
-                                        callback: addNote,
+                                        callback: _addNote,
                                       ),
                                     ).then((value) {
-                                      print('refresh state');
                                       setState(() {
                                         //triggers a refresh of the detail page
                                         notes = [];
@@ -271,6 +295,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     comment: note.comment,
                                     created: formatTime(note.created),
                                     noteId: note.id,
+                                    callback: _deleteNote,
                                   ),
                               ],
                             ),
@@ -333,15 +358,16 @@ class NoteView extends StatelessWidget {
   final String comment;
   final String created;
   final String noteId;
+  final Function callback;
 
-  const NoteView({this.comment, this.created, this.noteId});
+  const NoteView({this.comment, this.created, this.noteId, this.callback});
 
   _handleNoteTap(BuildContext context) async {
     final action = await showCupertinoModalPopup(
         context: context, builder: (BuildContext context) => NoteActionSheet());
 
     if (action == 'delete') {
-      print('delete $noteId');
+      callback(context, noteId);
     }
 
     if (action == 'edit') {
