@@ -11,8 +11,10 @@ class RecoTileTrailing extends StatelessWidget {
   Widget build(BuildContext context) {
     int recoCount = recos.length;
     int recosBeyondMax = recoCount - maxRecoRender;
+    List<dynamic> renderRecos =
+        recos.sublist(0, recosBeyondMax >= 0 ? maxRecoRender : recoCount);
 
-    if (recoCount > 0) {
+    if (recos.isNotEmpty) {
       return Container(
         // TODO: Discuss whether we want to use the below fixed width instead of MainAxisSize.min
         //width: MediaQuery.of(context).size.width * 0.35,
@@ -32,7 +34,11 @@ class RecoTileTrailing extends StatelessWidget {
                   MainAxisSize.min, // Use the minimum amount of space needed
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                for (var r in recos) RecoImg(r['sourceImg'], r['sourceName']),
+                for (var r in renderRecos)
+                  RecoImg(r['sourceImg'], r['sourceName']),
+                if (recosBeyondMax > 0 && recosBeyondMax <= 9)
+                  RecoImg(null, '+${recosBeyondMax.toString()}'),
+                if (recosBeyondMax > 9) RecoImg(null, '9+'),
               ],
             ),
           ],
@@ -55,7 +61,12 @@ class RecoImg extends StatelessWidget {
   Widget _buildInitialsReco(String sourceName) {
     RegExp toInitials = RegExp('\\B[A-Za-z]');
     String allInitials = sourceName.toUpperCase().replaceAll(toInitials, '');
-    String initials = allInitials.replaceAll(RegExp('\\s'), '').substring(0, 2);
+    String initialsWithoutSpaces = allInitials.replaceAll(RegExp('\\s'), '');
+    String initials = initialsWithoutSpaces.substring(
+        0,
+        initialsWithoutSpaces.length > 1 // conditional for single words
+            ? 2
+            : 1);
 
     return Container(
       margin: EdgeInsets.only(left: leftMargin),
