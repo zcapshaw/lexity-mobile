@@ -263,6 +263,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               child: ListTileHeaderText('Notes'),
                             ),
                             Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 for (var note in notes)
                                   NoteView(
