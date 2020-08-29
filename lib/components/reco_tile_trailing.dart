@@ -12,11 +12,10 @@ class RecoTileTrailing extends StatelessWidget {
     int recoCount = recos.length;
     int recosBeyondMax = recoCount - maxRecoRender;
 
-    print(recoCount);
-
     if (recoCount > 0) {
       return Container(
-        width: MediaQuery.of(context).size.width * 0.30,
+        // TODO: Discuss whether we want to use the below fixed width instead of MainAxisSize.min
+        //width: MediaQuery.of(context).size.width * 0.35,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -25,10 +24,13 @@ class RecoTileTrailing extends StatelessWidget {
               padding: EdgeInsets.only(bottom: 5),
               child: Text(
                 'Recommended by',
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                style: TextStyle(fontSize: 12, color: Colors.grey[700]),
               ),
             ),
             Row(
+              mainAxisSize:
+                  MainAxisSize.min, // Use the minimum amount of space needed
+              mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 for (var r in recos) RecoImg(r['sourceImg'], r['sourceName']),
               ],
@@ -37,7 +39,7 @@ class RecoTileTrailing extends StatelessWidget {
         ),
       );
     } else {
-      return Container();
+      return Container(height: 0, width: 0); // Don't render if no recos
     }
   }
 }
@@ -45,7 +47,8 @@ class RecoTileTrailing extends StatelessWidget {
 class RecoImg extends StatelessWidget {
   final String sourceName;
   final sourceImg; // not typed, as can be String OR null
-  final double diameter = 35;
+  final double diameter = 30;
+  final double leftMargin = 3;
 
   RecoImg(this.sourceImg, this.sourceName);
 
@@ -55,12 +58,22 @@ class RecoImg extends StatelessWidget {
     String initials = allInitials.replaceAll(RegExp('\\s'), '').substring(0, 2);
 
     return Container(
+      margin: EdgeInsets.only(left: leftMargin),
       width: diameter,
       height: diameter,
       decoration: BoxDecoration(
+        color: Colors.grey[500],
         shape: BoxShape.circle,
       ),
-      child: Text(initials),
+      child: Center(
+        child: Text(
+          initials,
+          style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1),
+        ),
+      ),
     );
   }
 
@@ -70,6 +83,7 @@ class RecoImg extends StatelessWidget {
       return _buildInitialsReco(sourceName);
     } else {
       return Container(
+        margin: EdgeInsets.only(left: leftMargin),
         width: diameter,
         height: diameter,
         child: CachedNetworkImage(
