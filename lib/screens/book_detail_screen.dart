@@ -49,7 +49,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     if (data.statusCode == 200) {
       var bookJson = jsonDecode(data.body) as Map;
-      var notesJson = bookJson['notes'];
+      var notesJson = bookJson['notes'] ?? [];
 
       htmlDescription = bookJson['description'];
 
@@ -336,25 +336,57 @@ class NoteView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: Text(
-                created,
-                style: Theme.of(context).textTheme.caption,
-              ),
+      width: double.infinity,
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          onTap: () {
+            showCupertinoModalPopup(
+              context: context,
+              builder: (BuildContext context) {
+                return CupertinoActionSheet(
+                  actions: <Widget>[
+                    CupertinoActionSheetAction(
+                      isDefaultAction: true,
+                      child: Text('Edit Note'),
+                      onPressed: () => Navigator.of(context).pop('edit'),
+                    ),
+                    CupertinoActionSheetAction(
+                      isDestructiveAction: true,
+                      child: Text('Delete Note'),
+                      onPressed: () => Navigator.of(context).pop('delete'),
+                    ),
+                  ],
+                  cancelButton: CupertinoActionSheetAction(
+                    isDefaultAction: true,
+                    child: Text('Cancel'),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                );
+              },
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  child: Text(
+                    created,
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    comment,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                comment,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
