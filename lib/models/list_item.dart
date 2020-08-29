@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'list_item.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(includeIfNull: false)
 class ListItem {
   ListItem({this.userId, this.bookId, this.type, this.labels, this.notes});
 

@@ -7,13 +7,16 @@ class ListService {
 
   Future<APIResponse> addOrUpdateListItem(accessToken, item) {
     print(accessToken);
+    print(jsonEncode(item));
     return http
-        .post(API + '/list/add',
-            headers: {
-              'access-token': accessToken,
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode(item))
+        .post(
+      API + '/list/add',
+      headers: {
+        'access-token': accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(item),
+    )
         .then((res) {
       if (res.statusCode == 200) {
         return APIResponse<bool>(data: true);

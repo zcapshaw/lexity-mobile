@@ -16,10 +16,19 @@ ListItem _$ListItemFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$ListItemToJson(ListItem instance) => <String, dynamic>{
-      'userId': instance.userId,
-      'bookId': instance.bookId,
-      'type': instance.type,
-      'labels': instance.labels,
-      'notes': instance.notes,
-    };
+Map<String, dynamic> _$ListItemToJson(ListItem instance) {
+  final val = <String, dynamic>{};
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('userId', instance.userId);
+  writeNotNull('bookId', instance.bookId);
+  writeNotNull('type', instance.type);
+  writeNotNull('labels', instance.labels);
+  writeNotNull('notes', instance.notes);
+  return val;
+}
