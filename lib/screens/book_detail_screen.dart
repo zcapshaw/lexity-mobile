@@ -55,7 +55,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
       List<Note> notesArray = [];
       for (var n in notesJson) {
-        Note note = Note(comment: n['comment'] ?? '', created: n['created']);
+        Note note = Note(
+            comment: n['comment'] ?? '', created: n['created'], id: n['id']);
         notesArray.add(note);
       }
 
@@ -269,6 +270,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   NoteView(
                                     comment: note.comment,
                                     created: formatTime(note.created),
+                                    noteId: note.id,
                                   ),
                               ],
                             ),
@@ -330,8 +332,22 @@ class ActionButton extends StatelessWidget {
 class NoteView extends StatelessWidget {
   final String comment;
   final String created;
+  final String noteId;
 
-  const NoteView({this.comment, this.created});
+  const NoteView({this.comment, this.created, this.noteId});
+
+  _handleNoteTap(BuildContext context) async {
+    final action = await showCupertinoModalPopup(
+        context: context, builder: (BuildContext context) => NoteActionSheet());
+
+    if (action == 'delete') {
+      print('delete $noteId');
+    }
+
+    if (action == 'edit') {
+      print('edit $noteId');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -341,30 +357,7 @@ class NoteView extends StatelessWidget {
         color: Colors.white,
         child: InkWell(
           onTap: () {
-            showCupertinoModalPopup(
-              context: context,
-              builder: (BuildContext context) {
-                return CupertinoActionSheet(
-                  actions: <Widget>[
-                    CupertinoActionSheetAction(
-                      isDefaultAction: true,
-                      child: Text('Edit Note'),
-                      onPressed: () => Navigator.of(context).pop('edit'),
-                    ),
-                    CupertinoActionSheetAction(
-                      isDestructiveAction: true,
-                      child: Text('Delete Note'),
-                      onPressed: () => Navigator.of(context).pop('delete'),
-                    ),
-                  ],
-                  cancelButton: CupertinoActionSheetAction(
-                    isDefaultAction: true,
-                    child: Text('Cancel'),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                );
-              },
-            );
+            _handleNoteTap(context);
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12.0),
@@ -388,6 +381,31 @@ class NoteView extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NoteActionSheet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoActionSheet(
+      actions: <Widget>[
+        CupertinoActionSheetAction(
+          isDefaultAction: true,
+          child: Text('Edit Note'),
+          onPressed: () => Navigator.of(context).pop('edit'),
+        ),
+        CupertinoActionSheetAction(
+          isDestructiveAction: true,
+          child: Text('Delete Note'),
+          onPressed: () => Navigator.of(context).pop('delete'),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        isDefaultAction: true,
+        child: Text('Cancel'),
+        onPressed: () => Navigator.of(context).pop(),
       ),
     );
   }
