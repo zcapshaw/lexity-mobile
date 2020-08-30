@@ -372,16 +372,26 @@ class ExpandableDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpandablePanel(
       header: ListTileHeaderText(title),
-      collapsed: Container(
-        height: 100,
-        child: Html(
-          data: description,
-          style: {
-            "p": Style(
-              padding: EdgeInsets.only(top: 10),
-              margin: EdgeInsets.only(top: 10),
-            ),
-          },
+      collapsed: ShaderMask(
+        shaderCallback: (rect) {
+          return LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
+        },
+        blendMode: BlendMode.dstIn,
+        child: Container(
+          height: 100,
+          child: Html(
+            data: description,
+            style: {
+              "p": Style(
+                padding: EdgeInsets.only(top: 10),
+                margin: EdgeInsets.only(top: 10),
+              ),
+            },
+          ),
         ),
       ),
       expanded: Html(
