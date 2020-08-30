@@ -7,6 +7,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:time_formatter/time_formatter.dart';
 import 'package:get_it/get_it.dart';
+import 'package:expandable/expandable.dart';
 
 import '../models/book.dart';
 import '../models/user.dart';
@@ -315,15 +316,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Divider(),
                             ),
-                            ListTileHeaderText('Description'),
-                            Html(
-                              data: htmlDescription,
-                              style: {
-                                "p": Style(
-                                  padding: EdgeInsets.only(top: 10),
-                                  margin: EdgeInsets.only(top: 10),
-                                )
-                              },
+                            ExpandableDescription(
+                              description: htmlDescription,
+                              title: 'Description',
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
@@ -364,5 +359,40 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             },
           ),
         ));
+  }
+}
+
+class ExpandableDescription extends StatelessWidget {
+  final String title;
+  final String description;
+
+  ExpandableDescription({this.title, this.description});
+
+  @override
+  Widget build(BuildContext context) {
+    return ExpandablePanel(
+      header: ListTileHeaderText(title),
+      collapsed: Container(
+        height: 100,
+        child: Html(
+          data: description,
+          style: {
+            "p": Style(
+              padding: EdgeInsets.only(top: 10),
+              margin: EdgeInsets.only(top: 10),
+            ),
+          },
+        ),
+      ),
+      expanded: Html(
+        data: description,
+        style: {
+          "p": Style(
+            padding: EdgeInsets.only(top: 10),
+            margin: EdgeInsets.only(top: 10),
+          )
+        },
+      ),
+    );
   }
 }
