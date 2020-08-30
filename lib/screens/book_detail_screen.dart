@@ -148,9 +148,28 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         ),
       ),
       builder: (BuildContext context) => _AddNoteWidget(
-        callback: (updatedText) {
-          print('callback invoked');
-          print(updatedText);
+        callback: (updatedText) async {
+          Object updatedNote = {
+            'userId': user.id,
+            'listId': listId,
+            'note': {'id': noteId, 'comment': updatedText}
+          };
+
+          final response = await listService.updateNote(
+              user.accessToken, jsonEncode(updatedNote));
+
+          if (response.error) {
+            print(response.errorCode);
+            print(response.errorMessage);
+          } else {
+            print('successfully updated $noteId');
+
+            setState(() {
+              //triggers a refresh of the detail page
+              notes = [];
+            });
+          }
+
           Navigator.pop(context);
         },
         initialText: comment,

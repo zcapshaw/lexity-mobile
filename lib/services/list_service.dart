@@ -68,7 +68,6 @@ class ListService {
     }).catchError(
       (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
     );
-    ;
   }
 }
 
