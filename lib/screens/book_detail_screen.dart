@@ -85,6 +85,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         genre: genre,
       );
       listId = book.listId;
+      print(listId);
+      print(widget.bookId);
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
