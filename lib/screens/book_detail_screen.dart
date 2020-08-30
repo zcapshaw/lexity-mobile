@@ -155,15 +155,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             'note': {'id': noteId, 'comment': updatedText}
           };
 
-          final response = await listService.updateNote(
-              user.accessToken, jsonEncode(updatedNote));
+          final response =
+              await listService.updateNote(user.accessToken, updatedNote);
 
           if (response.error) {
             print(response.errorCode);
             print(response.errorMessage);
           } else {
             print('successfully updated $noteId');
-
             setState(() {
               //triggers a refresh of the detail page
               notes = [];
