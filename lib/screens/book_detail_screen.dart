@@ -29,6 +29,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   String htmlDescription = '';
   List<Note> notes = [];
   String genre;
+  String listId;
   ListService get listService => GetIt.I<ListService>();
 
   @override
@@ -49,13 +50,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
 
     if (data.statusCode == 200) {
       var bookJson = jsonDecode(data.body) as Map;
-      var notesJson = bookJson['notes'];
+      var notesJson = bookJson['notes'] ?? [];
 
       htmlDescription = bookJson['description'];
 
       List<Note> notesArray = [];
       for (var n in notesJson) {
-        Note note = Note(comment: n['comment'] ?? '', created: n['created']);
+        Note note = Note(
+            comment: n['comment'] ?? '', created: n['created'], id: n['id']);
         notesArray.add(note);
       }
 
@@ -79,8 +81,12 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         subtitle: bookJson['subtitle'],
         author: bookJson['authors'][0],
         thumbnail: bookJson['cover'],
+        listId: bookJson['listId'],
         genre: genre,
       );
+      listId = book.listId;
+      print(listId);
+      print(widget.bookId);
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
@@ -88,7 +94,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     return book;
   }
 
-  void addNote(text) async {
+  void _addNote(text) async {
     final Note note = Note(comment: text);
     final List notes = [note.toJson()];
     ListItem item =
@@ -104,6 +110,75 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       print('successfully added note');
       Navigator.pop(context);
     }
+  }
+
+  void _deleteNote(context, noteId) async {
+    final response =
+        await listService.deleteNote(user.accessToken, user.id, listId, noteId);
+
+    if (response.error) {
+      print(response.errorCode);
+      print(response.errorMessage);
+    } else {
+      print('successfully deleted $noteId');
+
+      setState(() {
+        //triggers a refresh of the detail page
+        notes = [];
+      });
+      Scaffold.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.grey[600],
+        content: Text('Note deleted.'),
+        duration: Duration(seconds: 1),
+      ));
+    }
+  }
+
+  void _editNote(noteId, comment) {
+    print(noteId);
+    print(comment);
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(10.0),
+          topRight: Radius.circular(10.0),
+        ),
+      ),
+      builder: (BuildContext context) => _AddNoteWidget(
+        callback: (updatedText) async {
+          Object updatedNote = {
+            'userId': user.id,
+            'listId': listId,
+            'note': {'id': noteId, 'comment': updatedText}
+          };
+
+          final response =
+              await listService.updateNote(user.accessToken, updatedNote);
+
+          if (response.error) {
+            print(response.errorCode);
+            print(response.errorMessage);
+          } else {
+            print('successfully updated $noteId');
+            setState(() {
+              //triggers a refresh of the detail page
+              notes = [];
+            });
+          }
+
+          Navigator.pop(context);
+        },
+        initialText: comment,
+      ),
+    ).then((value) {
+      setState(() {
+        //triggers a refresh of the detail page
+        notes = [];
+      });
+    });
   }
 
   @override
@@ -222,10 +297,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                       ),
                                       builder: (BuildContext context) =>
                                           _AddNoteWidget(
-                                        callback: addNote,
+                                        callback: _addNote,
                                       ),
                                     ).then((value) {
-                                      print('refresh state');
                                       setState(() {
                                         //triggers a refresh of the detail page
                                         notes = [];
@@ -269,6 +343,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                   NoteView(
                                     comment: note.comment,
                                     created: formatTime(note.created),
+                                    noteId: note.id,
+                                    deleteCallback: _deleteNote,
+                                    editCallback: _editNote,
                                   ),
                               ],
                             ),
@@ -330,32 +407,87 @@ class ActionButton extends StatelessWidget {
 class NoteView extends StatelessWidget {
   final String comment;
   final String created;
+  final String noteId;
+  final Function deleteCallback;
+  final Function editCallback;
 
-  const NoteView({this.comment, this.created});
+  const NoteView(
+      {this.comment,
+      this.created,
+      this.noteId,
+      this.deleteCallback,
+      this.editCallback});
+
+  _handleNoteTap(BuildContext context) async {
+    final action = await showCupertinoModalPopup(
+        context: context, builder: (BuildContext context) => NoteActionSheet());
+
+    if (action == 'delete') {
+      deleteCallback(context, noteId);
+    }
+
+    if (action == 'edit') {
+      editCallback(noteId, comment);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              child: Text(
-                created,
-                style: Theme.of(context).textTheme.caption,
-              ),
+      width: double.infinity,
+      child: Material(
+        color: Colors.white,
+        child: InkWell(
+          onTap: () {
+            _handleNoteTap(context);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  child: Text(
+                    created,
+                    style: Theme.of(context).textTheme.caption,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Text(
+                    comment,
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                ),
+              ],
             ),
-            Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Text(
-                comment,
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-            ),
-          ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class NoteActionSheet extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return CupertinoActionSheet(
+      actions: <Widget>[
+        CupertinoActionSheetAction(
+          isDefaultAction: true,
+          child: Text('Edit Note'),
+          onPressed: () => Navigator.of(context).pop('edit'),
+        ),
+        CupertinoActionSheetAction(
+          isDestructiveAction: true,
+          child: Text('Delete Note'),
+          onPressed: () => Navigator.of(context).pop('delete'),
+        ),
+      ],
+      cancelButton: CupertinoActionSheetAction(
+        isDefaultAction: true,
+        child: Text('Cancel'),
+        onPressed: () => Navigator.of(context).pop(),
       ),
     );
   }
@@ -363,14 +495,28 @@ class NoteView extends StatelessWidget {
 
 class _AddNoteWidget extends StatefulWidget {
   final Function callback;
-  _AddNoteWidget({@required this.callback});
+  final String initialText;
+  _AddNoteWidget({@required this.callback, this.initialText});
 
   @override
   __AddNoteWidgetState createState() => __AddNoteWidgetState();
 }
 
 class __AddNoteWidgetState extends State<_AddNoteWidget> {
-  String noteText = '';
+  TextEditingController _textController;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController(text: widget.initialText ?? '');
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    _textController.dispose();
+    super.dispose();
+  }
 
   Widget build(BuildContext context) {
     return Container(
@@ -392,6 +538,7 @@ class __AddNoteWidgetState extends State<_AddNoteWidget> {
                 autofocus: true,
                 autocorrect: true,
                 clearButtonMode: OverlayVisibilityMode.never,
+                controller: _textController,
                 decoration: BoxDecoration(
                   color: Colors.grey[200],
                   borderRadius: BorderRadius.circular(10),
@@ -400,11 +547,6 @@ class __AddNoteWidgetState extends State<_AddNoteWidget> {
                 enableSuggestions: true,
                 maxLines: 5,
                 minLines: 2,
-                onChanged: (text) {
-                  setState(() {
-                    noteText = text;
-                  });
-                },
                 padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
                 placeholder: 'Jot down notes about this book',
                 suffix: RawMaterialButton(
@@ -413,7 +555,7 @@ class __AddNoteWidgetState extends State<_AddNoteWidget> {
                     'Save',
                     style: TextStyle(color: Colors.blue),
                   ),
-                  onPressed: () => widget.callback(noteText),
+                  onPressed: () => widget.callback(_textController.text),
                   padding: EdgeInsets.all(15),
                 ),
                 suffixMode: OverlayVisibilityMode.editing,
