@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lexity_mobile/components/reco_tile_trailing.dart';
 
 /// The base class for the different types of items the list can contain.
 abstract class ReadingListItem {
@@ -44,20 +45,13 @@ class BookItem implements ReadingListItem {
   final String listId;
   final String bookId;
   final String type;
-  final IconData icon = Icons.reorder;
+  final List<dynamic> recos;
 
   BookItem(this.title, this.subtitle, this.cover, this.listId, this.bookId,
-      this.type);
+      this.type, this.recos);
 
   Widget buildLeading(BuildContext context) => Image.network(cover);
   Widget buildTitle(BuildContext context) => Text(title);
   Widget buildSubtitle(BuildContext context) => Text(subtitle);
-  Widget buildTrailing(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Icon(icon),
-      ],
-    );
-  }
+  Widget buildTrailing(BuildContext context) => RecoTileTrailing(recos);
 }
