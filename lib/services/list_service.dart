@@ -1,6 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import '../models/book.dart';
+
 //TODO: add all my API call functions to this service
 class ListService {
   static const API = 'https://stellar-aurora-280316.uc.r.appspot.com';
@@ -67,6 +69,24 @@ class ListService {
           errorMessage: res.reasonPhrase);
     }).catchError(
       (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+    );
+  }
+
+  Future<APIResponse<Object>> getListItemDetail(
+      accessToken, userId, bookId) async {
+    return http.get(
+      API + '/list/detail/?userId=$userId&bookId=$bookId',
+      headers: {'access-token': accessToken},
+    ).then((res) {
+      if (res.statusCode == 200) {
+        return APIResponse<Object>(data: res.body);
+      }
+      return APIResponse<Object>(
+          error: true,
+          errorCode: res.statusCode,
+          errorMessage: res.reasonPhrase);
+    }).catchError(
+      (_) => APIResponse<Object>(error: true, errorMessage: 'An error occured'),
     );
   }
 }

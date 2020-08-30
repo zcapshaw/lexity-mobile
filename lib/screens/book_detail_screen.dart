@@ -2,18 +2,21 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:time_formatter/time_formatter.dart';
 import 'package:get_it/get_it.dart';
+import 'package:expandable/expandable.dart';
 
 import '../models/book.dart';
 import '../models/user.dart';
 import '../models/note.dart';
 import '../models/list_item.dart';
 import '../components/list_tile_header_text.dart';
+import '../components/action_button.dart';
+import '../components/note_view.dart';
+import '../components/text_input_modal.dart';
 import '../services/list_service.dart';
 
 class BookDetailScreen extends StatefulWidget {
@@ -42,14 +45,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   Future<Book> _getListItemDetail() async {
     Book book;
 
-    final http.Response data = await http.get(
-        'https://stellar-aurora-280316.uc.r.appspot.com/list/detail/?userId=${user.id}&bookId=${widget.bookId}',
-        headers: {
-          'access-token': '${user.accessToken}',
-        });
+    final response = await listService.getListItemDetail(
+        user.accessToken, user.id, widget.bookId);
 
-    if (data.statusCode == 200) {
-      var bookJson = jsonDecode(data.body) as Map;
+    if (!response.error) {
+      var bookJson = jsonDecode(response.data) as Map;
       var notesJson = bookJson['notes'] ?? [];
 
       htmlDescription = bookJson['description'];
@@ -85,11 +85,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         genre: genre,
       );
       listId = book.listId;
-      print(listId);
-      print(widget.bookId);
     } else {
-      print(data.statusCode);
-      print(data.reasonPhrase);
+      print(response.errorCode);
+      print(response.errorMessage);
     }
     return book;
   }
@@ -147,7 +145,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           topRight: Radius.circular(10.0),
         ),
       ),
-      builder: (BuildContext context) => _AddNoteWidget(
+      builder: (BuildContext context) => TextInputModal(
         callback: (updatedText) async {
           Object updatedNote = {
             'userId': user.id,
@@ -296,7 +294,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                         ),
                                       ),
                                       builder: (BuildContext context) =>
-                                          _AddNoteWidget(
+                                          TextInputModal(
                                         callback: _addNote,
                                       ),
                                     ).then((value) {
@@ -318,15 +316,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Divider(),
                             ),
-                            ListTileHeaderText('Description'),
-                            Html(
-                              data: htmlDescription,
-                              style: {
-                                "p": Style(
-                                  padding: EdgeInsets.only(top: 10),
-                                  margin: EdgeInsets.only(top: 10),
-                                )
-                              },
+                            ExpandableDescription(
+                              description: htmlDescription,
+                              title: 'Description',
                             ),
                             Padding(
                               padding: const EdgeInsets.only(top: 10.0),
@@ -370,200 +362,46 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 }
 
-class ActionButton extends StatelessWidget {
-  final IconData icon;
-  final String labelText;
-  final Function callback;
+class ExpandableDescription extends StatelessWidget {
+  final String title;
+  final String description;
 
-  const ActionButton(
-      {@required this.icon, this.labelText, @required this.callback});
+  ExpandableDescription({this.title, this.description});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: MaterialButton(
-            onPressed: callback,
-            color: Colors.grey[200],
-            textColor: Colors.white,
-            elevation: 0,
-            child: Icon(
-              icon,
-              size: 24,
-              color: Colors.grey[700],
-            ),
-            padding: EdgeInsets.all(16),
-            shape: CircleBorder(),
-          ),
-        ),
-        Text(labelText),
-      ],
-    );
-  }
-}
-
-class NoteView extends StatelessWidget {
-  final String comment;
-  final String created;
-  final String noteId;
-  final Function deleteCallback;
-  final Function editCallback;
-
-  const NoteView(
-      {this.comment,
-      this.created,
-      this.noteId,
-      this.deleteCallback,
-      this.editCallback});
-
-  _handleNoteTap(BuildContext context) async {
-    final action = await showCupertinoModalPopup(
-        context: context, builder: (BuildContext context) => NoteActionSheet());
-
-    if (action == 'delete') {
-      deleteCallback(context, noteId);
-    }
-
-    if (action == 'edit') {
-      editCallback(noteId, comment);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: Material(
-        color: Colors.white,
-        child: InkWell(
-          onTap: () {
-            _handleNoteTap(context);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  child: Text(
-                    created,
-                    style: Theme.of(context).textTheme.caption,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    comment,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class NoteActionSheet extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoActionSheet(
-      actions: <Widget>[
-        CupertinoActionSheetAction(
-          isDefaultAction: true,
-          child: Text('Edit Note'),
-          onPressed: () => Navigator.of(context).pop('edit'),
-        ),
-        CupertinoActionSheetAction(
-          isDestructiveAction: true,
-          child: Text('Delete Note'),
-          onPressed: () => Navigator.of(context).pop('delete'),
-        ),
-      ],
-      cancelButton: CupertinoActionSheetAction(
-        isDefaultAction: true,
-        child: Text('Cancel'),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-    );
-  }
-}
-
-class _AddNoteWidget extends StatefulWidget {
-  final Function callback;
-  final String initialText;
-  _AddNoteWidget({@required this.callback, this.initialText});
-
-  @override
-  __AddNoteWidgetState createState() => __AddNoteWidgetState();
-}
-
-class __AddNoteWidgetState extends State<_AddNoteWidget> {
-  TextEditingController _textController;
-
-  @override
-  void initState() {
-    super.initState();
-    _textController = TextEditingController(text: widget.initialText ?? '');
-  }
-
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the widget tree.
-    _textController.dispose();
-    super.dispose();
-  }
-
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topCenter,
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Column(
-        children: <Widget>[
-          Container(
-            child: Icon(
-              Icons.maximize,
-              size: 36,
-              color: Colors.grey[700],
-            ),
-          ),
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: CupertinoTextField(
-                autofocus: true,
-                autocorrect: true,
-                clearButtonMode: OverlayVisibilityMode.never,
-                controller: _textController,
-                decoration: BoxDecoration(
-                  color: Colors.grey[200],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                enableInteractiveSelection: true,
-                enableSuggestions: true,
-                maxLines: 5,
-                minLines: 2,
-                padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
-                placeholder: 'Jot down notes about this book',
-                suffix: RawMaterialButton(
-                  constraints: BoxConstraints.tightForFinite(),
-                  child: Text(
-                    'Save',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                  onPressed: () => widget.callback(_textController.text),
-                  padding: EdgeInsets.all(15),
-                ),
-                suffixMode: OverlayVisibilityMode.editing,
-                textCapitalization: TextCapitalization.sentences,
+    return ExpandablePanel(
+      header: ListTileHeaderText(title),
+      collapsed: ShaderMask(
+        shaderCallback: (rect) {
+          return LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.black, Colors.transparent],
+          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
+        },
+        blendMode: BlendMode.dstIn,
+        child: Container(
+          height: 100,
+          child: Html(
+            data: description,
+            style: {
+              "p": Style(
+                padding: EdgeInsets.only(top: 10),
+                margin: EdgeInsets.only(top: 10),
               ),
-            ),
+            },
           ),
-        ],
+        ),
+      ),
+      expanded: Html(
+        data: description,
+        style: {
+          "p": Style(
+            padding: EdgeInsets.only(top: 10),
+            margin: EdgeInsets.only(top: 10),
+          )
+        },
       ),
     );
   }
