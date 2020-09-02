@@ -30,7 +30,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   Future<List<Book>> _fetchResults() async {
     //fetch google books results based on queryText
     final http.Response data = await http.get(
-        'https://stellar-aurora-280316.uc.r.appspot.com/search/private/books?userId=${user.id}&searchText=$queryText',
+        'https://api.lexity.co/search/private/books?userId=${user.id}&searchText=$queryText',
         headers: {
           'access-token': '${user.accessToken}',
         });
@@ -81,7 +81,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     final String googleId = book.googleId;
 
     final http.Response response = await http.post(
-      'https://stellar-aurora-280316.uc.r.appspot.com/book/create/$googleId',
+      'https://api.lexity.co/book/create/$googleId',
     );
     if (response.statusCode == 200) {
       var responseJson = json.decode(response.body);

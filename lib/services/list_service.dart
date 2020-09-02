@@ -5,7 +5,7 @@ import '../models/book.dart';
 
 //TODO: add all my API call functions to this service
 class ListService {
-  static const API = 'https://stellar-aurora-280316.uc.r.appspot.com';
+  static const API = 'https://api.lexity.co';
 
   Future<APIResponse> addOrUpdateListItem(accessToken, item) {
     print(accessToken);

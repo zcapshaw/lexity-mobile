@@ -38,11 +38,10 @@ class _ReadingListState extends State<ReadingList> {
 
   //Construct a List of ListItems from the API response
   Future<List<ReadingListItem>> _getReadingList() async {
-    final http.Response data = await http.get(
-        'https://stellar-aurora-280316.uc.r.appspot.com/list/summary/?userId=${user.id}',
-        headers: {
-          'access-token': '${user.accessToken}',
-        });
+    final http.Response data = await http
+        .get('https://api.lexity.co/list/summary/?userId=${user.id}', headers: {
+      'access-token': '${user.accessToken}',
+    });
     if (data.statusCode == 200) {
       //Construct a 'readingList' array with a HeadingItem and BookItems
       readingList = [];
@@ -124,7 +123,7 @@ class _ReadingListState extends State<ReadingList> {
     });
     print(jsonItem);
     final http.Response res = await http.post(
-      'https://stellar-aurora-280316.uc.r.appspot.com/list/add',
+      'https://api.lexity.co/list/add',
       headers: {
         'access-token': '${user.accessToken}',
         'Content-Type': 'application/json',
@@ -144,7 +143,7 @@ class _ReadingListState extends State<ReadingList> {
 
   Future<void> _deleteBook(listId) async {
     final http.Response res = await http.delete(
-        'https://stellar-aurora-280316.uc.r.appspot.com/list/delete/?userId=${user.id}&listId=$listId',
+        'https://api.lexity.co/list/delete/?userId=${user.id}&listId=$listId',
         headers: {
           'access-token': '${user.accessToken}',
         });
