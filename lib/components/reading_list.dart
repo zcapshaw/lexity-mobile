@@ -121,8 +121,6 @@ class _ReadingListState extends State<ReadingList> {
       'userId': user.id,
       'bookId': readingListItem.bookId,
       'type': newType,
-      'notes': [{}], // Temp while updating backend - should not be required
-      'labels': [], // Temp while updating backend - should not be required
     });
     print(jsonItem);
     final http.Response res = await http.post(
