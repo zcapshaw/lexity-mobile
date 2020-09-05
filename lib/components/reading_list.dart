@@ -290,7 +290,7 @@ class _ReadingListState extends State<ReadingList> {
                         Container(
                           padding: EdgeInsets.fromLTRB(0, 5, 0, 30),
                           child: Text('''Your reading list is empty.
-Tap the + button to add some books''',
+Tap the + button to add some books.''',
                               textAlign: TextAlign.center,
                               style: Theme.of(context).textTheme.subtitle2),
                         ),
