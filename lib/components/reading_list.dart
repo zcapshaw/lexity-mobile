@@ -295,7 +295,7 @@ Tap the + button to add some books''',
                               style: Theme.of(context).textTheme.subtitle2),
                         ),
                         Container(
-                          padding: EdgeInsets.fromLTRB(100, 0, 100, 100),
+                          padding: EdgeInsets.fromLTRB(110, 0, 110, 110),
                           child: Image.asset('assets/undraw_note_list.png'),
                         ),
                       ],
