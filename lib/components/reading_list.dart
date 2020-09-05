@@ -199,76 +199,110 @@ class _ReadingListState extends State<ReadingList> {
           }
 
           return Flexible(
-            child: ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (snapshot.data[index] is HeadingItem) {
-                    return Column(
+            child: Column(
+              children: <Widget>[
+                Flexible(
+                  child: ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        if (snapshot.data[index] is HeadingItem) {
+                          return Column(
+                            children: <Widget>[
+                              ListTile(
+                                leading:
+                                    snapshot.data[index].buildLeading(context),
+                                title: snapshot.data[index].buildTitle(context),
+                                subtitle:
+                                    snapshot.data[index].buildSubtitle(context),
+                                trailing:
+                                    snapshot.data[index].buildTrailing(context),
+                              ),
+                              Divider(
+                                height: 0,
+                              ),
+                            ],
+                          );
+                        }
+                        return Column(
+                          children: <Widget>[
+                            Dismissible(
+                              key: UniqueKey(),
+                              confirmDismiss: (direction) {
+                                if (direction == DismissDirection.startToEnd) {
+                                  return Future<bool>.value(true);
+                                } else if (direction ==
+                                    DismissDirection.endToStart) {
+                                  return _promptUser(
+                                      direction, snapshot.data[index]);
+                                }
+                              },
+                              direction: widget.enableSwipeRight
+                                  ? DismissDirection.horizontal
+                                  : DismissDirection.endToStart,
+                              background: SwipeRightBackground(
+                                  type: snapshot.data[index].type),
+                              secondaryBackground: SwipeLeftBackground(),
+                              onDismissed: (direction) {
+                                if (direction == DismissDirection.startToEnd) {
+                                  _updateType(snapshot.data[index]);
+                                } else {
+                                  setState(() {
+                                    readingList.remove(snapshot.data[index]);
+                                  });
+                                  Scaffold.of(context).showSnackBar(SnackBar(
+                                      backgroundColor: Colors.grey[600],
+                                      content:
+                                          Text("Book deleted from list.")));
+                                }
+                              },
+                              child: ListTile(
+                                leading:
+                                    snapshot.data[index].buildLeading(context),
+                                title: snapshot.data[index].buildTitle(context),
+                                subtitle:
+                                    snapshot.data[index].buildSubtitle(context),
+                                trailing:
+                                    snapshot.data[index].buildTrailing(context),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => BookDetailScreen(
+                                        bookId: snapshot.data[index].bookId,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                            Divider(
+                              height: 0,
+                            ),
+                          ],
+                        );
+                      }),
+                ),
+                if (snapshot.data.length == 2)
+                  Flexible(
+                    flex: 2,
+                    child: Column(
                       children: <Widget>[
-                        ListTile(
-                          leading: snapshot.data[index].buildLeading(context),
-                          title: snapshot.data[index].buildTitle(context),
-                          subtitle: snapshot.data[index].buildSubtitle(context),
-                          trailing: snapshot.data[index].buildTrailing(context),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(0, 5, 0, 30),
+                          child: Text('''Your reading list is empty.
+Tap the + button to add some books''',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.subtitle2),
                         ),
-                        Divider(
-                          height: 0,
+                        Container(
+                          padding: EdgeInsets.fromLTRB(100, 0, 100, 100),
+                          child: Image.asset('assets/undraw_note_list.png'),
                         ),
                       ],
-                    );
-                  }
-                  return Column(
-                    children: <Widget>[
-                      Dismissible(
-                        key: UniqueKey(),
-                        confirmDismiss: (direction) {
-                          if (direction == DismissDirection.startToEnd) {
-                            return Future<bool>.value(true);
-                          } else if (direction == DismissDirection.endToStart) {
-                            return _promptUser(direction, snapshot.data[index]);
-                          }
-                        },
-                        direction: widget.enableSwipeRight
-                            ? DismissDirection.horizontal
-                            : DismissDirection.endToStart,
-                        background: SwipeRightBackground(
-                            type: snapshot.data[index].type),
-                        secondaryBackground: SwipeLeftBackground(),
-                        onDismissed: (direction) {
-                          if (direction == DismissDirection.startToEnd) {
-                            _updateType(snapshot.data[index]);
-                          } else {
-                            setState(() {
-                              readingList.remove(snapshot.data[index]);
-                            });
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.grey[600],
-                                content: Text("Book deleted from list.")));
-                          }
-                        },
-                        child: ListTile(
-                          leading: snapshot.data[index].buildLeading(context),
-                          title: snapshot.data[index].buildTitle(context),
-                          subtitle: snapshot.data[index].buildSubtitle(context),
-                          trailing: snapshot.data[index].buildTrailing(context),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BookDetailScreen(
-                                  bookId: snapshot.data[index].bookId,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      Divider(
-                        height: 0,
-                      ),
-                    ],
-                  );
-                }),
+                    ),
+                  ),
+              ],
+            ),
           );
         },
       ),
