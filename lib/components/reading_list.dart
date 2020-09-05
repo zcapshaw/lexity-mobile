@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import 'swipe_background.dart';
+import './reorderable_list_w_physics.dart';
 import '../screens/book_detail_screen.dart';
 import '../models/reading_list_item.dart';
 import '../models/user.dart';
@@ -28,6 +30,7 @@ class ReadingList extends StatefulWidget {
 class _ReadingListState extends State<ReadingList> {
   List<ReadingListItem> readingList;
   UserModel user;
+  final ScrollController reorderScrollController = ScrollController();
 
   @override
   initState() {
@@ -218,13 +221,29 @@ class _ReadingListState extends State<ReadingList> {
               ),
             );
           }
-
           return Flexible(
-            child: ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
+            child: RefreshIndicator(
+              onRefresh: _updateList,
+              child: CustomReorderableListView(
+                scrollController: reorderScrollController,
+                scrollDirection: Axis.vertical,
+                onReorder: (oldIndex, newIndex) {
+                  setState(
+                    () {
+                      if (newIndex > oldIndex) {
+                        newIndex -= 1;
+                      }
+                      final ReadingListItem item =
+                          readingList.removeAt(oldIndex);
+                      readingList.insert(newIndex, item);
+                    },
+                  );
+                },
+                children: List.generate(snapshot.data.length, (index) {
                   if (snapshot.data[index] is HeadingItem) {
                     return Column(
+                      key: UniqueKey(),
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         ListTile(
                           leading: snapshot.data[index].buildLeading(context),
@@ -239,6 +258,8 @@ class _ReadingListState extends State<ReadingList> {
                     );
                   }
                   return Column(
+                    key: ValueKey(snapshot.data[index].bookId),
+                    mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Dismissible(
                         key: UniqueKey(),
@@ -280,10 +301,12 @@ class _ReadingListState extends State<ReadingList> {
                       ),
                       Divider(
                         height: 0,
-                      ),
+                      )
                     ],
                   );
                 }),
+              ),
+            ),
           );
         },
       ),
