@@ -192,7 +192,7 @@ class _ReadingListState extends State<ReadingList> {
       ),
     );
     setState(() {});
-    if (result == 'list updated') {
+    if (result == true) {
       Scaffold.of(context)
         ..removeCurrentSnackBar()
         ..showSnackBar(SnackBar(

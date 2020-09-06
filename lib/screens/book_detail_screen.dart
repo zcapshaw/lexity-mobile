@@ -213,8 +213,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       print(response.errorMessage);
     } else {
       print('successfully updated type');
-      //pass 'list updated' so the snackbar message will show on the previous screen
-      Navigator.pop(context, 'list updated');
+      //pass 'true' so the snackbar message will show on the previous screen
+      Navigator.pop(context, true);
     }
   }
 
