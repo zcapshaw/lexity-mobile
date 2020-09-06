@@ -182,6 +182,25 @@ class _ReadingListState extends State<ReadingList> {
         false; // In case the user dismisses the dialog by clicking away from it
   }
 
+  _navigateToBookDetails(BuildContext context, bookId) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookDetailScreen(
+          bookId: bookId,
+        ),
+      ),
+    );
+    setState(() {});
+    Scaffold.of(context)
+      ..removeCurrentSnackBar()
+      ..showSnackBar(SnackBar(
+        content: Text("Successfully updated list."),
+        backgroundColor: Colors.grey[600],
+        duration: Duration(seconds: 1),
+      ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -252,14 +271,8 @@ class _ReadingListState extends State<ReadingList> {
                           subtitle: snapshot.data[index].buildSubtitle(context),
                           trailing: snapshot.data[index].buildTrailing(context),
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BookDetailScreen(
-                                  bookId: snapshot.data[index].bookId,
-                                ),
-                              ),
-                            );
+                            _navigateToBookDetails(
+                                context, snapshot.data[index].bookId);
                           },
                         ),
                       ),

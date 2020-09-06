@@ -33,6 +33,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   List<Note> notes = [];
   String genre;
   String listId;
+  String actionText = 'Start Reading';
+  String nextType = 'READING';
+  IconData actionIcon = Icons.play_arrow;
   ListService get listService => GetIt.I<ListService>();
 
   @override
@@ -76,6 +79,28 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             .toUpperCase();
       }
 
+      //sets action button icon and text based on listType
+      switch (bookJson['type']) {
+        case "TO_READ":
+          actionText = 'Start Reading';
+          actionIcon = Icons.play_arrow;
+          nextType = 'READING';
+          break;
+        case "READING":
+          actionText = 'Mark As Finished';
+          actionIcon = Icons.done;
+          nextType = 'READ';
+          break;
+        case "READ":
+          actionText = 'Read Again';
+          actionIcon = Icons.replay;
+          nextType = 'READING';
+          break;
+        default:
+          actionText = 'Start Reading';
+          actionIcon = Icons.play_arrow;
+      }
+
       book = Book(
         title: bookJson['title'],
         subtitle: bookJson['subtitle'],
@@ -83,6 +108,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         thumbnail: bookJson['cover'],
         listId: bookJson['listId'],
         genre: genre,
+        listType: bookJson['type'],
       );
       listId = book.listId;
     } else {
@@ -177,6 +203,20 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         notes = [];
       });
     });
+  }
+
+  void _updateType() async {
+    final response = await listService.updateListItemType(
+        user.accessToken, user.id, widget.bookId, nextType);
+    if (response.error) {
+      print(response.errorCode);
+      print(response.errorMessage);
+    } else {
+      print('successfully updated type');
+      Navigator.pop(context, () {
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -276,9 +316,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 ActionButton(
-                                  icon: Icons.play_arrow,
-                                  labelText: 'Start Reading',
-                                  callback: () {},
+                                  icon: actionIcon,
+                                  labelText: actionText,
+                                  callback: () => _updateType(),
                                 ),
                                 ActionButton(
                                   icon: Icons.comment,
