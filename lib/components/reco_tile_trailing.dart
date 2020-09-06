@@ -59,14 +59,17 @@ class RecoImg extends StatelessWidget {
   RecoImg(this.sourceImg, this.sourceName);
 
   Widget _buildInitialsReco(String sourceName) {
-    RegExp toInitials = RegExp('\\B[A-Za-z]');
-    String allInitials = sourceName.toUpperCase().replaceAll(toInitials, '');
-    String initialsWithoutSpaces = allInitials.replaceAll(RegExp('\\s'), '');
-    String initials = initialsWithoutSpaces.substring(
-        0,
-        initialsWithoutSpaces.length > 1 // conditional for single words
-            ? 2
-            : 1);
+    //create an array of words, split by spaces in sourceName
+    List<String> splitWords = sourceName.toUpperCase().split(' ');
+    String initials = '';
+
+    //populate `initials` with first character of each word, up to 2
+    for (var word in splitWords) {
+      initials = initials + '${word[0]}';
+      if (initials.length >= 2) {
+        break;
+      }
+    }
 
     return Container(
       margin: EdgeInsets.only(left: leftMargin),
