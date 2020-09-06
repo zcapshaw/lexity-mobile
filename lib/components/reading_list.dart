@@ -192,13 +192,15 @@ class _ReadingListState extends State<ReadingList> {
       ),
     );
     setState(() {});
-    Scaffold.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(
-        content: Text("Successfully updated list."),
-        backgroundColor: Colors.grey[600],
-        duration: Duration(seconds: 1),
-      ));
+    if (result == 'list updated') {
+      Scaffold.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text("Successfully updated list."),
+          backgroundColor: Colors.grey[600],
+          duration: Duration(seconds: 1),
+        ));
+    }
   }
 
   @override

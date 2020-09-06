@@ -213,9 +213,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       print(response.errorMessage);
     } else {
       print('successfully updated type');
-      Navigator.pop(context, () {
-        setState(() {});
-      });
+      Navigator.pop(context, 'list updated');
     }
   }
 
