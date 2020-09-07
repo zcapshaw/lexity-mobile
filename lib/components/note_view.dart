@@ -5,15 +5,21 @@ class NoteView extends StatelessWidget {
   final String comment;
   final String created;
   final String noteId;
+  final String leadingImg;
   final Function deleteCallback;
   final Function editCallback;
+  final bool isReco;
+  final String sourceName;
 
   const NoteView(
       {this.comment,
       this.created,
       this.noteId,
       this.deleteCallback,
-      this.editCallback});
+      this.editCallback,
+      this.leadingImg,
+      this.isReco,
+      this.sourceName});
 
   _handleNoteTap(BuildContext context) async {
     final action = await showCupertinoModalPopup(
@@ -28,39 +34,62 @@ class NoteView extends StatelessWidget {
     }
   }
 
+  String _getInitials() {
+    //create an array of words, split by spaces in sourceName
+    List<String> splitWords = sourceName.toUpperCase().split(' ');
+    String initials = '';
+
+    //populate `initials` with first character of each word, up to 2
+    for (var word in splitWords) {
+      initials = initials + '${word[0]}';
+      if (initials.length >= 2) {
+        break;
+      }
+    }
+
+    return initials;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      child: Material(
-        color: Colors.white,
-        child: InkWell(
-          onTap: () {
-            _handleNoteTap(context);
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Container(
-                  child: Text(
-                    created,
-                    style: Theme.of(context).textTheme.caption,
+                if (isReco)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Text(
+                      'Recommended by $sourceName',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: Text(
-                    comment,
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
-                ),
+                comment == '' ? SizedBox.shrink() : Text(comment)
               ],
             ),
           ),
+          subtitle: Text(created),
+          leading: isReco
+              ? CircleAvatar(
+                  backgroundColor: Colors.grey[600],
+                  child: Text(
+                    _getInitials(),
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                )
+              : CircleAvatar(
+                  backgroundImage: NetworkImage(leadingImg),
+                  backgroundColor: Colors.grey[600],
+                ),
+          onTap: () => _handleNoteTap(context),
         ),
-      ),
+        Divider(),
+      ],
     );
   }
 }

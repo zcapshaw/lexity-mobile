@@ -60,8 +60,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       List<Note> notesArray = [];
       for (var n in notesJson) {
         Note note = Note(
-            comment: n['comment'] ?? '', created: n['created'], id: n['id']);
+          comment: n['comment'] ?? '',
+          created: n['created'],
+          id: n['id'],
+          sourceName: n['sourceName'],
+          isReco: (n['sourceName'] != null),
+        );
         notesArray.add(note);
+        print(note.isReco);
       }
 
       // adds notes to the list
@@ -375,8 +381,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     comment: note.comment,
                                     created: formatTime(note.created),
                                     noteId: note.id,
+                                    leadingImg: user.profileImg,
                                     deleteCallback: _deleteNote,
                                     editCallback: _editNote,
+                                    sourceName: note.sourceName,
+                                    isReco: note.isReco,
                                   ),
                               ],
                             ),
