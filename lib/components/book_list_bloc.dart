@@ -4,26 +4,26 @@ import 'package:rxdart/rxdart.dart';
 import 'package:get_it/get_it.dart';
 
 import '../services/list_service.dart';
-import '../models/reading_list_item.dart';
+import '../models/list_item.dart';
 
 class BookListBloc {
   ListService get listService => GetIt.I<ListService>();
   final BehaviorSubject<Map<String, int>> _listCountController =
       BehaviorSubject<Map<String, int>>();
-  final BehaviorSubject<List<ReadingListItem>> _listBookController =
-      BehaviorSubject<List<ReadingListItem>>();
+  final BehaviorSubject<List<ListItem>> _listBookController =
+      BehaviorSubject<List<ListItem>>();
 
   final Map<String, int> _listCountItems = {};
 
   Stream<Map<String, int>> get listCount => _listCountController.stream;
-  Stream<List<ReadingListItem>> get listBooks => _listBookController.stream;
+  Stream<List<ListItem>> get listBooks => _listBookController.stream;
 
   Future<void> refreshBackendBookList(String accessToken, String userId) async {
     final response = await listService.getListItemSummary(accessToken, userId);
     if (!response.error) {
       var bookJson = jsonDecode(response.data);
       /*** UGLY Temporary Subsection due to current backend object shape ***/
-      List<ReadingListItem> readingList = [];
+      List<ListItem> readingList = [];
       List tempBookData = [];
       for (var item in bookJson['TO_READ']) {
         tempBookData.add(item);
@@ -37,14 +37,20 @@ class BookListBloc {
       addListCountItem('TO_READ', bookJson['TO_READ'].length);
       addListCountItem('READING', bookJson['READING'].length);
       addListCountItem('READ', bookJson['READ'].length);
-
       /*** -------------- ***/
+
       if (!_listBookController.isClosed) {
         for (var b in tempBookData) {
           String title = b['title'];
           if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-          BookItem book = BookItem(title, b['authors'][0], b['cover'],
-              b['listId'], b['bookId'], b['type'], b['recos']);
+          ListItem book = ListItem(
+              title: title,
+              authors: b['authors'],
+              cover: b['cover'],
+              listId: b['listId'],
+              bookId: b['bookId'],
+              type: b['type'],
+              recos: b['recos']);
           readingList.add(book);
         }
         _listBookController.sink.add(readingList);
@@ -61,14 +67,14 @@ class BookListBloc {
         newIndex -= 1;
       }
       final readingList = _listBookController.value;
-      final ReadingListItem item = readingList.removeAt(oldIndex);
+      final ListItem item = readingList.removeAt(oldIndex);
       readingList.insert(newIndex, item);
       _listBookController.sink.add(readingList);
     }
   }
 
   void deleteBook(
-      BookItem book, String accessToken, String userId, String listId) {
+      ListItem book, String accessToken, String userId, String listId) {
     final readingList = _listBookController.value;
     readingList.remove(book);
     _listBookController.sink.add(readingList);

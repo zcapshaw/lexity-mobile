@@ -6,11 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
 import 'swipe_background.dart';
-import './reorderable_list_w_physics.dart';
-import '../screens/book_detail_screen.dart';
-import '../models/reading_list_item.dart';
-import '../models/user.dart';
+import 'reorderable_list_w_physics.dart';
+import 'reco_tile_trailing.dart';
 import 'book_list_bloc.dart';
+import '../screens/book_detail_screen.dart';
+import '../models/list_item.dart';
+import '../models/user.dart';
 
 class ReadingList extends StatefulWidget {
   final List<String> types;
@@ -27,7 +28,7 @@ class ReadingList extends StatefulWidget {
 }
 
 class _ReadingListState extends State<ReadingList> {
-  List<ReadingListItem> readingList;
+  // List<ReadingListItem> readingList;
   UserModel user;
   final ScrollController reorderScrollController = ScrollController();
 
@@ -105,7 +106,7 @@ class _ReadingListState extends State<ReadingList> {
     }
   }
 
-  Future<bool> _promptUser(DismissDirection direction, BookItem book) async {
+  Future<bool> _promptUser(DismissDirection direction, ListItem book) async {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
@@ -174,26 +175,26 @@ class _ReadingListState extends State<ReadingList> {
                     snapshot.data.length,
                     (index) {
                       if (snapshot.hasData && snapshot.data[index] != null) {
-                        if (snapshot.data[index] is HeadingItem) {
-                          return Column(
-                            key: UniqueKey(),
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              ListTile(
-                                leading:
-                                    snapshot.data[index].buildLeading(context),
-                                title: snapshot.data[index].buildTitle(context),
-                                subtitle:
-                                    snapshot.data[index].buildSubtitle(context),
-                                trailing:
-                                    snapshot.data[index].buildTrailing(context),
-                              ),
-                              Divider(
-                                height: 0,
-                              ),
-                            ],
-                          );
-                        }
+                        // if (snapshot.data[index] is HeadingItem) {
+                        //   return Column(
+                        //     key: UniqueKey(),
+                        //     mainAxisSize: MainAxisSize.min,
+                        //     children: <Widget>[
+                        //       ListTile(
+                        //         leading:
+                        //             snapshot.data[index].buildLeading(context),
+                        //         title: snapshot.data[index].buildTitle(context),
+                        //         subtitle:
+                        //             snapshot.data[index].buildSubtitle(context),
+                        //         trailing:
+                        //             snapshot.data[index].buildTrailing(context),
+                        //       ),
+                        //       Divider(
+                        //         height: 0,
+                        //       ),
+                        //     ],
+                        //   );
+                        // }
                         return Column(
                             key: ValueKey(snapshot.data[index].bookId),
                             mainAxisSize: MainAxisSize.min,
@@ -221,9 +222,6 @@ class _ReadingListState extends State<ReadingList> {
                                       DismissDirection.startToEnd) {
                                     _updateType(snapshot.data[index]);
                                   } else {
-                                    setState(() {
-                                      readingList.remove(snapshot.data[index]);
-                                    });
                                     Scaffold.of(context).showSnackBar(SnackBar(
                                         backgroundColor: Colors.grey[600],
                                         content:
@@ -231,14 +229,13 @@ class _ReadingListState extends State<ReadingList> {
                                   }
                                 },
                                 child: ListTile(
-                                  leading: snapshot.data[index]
-                                      .buildLeading(context),
-                                  title:
-                                      snapshot.data[index].buildTitle(context),
-                                  subtitle: snapshot.data[index]
-                                      .buildSubtitle(context),
-                                  trailing: snapshot.data[index]
-                                      .buildTrailing(context),
+                                  leading: Image.network(
+                                      snapshot.data[index].bookCover),
+                                  title: Text(snapshot.data[index].bookTitle),
+                                  subtitle:
+                                      Text(snapshot.data[index].bookAuthors[0]),
+                                  trailing: RecoTileTrailing(
+                                      snapshot.data[index].bookRecos),
                                   onTap: () {
                                     Navigator.push(
                                       context,
