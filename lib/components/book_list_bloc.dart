@@ -67,6 +67,20 @@ class BookListBloc {
     }
   }
 
+  void deleteBook(
+      BookItem book, String accessToken, String userId, String listId) {
+    final readingList = _listBookController.value;
+    readingList.remove(book);
+    _listBookController.sink.add(readingList);
+    // reduce associated type counter by 1
+    addListCountItem(book.bookType, --_listCountItems[book.bookType]);
+    try {
+      listService.deleteBook(accessToken, userId, listId);
+    } catch (err) {
+      print('Could not delete the book in the backend: $err');
+    }
+  }
+
   void addListCountItem(String type, int count) {
     if (!_listCountController.isClosed) {
       _listCountItems[type] = count;

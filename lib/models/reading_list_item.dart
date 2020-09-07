@@ -50,8 +50,12 @@ class BookItem implements ReadingListItem {
   BookItem(this.title, this.subtitle, this.cover, this.listId, this.bookId,
       this.type, this.recos);
 
-  String get bookTitle {
-    return this.title;
+  String get bookListId {
+    return this.listId;
+  }
+
+  String get bookType {
+    return this.type;
   }
 
   Widget buildLeading(BuildContext context) => Image.network(cover);

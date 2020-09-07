@@ -105,21 +105,7 @@ class _ReadingListState extends State<ReadingList> {
     }
   }
 
-  Future<void> _deleteBook(listId) async {
-    final http.Response res = await http.delete(
-        'https://api.lexity.co/list/delete/?userId=${user.id}&listId=$listId',
-        headers: {
-          'access-token': '${user.accessToken}',
-        });
-    if (res.statusCode == 200) {
-      print('successfully deleted book');
-    } else {
-      print(res.statusCode);
-      print(res.reasonPhrase);
-    }
-  }
-
-  Future<bool> _promptUser(DismissDirection direction, book) async {
+  Future<bool> _promptUser(DismissDirection direction, BookItem book) async {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
@@ -129,7 +115,8 @@ class _ReadingListState extends State<ReadingList> {
                 child: Text("Delete"),
                 onPressed: () {
                   // Dismiss the dialog and also dismiss the swiped item
-                  _deleteBook(book.listId);
+                  bookListBloc.deleteBook(
+                      book, user.accessToken, user.id, book.bookListId);
                   Navigator.of(context).pop(true);
                 },
               ),
