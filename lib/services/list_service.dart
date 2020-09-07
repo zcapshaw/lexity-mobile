@@ -118,6 +118,23 @@ class ListService {
       (_) => APIResponse<Object>(error: true, errorMessage: 'An error occured'),
     );
   }
+
+  Future<APIResponse<Object>> getListItemSummary(accessToken, userId) async {
+    return http.get(
+      API + '/list/summary/?userId=$userId',
+      headers: {'access-token': accessToken},
+    ).then((res) {
+      if (res.statusCode == 200) {
+        return APIResponse<Object>(data: res.body);
+      }
+      return APIResponse<Object>(
+          error: true,
+          errorCode: res.statusCode,
+          errorMessage: res.reasonPhrase);
+    }).catchError(
+      (_) => APIResponse<Object>(error: true, errorMessage: 'An error occured'),
+    );
+  }
 }
 
 class APIResponse<T> {

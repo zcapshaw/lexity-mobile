@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:lexity_mobile/models/user.dart';
+import '../components/book_list_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key key}) : super(key: key);
@@ -15,6 +16,8 @@ void authNav(context) {
   UserModel user = Provider.of<UserModel>(context, listen: true);
   if (authenticated != user.authN && user.createComplete == true) {
     authenticated = user.authN;
+    // Refresh the users Book List upon login
+    bookListBloc.refreshBackendBookList(user.accessToken, user.id);
     print(
         'User created: ${user.createComplete}, User authenticated: ${user.authN}');
     if (user.createComplete && user.authN) {

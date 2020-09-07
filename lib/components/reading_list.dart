@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/semantics.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
@@ -37,42 +36,6 @@ class _ReadingListState extends State<ReadingList> {
     super.initState();
     // assign user for access to UserModel methods
     user = Provider.of<UserModel>(context, listen: false);
-  }
-
-  //Construct a List of ListItems from the API response
-  Future<List<ReadingListItem>> _getReadingList() async {
-    final http.Response data = await http
-        .get('https://api.lexity.co/list/summary/?userId=${user.id}', headers: {
-      'access-token': '${user.accessToken}',
-    });
-    if (data.statusCode == 200) {
-      //Construct a 'readingList' array with a HeadingItem and BookItems
-      readingList = [];
-      var json = jsonDecode(data.body);
-
-      // Cycle through json by type, adding applicable headers
-      for (String type in widget.types) {
-        if (json[type] != null) {
-          int bookCount = json[type].length;
-          bookListBloc.addListCountItem(type, bookCount);
-          if (widget.enableHeaders) {
-            readingList.add(HeadingItem(_getHeaderText(type, bookCount)));
-          }
-          for (var b in json[type]) {
-            String title = b['title'];
-            if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-            BookItem book = BookItem(title, b['authors'][0], b['cover'],
-                b['listId'], b['bookId'], b['type'], b['recos']);
-            readingList.add(book);
-          }
-        }
-      }
-    } else {
-      print(data.statusCode);
-      print(data.reasonPhrase);
-    }
-
-    return readingList;
   }
 
   // Construct Header text based on list type
@@ -206,108 +169,114 @@ class _ReadingListState extends State<ReadingList> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: FutureBuilder(
-        future: _getReadingList(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
-            return Expanded(
-              child: Container(
-                child: Center(
-                  child: CircularProgressIndicator(),
+    return Flexible(
+      child: StreamBuilder(
+          stream: bookListBloc.listBooks, // Stream getter
+          initialData: {},
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            return Container(
+              child: RefreshIndicator(
+                onRefresh: () => bookListBloc.refreshBackendBookList(
+                    user.accessToken, user.id),
+                child: CustomReorderableListView(
+                  scrollController: reorderScrollController,
+                  scrollDirection: Axis.vertical,
+                  onReorder: (oldIndex, newIndex) =>
+                      bookListBloc.reorderBook(oldIndex, newIndex),
+                  children: List.generate(
+                    snapshot.data.length,
+                    (index) {
+                      if (snapshot.hasData && snapshot.data[index] != null) {
+                        if (snapshot.data[index] is HeadingItem) {
+                          return Column(
+                            key: UniqueKey(),
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              ListTile(
+                                leading:
+                                    snapshot.data[index].buildLeading(context),
+                                title: snapshot.data[index].buildTitle(context),
+                                subtitle:
+                                    snapshot.data[index].buildSubtitle(context),
+                                trailing:
+                                    snapshot.data[index].buildTrailing(context),
+                              ),
+                              Divider(
+                                height: 0,
+                              ),
+                            ],
+                          );
+                        }
+                        return Column(
+                            key: ValueKey(snapshot.data[index].bookId),
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Dismissible(
+                                key: UniqueKey(),
+                                confirmDismiss: (direction) {
+                                  if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    return Future<bool>.value(true);
+                                  } else if (direction ==
+                                      DismissDirection.endToStart) {
+                                    return _promptUser(
+                                        direction, snapshot.data[index]);
+                                  }
+                                },
+                                direction: widget.enableSwipeRight
+                                    ? DismissDirection.horizontal
+                                    : DismissDirection.endToStart,
+                                background: SwipeRightBackground(
+                                    type: snapshot.data[index].type),
+                                secondaryBackground: SwipeLeftBackground(),
+                                onDismissed: (direction) {
+                                  if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    _updateType(snapshot.data[index]);
+                                  } else {
+                                    setState(() {
+                                      readingList.remove(snapshot.data[index]);
+                                    });
+                                    Scaffold.of(context).showSnackBar(SnackBar(
+                                        backgroundColor: Colors.grey[600],
+                                        content:
+                                            Text("Book deleted from list.")));
+                                  }
+                                },
+                                child: ListTile(
+                                  leading: snapshot.data[index]
+                                      .buildLeading(context),
+                                  title:
+                                      snapshot.data[index].buildTitle(context),
+                                  subtitle: snapshot.data[index]
+                                      .buildSubtitle(context),
+                                  trailing: snapshot.data[index]
+                                      .buildTrailing(context),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => BookDetailScreen(
+                                          bookId: snapshot.data[index].bookId,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                              Divider(
+                                height: 0,
+                              )
+                            ]);
+                      } else {
+                        return Container();
+                      }
+                    },
+                  ),
                 ),
               ),
             );
-          }
-          return Flexible(
-            child: RefreshIndicator(
-              onRefresh: _updateList,
-              child: CustomReorderableListView(
-                scrollController: reorderScrollController,
-                scrollDirection: Axis.vertical,
-                onReorder: (oldIndex, newIndex) {
-                  setState(
-                    () {
-                      if (newIndex > oldIndex) {
-                        newIndex -= 1;
-                      }
-                      final ReadingListItem item =
-                          readingList.removeAt(oldIndex);
-                      readingList.insert(newIndex, item);
-                    },
-                  );
-                },
-                children: List.generate(snapshot.data.length, (index) {
-                  if (snapshot.data[index] is HeadingItem) {
-                    return Column(
-                      key: UniqueKey(),
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        ListTile(
-                          leading: snapshot.data[index].buildLeading(context),
-                          title: snapshot.data[index].buildTitle(context),
-                          subtitle: snapshot.data[index].buildSubtitle(context),
-                          trailing: snapshot.data[index].buildTrailing(context),
-                        ),
-                        Divider(
-                          height: 0,
-                        ),
-                      ],
-                    );
-                  }
-                  return Column(
-                    key: ValueKey(snapshot.data[index].bookId),
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Dismissible(
-                        key: UniqueKey(),
-                        confirmDismiss: (direction) {
-                          if (direction == DismissDirection.startToEnd) {
-                            return Future<bool>.value(true);
-                          } else if (direction == DismissDirection.endToStart) {
-                            return _promptUser(direction, snapshot.data[index]);
-                          }
-                        },
-                        direction: widget.enableSwipeRight
-                            ? DismissDirection.horizontal
-                            : DismissDirection.endToStart,
-                        background: SwipeRightBackground(
-                            type: snapshot.data[index].type),
-                        secondaryBackground: SwipeLeftBackground(),
-                        onDismissed: (direction) {
-                          if (direction == DismissDirection.startToEnd) {
-                            _updateType(snapshot.data[index]);
-                          } else {
-                            setState(() {
-                              readingList.remove(snapshot.data[index]);
-                            });
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.grey[600],
-                                content: Text("Book deleted from list.")));
-                          }
-                        },
-                        child: ListTile(
-                          leading: snapshot.data[index].buildLeading(context),
-                          title: snapshot.data[index].buildTitle(context),
-                          subtitle: snapshot.data[index].buildSubtitle(context),
-                          trailing: snapshot.data[index].buildTrailing(context),
-                          onTap: () {
-                            _navigateToBookDetails(
-                                context, snapshot.data[index].bookId);
-                          },
-                        ),
-                      ),
-                      Divider(
-                        height: 0,
-                      )
-                    ],
-                  );
-                }),
-              ),
-            ),
-          );
-        },
-      ),
+          }),
     );
   }
 }
