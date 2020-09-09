@@ -90,13 +90,14 @@ class BookListBloc {
     }
   }
 
+  // Determine the appropriate type based off of the index
+  // NOTE: This assumes a consistant array structure order of types
+  // ['READING', 'TO_READ', 'READ']
   String _getTypeByIndex(int index) {
     final int headerPlaceholder = 1;
     final int readingCount = _listCountItems['READING'];
     final int toReadCount = _listCountItems['TO_READ'];
     String type;
-    print('Reading count is $readingCount');
-    print(index);
 
     if (index <= readingCount + headerPlaceholder) {
       type = 'READING';
