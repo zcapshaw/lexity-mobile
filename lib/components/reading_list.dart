@@ -9,7 +9,8 @@ import 'swipe_background.dart';
 import 'reorderable_list_w_physics.dart';
 import 'reco_tile_trailing.dart';
 import 'book_list_bloc.dart';
-import 'list_item_header.dart';
+import 'list_tile_header.dart';
+import 'list_tile_item.dart';
 import '../screens/book_detail_screen.dart';
 import '../models/list_item.dart';
 import '../models/user.dart';
@@ -135,6 +136,17 @@ class _ReadingListState extends State<ReadingList> {
         false; // In case the user dismisses the dialog by clicking away from it
   }
 
+  void _onPressTile(String bookId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => BookDetailScreen(
+          bookId: bookId,
+        ),
+      ),
+    );
+  }
+
   _navigateToBookDetails(BuildContext context, bookId) async {
     final result = await Navigator.push(
       context,
@@ -172,7 +184,6 @@ class _ReadingListState extends State<ReadingList> {
                   scrollDirection: Axis.vertical,
                   onReorder: (oldIndex, newIndex) =>
                       bookListBloc.reorderBook(oldIndex, newIndex),
-                  header: ListItemHeader('Reading', 3),
                   children: List.generate(
                     snapshot.data.length,
                     (index) {
@@ -197,63 +208,16 @@ class _ReadingListState extends State<ReadingList> {
                         //     ],
                         //   );
                         // }
-                        return Column(
-                            key: ValueKey(snapshot.data[index].bookId),
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Dismissible(
-                                key: UniqueKey(),
-                                confirmDismiss: (direction) {
-                                  if (direction ==
-                                      DismissDirection.startToEnd) {
-                                    return Future<bool>.value(true);
-                                  } else if (direction ==
-                                      DismissDirection.endToStart) {
-                                    return _promptUser(
-                                        direction, snapshot.data[index]);
-                                  }
-                                },
-                                direction: widget.enableSwipeRight
-                                    ? DismissDirection.horizontal
-                                    : DismissDirection.endToStart,
-                                background: SwipeRightBackground(
-                                    type: snapshot.data[index].type),
-                                secondaryBackground: SwipeLeftBackground(),
-                                onDismissed: (direction) {
-                                  if (direction ==
-                                      DismissDirection.startToEnd) {
-                                    _updateType(snapshot.data[index]);
-                                  } else {
-                                    Scaffold.of(context).showSnackBar(SnackBar(
-                                        backgroundColor: Colors.grey[600],
-                                        content:
-                                            Text("Book deleted from list.")));
-                                  }
-                                },
-                                child: ListTile(
-                                  leading: Image.network(
-                                      snapshot.data[index].bookCover),
-                                  title: Text(snapshot.data[index].bookTitle),
-                                  subtitle:
-                                      Text(snapshot.data[index].bookAuthors[0]),
-                                  trailing: RecoTileTrailing(
-                                      snapshot.data[index].bookRecos),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => BookDetailScreen(
-                                          bookId: snapshot.data[index].bookId,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              Divider(
-                                height: 0,
-                              )
-                            ]);
+                        if (snapshot.data[index] is ListItemHeader) {
+                          return ListTileHeader(snapshot.data[index].text,
+                              snapshot.data[index].count, UniqueKey());
+                        } else if (snapshot.data[index] is ListItem) {}
+                        return ListTileItem(
+                            item: snapshot.data[index],
+                            enableSwipeRight: widget.enableSwipeRight,
+                            onPressTile: _onPressTile,
+                            deletePrompt: _promptUser,
+                            key: ValueKey(snapshot.data[index].bookId));
                       } else {
                         return Container();
                       }

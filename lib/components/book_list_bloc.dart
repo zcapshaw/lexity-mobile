@@ -22,37 +22,35 @@ class BookListBloc {
     final response = await listService.getListItemSummary(accessToken, userId);
     if (!response.error) {
       var bookJson = jsonDecode(response.data);
-      /*** UGLY Temporary Subsection due to current backend object shape ***/
-      List<ListItem> readingList = [];
-      List tempBookData = [];
-      for (var item in bookJson['TO_READ']) {
-        tempBookData.add(item);
-      }
-      for (var item in bookJson['READING']) {
-        tempBookData.add(item);
-      }
-      for (var item in bookJson['READ']) {
-        tempBookData.add(item);
-      }
-      addListCountItem('TO_READ', bookJson['TO_READ'].length);
-      addListCountItem('READING', bookJson['READING'].length);
-      addListCountItem('READ', bookJson['READ'].length);
-      /*** -------------- ***/
-
       if (!_listBookController.isClosed) {
-        for (var b in tempBookData) {
-          String title = b['title'];
-          if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-          ListItem book = ListItem(
-              title: title,
-              authors: b['authors'],
-              cover: b['cover'],
-              listId: b['listId'],
-              bookId: b['bookId'],
-              type: b['type'],
-              recos: b['recos']);
+        /*** UGLY Temporary Subsection due to current backend object shape ***/
+        List<ListItem> readingList = [];
+
+        int readingCount = bookJson['READING'].length;
+        int toReadCount = bookJson['TO_READ'].length;
+        int readCount = bookJson['READ'].length;
+        addListCountItem('READING', readingCount);
+        addListCountItem('TO_READ', toReadCount);
+        addListCountItem('READ', readCount);
+
+        readingList.add(ListItemHeader('Reading', readingCount));
+        for (var item in bookJson['READING']) {
+          var book = ListItem.fromJson(item);
           readingList.add(book);
         }
+
+        readingList.add(ListItemHeader('Want to Read', toReadCount));
+        for (var item in bookJson['TO_READ']) {
+          var book = ListItem.fromJson(item);
+          readingList.add(book);
+        }
+
+        readingList.add(ListItemHeader('Read', readCount));
+        for (var item in bookJson['READ']) {
+          var book = ListItem.fromJson(item);
+          readingList.add(book);
+        }
+        /*** -------------- ***/
         _listBookController.sink.add(readingList);
       } else {
         print(response.errorCode);

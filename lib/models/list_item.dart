@@ -6,6 +6,7 @@ part 'list_item.g.dart';
 class ListItem {
   ListItem(
       {this.title,
+      this.subtitle,
       this.authors,
       this.cover,
       this.listId,
@@ -17,6 +18,7 @@ class ListItem {
       this.notes});
 
   final String title;
+  final String subtitle;
   final List authors;
   final String cover;
   final String listId;
@@ -43,6 +45,12 @@ class ListItem {
     return this.title;
   }
 
+  String get titleWithSubtitle {
+    String title = this.title;
+    if (this.subtitle != null) title = '$title: ${this.subtitle}';
+    return title;
+  }
+
   List get bookAuthors {
     return this.authors;
   }
@@ -51,5 +59,22 @@ class ListItem {
     return this.recos;
   }
 
+  factory ListItem.fromJson(Map<String, dynamic> json) =>
+      _$ListItemFromJson(json);
   Map<String, dynamic> toJson() => _$ListItemToJson(this);
+}
+
+class ListItemHeader extends ListItem {
+  final String headingText;
+  final int headingCount;
+
+  ListItemHeader(this.headingText, this.headingCount);
+
+  String get text {
+    return this.headingText;
+  }
+
+  int get count {
+    return this.headingCount;
+  }
 }

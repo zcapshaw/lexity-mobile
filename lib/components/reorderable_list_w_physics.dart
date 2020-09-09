@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 
 //import 'package:debug.dart';
 import 'package:flutter/material.dart';
+import 'package:lexity_mobile/components/list_tile_item.dart';
 //import 'package:flutter/material_localizations.dart';
 
 // Examples can assume:
@@ -600,7 +601,8 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
               _wrap(finalDropArea, widget.children.length, constraints),
             if (widget.header != null) widget.header,
             for (int i = 0; i < widget.children.length; i += 1)
-              _wrap(widget.children[i], i, constraints),
+              if (widget.children[i] is Widget)
+                _wrap(widget.children[i], i, constraints),
             if (!widget.reverse)
               _wrap(finalDropArea, widget.children.length, constraints),
           ],
