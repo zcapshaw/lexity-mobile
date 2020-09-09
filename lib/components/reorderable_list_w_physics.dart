@@ -9,6 +9,7 @@ import 'package:flutter/rendering.dart';
 
 //import 'package:debug.dart';
 import 'package:flutter/material.dart';
+import 'package:lexity_mobile/components/list_tile_header.dart';
 import 'package:lexity_mobile/components/list_tile_item.dart';
 //import 'package:flutter/material_localizations.dart';
 
@@ -590,7 +591,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
       }
       return SingleChildScrollView(
         //TODO: When physics is added to new versions of flutter, we won't need this customization
-        physics: AlwaysScrollableScrollPhysics(), //THIS IS THE CUSTOMIZATION
+        physics: AlwaysScrollableScrollPhysics(), //THIS IS CUSTOMIZATION
         scrollDirection: widget.scrollDirection,
         padding: widget.padding,
         controller: _scrollController,
@@ -601,7 +602,12 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
               _wrap(finalDropArea, widget.children.length, constraints),
             if (widget.header != null) widget.header,
             for (int i = 0; i < widget.children.length; i += 1)
-              if (widget.children[i] is Widget)
+              // THIS IS CUSTOMIZATION
+              // We want to ensure that the ListTileHeader is not 'draggable'
+              // therefore we have custom conditional logic based on the class
+              if (widget.children[i] is ListTileItem)
+                _wrap(widget.children[i], i, constraints)
+              else if (widget.children[i] is ListTileHeader)
                 _wrap(widget.children[i], i, constraints),
             if (!widget.reverse)
               _wrap(finalDropArea, widget.children.length, constraints),
