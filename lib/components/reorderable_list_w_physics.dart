@@ -366,7 +366,9 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
 
   // Wraps one of the widget's children in a DragTarget and Draggable.
   // Handles up the logic for dragging and reordering items in the list.
-  Widget _wrap(Widget toWrap, int index, BoxConstraints constraints) {
+  // ADD CUSTOMIZATION FOR CANDRAG BOOLEAN
+  Widget _wrap(Widget toWrap, int index, BoxConstraints constraints,
+      {bool canDrag = true}) {
     assert(toWrap.key != null);
     final GlobalObjectKey keyIndexGlobalKey = GlobalObjectKey(toWrap.key);
     // We pass the toWrapWithGlobalKey into the Draggable so that when a list
@@ -472,7 +474,9 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
       // We build the draggable inside of a layout builder so that we can
       // constrain the size of the feedback dragging widget.
       Widget child = LongPressDraggable<Key>(
-        maxSimultaneousDrags: 1,
+        // CUSTOMIZATION - By setting Max to 0 when canDrag == false, we can prevent
+        // our ListTileHeader class from being draggable
+        maxSimultaneousDrags: canDrag ? 1 : 0,
         axis: widget.scrollDirection,
         data: toWrap.key,
         ignoringFeedbackSemantics: false,
@@ -498,6 +502,7 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
         onDraggableCanceled: (Velocity velocity, Offset offset) {
           onDragEnded();
         },
+        hapticFeedbackOnStart: true, // CUSTOMIZATION
       );
 
       // The target for dropping at the end of the list doesn't need to be
@@ -608,7 +613,12 @@ class _ReorderableListContentState extends State<_ReorderableListContent>
               if (widget.children[i] is ListTileItem)
                 _wrap(widget.children[i], i, constraints)
               else if (widget.children[i] is ListTileHeader)
-                _wrap(widget.children[i], i, constraints),
+                // CUSTOMIZATION - if the first value in the list is a ListTileHeader
+                // do NOT _wrap it, so that it's static and no item can be dragged above it
+                if (i == 0)
+                  widget.children[i]
+                else
+                  _wrap(widget.children[i], i, constraints, canDrag: false),
             if (!widget.reverse)
               _wrap(finalDropArea, widget.children.length, constraints),
           ],

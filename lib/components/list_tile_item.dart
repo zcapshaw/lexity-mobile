@@ -6,15 +6,19 @@ import '../models/list_item.dart';
 
 class ListTileItem extends StatelessWidget {
   final ListItem item;
+  final int tileIndex;
   final bool enableSwipeRight;
   final Function onPressTile;
   final Function deletePrompt;
+  final Function typeChangeAction;
 
   ListTileItem(
       {@required this.item,
+      @required this.tileIndex,
       @required this.enableSwipeRight,
       @required this.onPressTile,
       @required this.deletePrompt,
+      @required this.typeChangeAction,
       @required Key key})
       : super(key: key);
 
@@ -37,7 +41,7 @@ class ListTileItem extends StatelessWidget {
         secondaryBackground: SwipeLeftBackground(),
         onDismissed: (direction) {
           if (direction == DismissDirection.startToEnd) {
-            //_updateType(item);
+            typeChangeAction(item, tileIndex);
           } else {
             Scaffold.of(context).showSnackBar(SnackBar(
                 backgroundColor: Colors.grey[600],

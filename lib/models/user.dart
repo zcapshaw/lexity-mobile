@@ -76,6 +76,7 @@ class UserModel extends ChangeNotifier {
   int get joined => appUser.joined;
   int get followers => appUser.followers;
   int get friends => appUser.friends;
+  User get currentUser => appUser;
 
   // initialize the new user from values in local secure storage
   Future<void> _init() async {

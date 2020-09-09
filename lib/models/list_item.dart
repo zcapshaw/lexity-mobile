@@ -24,26 +24,18 @@ class ListItem {
   final String listId;
   final String userId;
   final String bookId;
-  final String type;
-  final List recos;
-  final List labels;
-  final List notes;
+  String type;
+  List recos;
+  List labels;
+  List notes;
 
-  String get bookListId {
-    return this.listId;
-  }
-
-  String get bookType {
-    return this.type;
-  }
-
-  String get bookCover {
-    return this.cover;
-  }
-
-  String get bookTitle {
-    return this.title;
-  }
+  String get id => this.bookId;
+  String get bookListId => this.listId;
+  String get bookType => this.type;
+  String get bookCover => this.cover;
+  String get bookTitle => this.title;
+  List get bookAuthors => this.authors;
+  List get bookRecos => this.recos;
 
   String get titleWithSubtitle {
     String title = this.title;
@@ -51,13 +43,7 @@ class ListItem {
     return title;
   }
 
-  List get bookAuthors {
-    return this.authors;
-  }
-
-  List get bookRecos {
-    return this.recos;
-  }
+  set changeType(String newType) => this.type = newType;
 
   factory ListItem.fromJson(Map<String, dynamic> json) =>
       _$ListItemFromJson(json);
@@ -65,16 +51,7 @@ class ListItem {
 }
 
 class ListItemHeader extends ListItem {
-  final String headingText;
-  final int headingCount;
+  ListItemHeader(String type) : super(type: type);
 
-  ListItemHeader(this.headingText, this.headingCount);
-
-  String get text {
-    return this.headingText;
-  }
-
-  int get count {
-    return this.headingCount;
-  }
+  String get headerType => this.type;
 }
