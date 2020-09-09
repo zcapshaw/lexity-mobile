@@ -9,6 +9,7 @@ import 'swipe_background.dart';
 import 'reorderable_list_w_physics.dart';
 import 'reco_tile_trailing.dart';
 import 'book_list_bloc.dart';
+import 'list_item_header.dart';
 import '../screens/book_detail_screen.dart';
 import '../models/list_item.dart';
 import '../models/user.dart';
@@ -171,6 +172,7 @@ class _ReadingListState extends State<ReadingList> {
                   scrollDirection: Axis.vertical,
                   onReorder: (oldIndex, newIndex) =>
                       bookListBloc.reorderBook(oldIndex, newIndex),
+                  header: ListItemHeader('Reading', 3),
                   children: List.generate(
                     snapshot.data.length,
                     (index) {

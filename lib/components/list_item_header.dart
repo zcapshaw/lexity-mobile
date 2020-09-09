@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
-class ListItemHeader {
+class ListItemHeader extends StatelessWidget {
   final String headingText;
   final int headingCount;
 
   ListItemHeader(this.headingText, this.headingCount);
 
-  Widget buildTitle(BuildContext context) {
+  Widget build(BuildContext context) {
     return Container(
+      alignment: Alignment.topLeft,
       margin: EdgeInsets.only(top: 30, bottom: 10),
       child: Text(
         '$headingText ($headingCount)',
@@ -15,8 +16,4 @@ class ListItemHeader {
       ),
     );
   }
-
-  Widget buildSubtitle(BuildContext context) => null;
-  Widget buildTrailing(BuildContext context) => null;
-  Widget buildLeading(BuildContext context) => null;
 }
