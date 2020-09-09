@@ -122,7 +122,7 @@ class _ReadingListState extends State<ReadingList> {
     return Flexible(
       child: StreamBuilder(
         stream: bookListBloc.listBooks, // Stream getter
-        initialData: {},
+        initialData: [],
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
           return Container(
             child: RefreshIndicator(
@@ -135,21 +135,29 @@ class _ReadingListState extends State<ReadingList> {
                     user.currentUser, oldIndex, newIndex),
                 children: List.generate(snapshot.data.length, (index) {
                   if (snapshot.hasData && snapshot.data[index] != null) {
-                    if (snapshot.data[index] is ListItemHeader) {
+                    if (snapshot.data[index] is ListItemHeader &&
+                        widget.enableHeaders &&
+                        widget.types
+                            .contains(snapshot.data[index].headerType)) {
                       return ListTileHeader(
-                          type: snapshot.data[index].headerType,
-                          key: UniqueKey());
-                    } else if (snapshot.data[index] is ListItem) {}
-                    return ListTileItem(
+                        type: snapshot.data[index].bookType,
+                        key: UniqueKey(),
+                      );
+                    } else if (snapshot.data[index] is ListItem &&
+                        snapshot.data[index] is! ListItemHeader &&
+                        widget.types.contains(snapshot.data[index].bookType)) {
+                      return ListTileItem(
                         item: snapshot.data[index],
                         tileIndex: index,
                         enableSwipeRight: widget.enableSwipeRight,
                         onPressTile: _onPressTile,
                         deletePrompt: _promptUser,
                         typeChangeAction: _updateType,
-                        key: ValueKey(snapshot.data[index].bookId));
-                  } else {
-                    return Container();
+                        key: ValueKey(snapshot.data[index].bookId),
+                      );
+                    } else {
+                      return Container(key: UniqueKey(), height: 0, width: 0);
+                    }
                   }
                 }),
               ),
