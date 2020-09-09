@@ -33,6 +33,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   List<Note> notes = [];
   String genre;
   String listId;
+  String actionText = 'Start Reading';
+  String nextType = 'READING';
+  IconData actionIcon = Icons.play_arrow;
   ListService get listService => GetIt.I<ListService>();
 
   @override
@@ -57,8 +60,14 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       List<Note> notesArray = [];
       for (var n in notesJson) {
         Note note = Note(
-            comment: n['comment'] ?? '', created: n['created'], id: n['id']);
+          comment: n['comment'] ?? '',
+          created: n['created'],
+          id: n['id'],
+          sourceName: n['sourceName'],
+          isReco: (n['sourceName'] != null),
+        );
         notesArray.add(note);
+        print(note.isReco);
       }
 
       // adds notes to the list
@@ -76,6 +85,28 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             .toUpperCase();
       }
 
+      //sets action button icon and text based on listType
+      switch (bookJson['type']) {
+        case "TO_READ":
+          actionText = 'Start Reading';
+          actionIcon = Icons.play_arrow;
+          nextType = 'READING';
+          break;
+        case "READING":
+          actionText = 'Mark As Finished';
+          actionIcon = Icons.done;
+          nextType = 'READ';
+          break;
+        case "READ":
+          actionText = 'Read Again';
+          actionIcon = Icons.replay;
+          nextType = 'READING';
+          break;
+        default:
+          actionText = 'Start Reading';
+          actionIcon = Icons.play_arrow;
+      }
+
       book = Book(
         title: bookJson['title'],
         subtitle: bookJson['subtitle'],
@@ -83,6 +114,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         thumbnail: bookJson['cover'],
         listId: bookJson['listId'],
         genre: genre,
+        listType: bookJson['type'],
       );
       listId = book.listId;
     } else {
@@ -177,6 +209,19 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         notes = [];
       });
     });
+  }
+
+  void _updateType() async {
+    final response = await listService.updateListItemType(
+        user.accessToken, user.id, widget.bookId, nextType);
+    if (response.error) {
+      print(response.errorCode);
+      print(response.errorMessage);
+    } else {
+      print('successfully updated type');
+      //pass 'true' so the snackbar message will show on the previous screen
+      Navigator.pop(context, true);
+    }
   }
 
   @override
@@ -276,9 +321,9 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 ActionButton(
-                                  icon: Icons.play_arrow,
-                                  labelText: 'Start Reading',
-                                  callback: () {},
+                                  icon: actionIcon,
+                                  labelText: actionText,
+                                  callback: () => _updateType(),
                                 ),
                                 ActionButton(
                                   icon: Icons.comment,
@@ -336,8 +381,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                     comment: note.comment,
                                     created: formatTime(note.created),
                                     noteId: note.id,
+                                    leadingImg: user.profileImg,
                                     deleteCallback: _deleteNote,
                                     editCallback: _editNote,
+                                    sourceName: note.sourceName,
+                                    isReco: note.isReco,
                                   ),
                               ],
                             ),
@@ -372,36 +420,40 @@ class ExpandableDescription extends StatelessWidget {
   Widget build(BuildContext context) {
     return ExpandablePanel(
       header: ListTileHeaderText(title),
-      collapsed: ShaderMask(
-        shaderCallback: (rect) {
-          return LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.black, Colors.transparent],
-          ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
-        },
-        blendMode: BlendMode.dstIn,
-        child: Container(
-          height: 100,
-          child: Html(
-            data: description,
-            style: {
-              "p": Style(
-                padding: EdgeInsets.only(top: 10),
-                margin: EdgeInsets.only(top: 10),
-              ),
-            },
+      collapsed: ExpandableButton(
+        child: ShaderMask(
+          shaderCallback: (rect) {
+            return LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.black, Colors.transparent],
+            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
+          },
+          blendMode: BlendMode.dstIn,
+          child: Container(
+            height: 100,
+            child: Html(
+              data: description,
+              style: {
+                "p": Style(
+                  padding: EdgeInsets.only(top: 10),
+                  margin: EdgeInsets.only(top: 10),
+                ),
+              },
+            ),
           ),
         ),
       ),
-      expanded: Html(
-        data: description,
-        style: {
-          "p": Style(
-            padding: EdgeInsets.only(top: 10),
-            margin: EdgeInsets.only(top: 10),
-          )
-        },
+      expanded: ExpandableButton(
+        child: Html(
+          data: description,
+          style: {
+            "p": Style(
+              padding: EdgeInsets.only(top: 10),
+              margin: EdgeInsets.only(top: 10),
+            )
+          },
+        ),
       ),
     );
   }

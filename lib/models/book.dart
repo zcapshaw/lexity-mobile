@@ -7,6 +7,7 @@ class Book {
   final String description;
   final String genre;
   final String listId;
+  final String listType;
 
   Book(
       {this.title,
@@ -16,5 +17,6 @@ class Book {
       this.googleId,
       this.description,
       this.genre,
-      this.listId});
+      this.listId,
+      this.listType});
 }
