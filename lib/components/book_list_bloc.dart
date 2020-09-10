@@ -175,6 +175,49 @@ class BookListBloc {
     return newIndex;
   }
 
+  void addBook(ListItem list, ListItem book, String accessToken) {
+    final readingList = _listBookController.value;
+    final int matchingIndex = _getIndexIfExists(book.bookId);
+    int insertIndex = _getTypeChangeIndex(book.bookType);
+
+    if (matchingIndex >= 0) {
+      ListItem oldBook = readingList.removeAt(matchingIndex);
+      if (insertIndex > matchingIndex) {
+        insertIndex -= 1;
+      }
+
+      book.mergeRecos = oldBook.recos ?? [];
+      // If type is NOT changing, then replace the book in the matchingIndex
+      if (book.bookType == oldBook.bookType) {
+        readingList.insert(matchingIndex, book);
+      } else {
+        readingList.insert(insertIndex, book);
+      }
+
+      // decrease associated type counter by 1
+      addListCountItem(oldBook.bookType, --_listCountItems[oldBook.bookType]);
+    } else {
+      readingList.insert(insertIndex, book);
+    }
+    _listBookController.sink.add(readingList);
+
+    // increase associated type counter by 1
+    addListCountItem(book.bookType, ++_listCountItems[book.bookType]);
+
+    try {
+      listService.addOrUpdateListItem(accessToken, list);
+    } catch (err) {
+      print('Could not add the book in the backend: $err');
+    }
+  }
+
+  int _getIndexIfExists(String bookId) {
+    final readingList = _listBookController.value;
+    List bookIdList = [];
+    readingList.forEach((e) => bookIdList.add(e.bookId ?? 'HEADER'));
+    return bookIdList.indexOf(bookId); // returns -1 if element is not found
+  }
+
   void deleteBook(ListItem book, User user) {
     final readingList = _listBookController.value;
     readingList.remove(book);

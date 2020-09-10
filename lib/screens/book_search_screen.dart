@@ -47,25 +47,18 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         //handle books that come back from Google with missing data
         final String cover = b['cover'] != null ? b['cover']['thumbnail'] : '';
         final String subtitle = b['subtitle'] ?? '';
+        final bool inUserList = b['inUserList'];
+        final bool userRead = b['userRead'];
         String title = b['title'] ?? '';
         String author = b['authors'] != null ? b['authors'][0] : '';
-
-        if (b['inUserList'] && b['userRead']) {
-          author = '$author • Previously read';
-        } else if (b['inUserList']) {
-          author = '$author • On my list';
-        }
-
-        if (subtitle == '') {
-          title = '$title';
-        } else {
-          title = '$title: $subtitle';
-        }
 
         //construct a Book object and add it to the books array
         Book book = Book(
             title: title,
+            subtitle: subtitle,
             author: author,
+            inUserList: inUserList,
+            userRead: userRead,
             thumbnail: cover,
             googleId: b['googleId']);
         books.add(book);
@@ -98,6 +91,16 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
       print(responseJson['id']);
     }
+  }
+
+  String _modifiedAuthorText(Book book) {
+    String author = book.bookAuthors[0] ?? '';
+    if (book.bookInUserList && book.userReadBook) {
+      author = '$author • Previously read';
+    } else if (book.bookInUserList) {
+      author = '$author • On my list';
+    }
+    return author;
   }
 
   @override
@@ -166,9 +169,10 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                         return Column(
                           children: <Widget>[
                             ListTile(
-                                title: Text(snapshot.data[index].title),
-                                subtitle:
-                                    Text(snapshot.data[index].author ?? ''),
+                                title: Text(
+                                    snapshot.data[index].titleWithSubtitle),
+                                subtitle: Text(
+                                    _modifiedAuthorText(snapshot.data[index])),
                                 leading: Image.network(
                                     snapshot.data[index].thumbnail),
                                 onTap: () {

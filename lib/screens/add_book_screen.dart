@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:provider/provider.dart';
 import 'package:get_it/get_it.dart';
 
@@ -9,6 +6,7 @@ import '../models/user.dart';
 import '../models/note.dart';
 import '../models/book.dart';
 import '../models/list_item.dart';
+import '../components/book_list_bloc.dart';
 import '../components/list_tile_header_text.dart';
 import '../components/list_tile_text_field.dart';
 import './main_screen.dart';
@@ -47,7 +45,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final Note note = Note(comment: noteText);
     final Note reco = Note(sourceName: recoSource, comment: recoText);
     final List notes = [note.toJson(), reco.toJson()];
-    ListItem item;
+
+    // Temporary instantiation without image - eventually, user search will provide img if available
+    final List newReco = [
+      {'sourceName': recoSource, 'sourceImg': null}
+    ];
 
     // Only retain non-null notes objects with text.length > 0
     // E.g. if there are NO notes OR recos, this will return an empty list []
@@ -55,26 +57,27 @@ class _AddBookScreenState extends State<AddBookScreen> {
         note['comment'] != null && note['comment'].toString().length > 0 ||
         note['sourceName'] != null && note['sourceName'].toString().length > 0);
 
-    item = ListItem(
+    ListItem item = ListItem(
         userId: user.id,
         bookId: widget.bookId,
         type: type,
         labels: labels,
         notes: notes);
 
-    final jsonItem = item.toJson();
+    ListItem book = ListItem(
+      bookId: widget.bookId,
+      title: widget.book.bookTitle,
+      subtitle: widget.book.bookSubtitle,
+      authors: widget.book.bookAuthors,
+      cover: widget.book.bookCover,
+      type: listType,
+      recos: recoSource != null ? newReco : [],
+    );
 
-    final response =
-        await listService.addOrUpdateListItem(user.accessToken, jsonItem);
-
-    if (response.error) {
-      print(response.errorCode);
-      print(response.errorMessage);
-    } else {
-      print('successfully added ${widget.bookId}');
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MainScreen()));
-    }
+    bookListBloc.addBook(item, book, user.accessToken);
+    print('successfully added ${widget.bookId}');
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
 
   _addReco(BuildContext context, String recoSource, String recoText) async {
@@ -121,7 +124,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
             ListTile(
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              title: Text(widget.book.title),
+              title: Text(widget.book.titleWithSubtitle),
               subtitle: Text(widget.book.author),
               leading: Image.network(widget.book.thumbnail),
             ),

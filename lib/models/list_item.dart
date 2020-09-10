@@ -44,6 +44,7 @@ class ListItem {
   }
 
   set changeType(String newType) => this.type = newType;
+  set mergeRecos(List newRecos) => this.recos.addAll(newRecos);
 
   factory ListItem.fromJson(Map<String, dynamic> json) =>
       _$ListItemFromJson(json);
