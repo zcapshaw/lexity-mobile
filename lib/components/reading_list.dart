@@ -15,11 +15,15 @@ class ReadingList extends StatefulWidget {
   final List<String> types;
   final bool enableSwipeRight;
   final bool enableHeaders;
+  final bool
+      isHomescreen; // used for conditional indexing on homescreen (when there's no READ list)
 
-  ReadingList(
-      {@required this.types,
-      this.enableSwipeRight = true,
-      this.enableHeaders = true});
+  ReadingList({
+    @required this.types,
+    this.enableSwipeRight = true,
+    this.enableHeaders = true,
+    this.isHomescreen = false,
+  });
 
   @override
   _ReadingListState createState() => _ReadingListState();
@@ -132,7 +136,7 @@ class _ReadingListState extends State<ReadingList> {
                 scrollController: reorderScrollController,
                 scrollDirection: Axis.vertical,
                 onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
-                    user.currentUser, oldIndex, newIndex),
+                    user.currentUser, oldIndex, newIndex, widget.isHomescreen),
                 children: List.generate(snapshot.data.length, (index) {
                   if (snapshot.hasData && snapshot.data[index] != null) {
                     if (snapshot.data[index] is ListItemHeader &&

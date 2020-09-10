@@ -60,7 +60,25 @@ class BookListBloc {
     }
   }
 
-  void reorderBook(User user, int oldIndex, int newIndex) {
+  void reorderBook(User user, int oldIndex, int newIndex, bool isHomescreen) {
+    final int headerPlaceholder = 1;
+    final readingList = _listBookController.value;
+    final int readingListLength = readingList.length;
+    final int lengthWithoutRead =
+        readingListLength - _listCountItems['READ'] - headerPlaceholder;
+
+    // This is an inflexible, somewhat 'hacky', solution.
+    // Given that the List BLoC is shared between the UserScreen and HomeScreen
+    // We render the HomeScreen and filter out (empty containers) all type = 'READ'
+    // An outcome of this, is that a drag to the bottom of the "Want to read"
+    // section will have a newIndex at the end of the overall array, because
+    // the newIndex is read as AFTER all of the empty 'READ' containers.
+    // To solve this, isHomescreen bool was created, so that a drag to an index that is
+    // beyond the scope of HomeScreen - that is, an index that would be 'READ' - will be
+    // automatically reassigned to the last acceptable HomeScreen view index of readingList
+    if (isHomescreen && newIndex > lengthWithoutRead)
+      newIndex = lengthWithoutRead;
+
     String newIndexType = _getTypeByIndex(newIndex);
     String oldIndexType = _getTypeByIndex(oldIndex);
     if (!_listBookController.isClosed) {
@@ -70,7 +88,6 @@ class BookListBloc {
         newIndex -= 1;
       }
 
-      final readingList = _listBookController.value;
       final ListItem book = readingList.removeAt(oldIndex);
       if (newIndexType == oldIndexType) {
         readingList.insert(newIndex, book);
@@ -150,7 +167,8 @@ class BookListBloc {
         }
       default:
         {
-          newIndex = readingListLength;
+          // Move read books to the top of the READ array
+          newIndex = readingListLength - _listCountItems['READ'];
           break;
         }
     }
