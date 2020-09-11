@@ -186,7 +186,9 @@ class BookListBloc {
         insertIndex -= 1;
       }
 
+      // Combine existing and new reco in ListItem book
       book.mergeRecos = oldBook.recos ?? [];
+
       // If type is NOT changing, then replace the book in the matchingIndex
       if (book.bookType == oldBook.bookType) {
         readingList.insert(matchingIndex, book);

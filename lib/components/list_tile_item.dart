@@ -53,7 +53,7 @@ class ListTileItem extends StatelessWidget {
           title: Text(item.titleWithSubtitle),
           subtitle: Text(item.bookAuthors[0]),
           trailing: RecoTileTrailing(item.bookRecos),
-          onTap: () => onPressTile(item.bookId),
+          onTap: () => onPressTile(context, item, tileIndex),
         ),
       ),
       Divider(

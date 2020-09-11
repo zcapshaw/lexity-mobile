@@ -89,24 +89,12 @@ class _ReadingListState extends State<ReadingList> {
         false; // In case the user dismisses the dialog by clicking away from it
   }
 
-  void _onPressTile(String bookId) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => BookDetailScreen(
-          bookId: bookId,
-        ),
-      ),
-    );
-  }
-
-  _navigateToBookDetails(BuildContext context, bookId) async {
+  _navigateToBookDetails(
+      BuildContext context, ListItem book, int listItemIndex) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailScreen(
-          bookId: bookId,
-        ),
+        builder: (context) => BookDetailScreen(book, listItemIndex),
       ),
     );
     setState(() {});
@@ -154,7 +142,7 @@ class _ReadingListState extends State<ReadingList> {
                         item: snapshot.data[index],
                         tileIndex: index,
                         enableSwipeRight: widget.enableSwipeRight,
-                        onPressTile: _onPressTile,
+                        onPressTile: _navigateToBookDetails,
                         deletePrompt: _promptUser,
                         typeChangeAction: _updateType,
                         key: ValueKey(snapshot.data[index].bookId),
