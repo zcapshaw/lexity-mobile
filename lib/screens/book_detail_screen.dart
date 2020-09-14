@@ -17,11 +17,14 @@ import '../components/list_tile_header_text.dart';
 import '../components/action_button.dart';
 import '../components/note_view.dart';
 import '../components/text_input_modal.dart';
+import '../components/book_list_bloc.dart';
 import '../services/list_service.dart';
 
 class BookDetailScreen extends StatefulWidget {
-  const BookDetailScreen({this.bookId});
-  final String bookId;
+  final ListItem book;
+  final int listItemIndex;
+
+  BookDetailScreen(this.book, this.listItemIndex);
 
   @override
   _BookDetailScreenState createState() => _BookDetailScreenState();
@@ -49,7 +52,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     Book book;
 
     final response = await listService.getListItemDetail(
-        user.accessToken, user.id, widget.bookId);
+        user.accessToken, user.id, widget.book.bookId);
 
     if (!response.error) {
       var bookJson = jsonDecode(response.data) as Map;
@@ -128,7 +131,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     final Note note = Note(comment: text);
     final List notes = [note.toJson()];
     ListItem item =
-        ListItem(userId: user.id, bookId: widget.bookId, notes: notes);
+        ListItem(userId: user.id, bookId: widget.book.bookId, notes: notes);
 
     final response =
         await listService.addOrUpdateListItem(user.accessToken, item);
@@ -212,16 +215,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   void _updateType() async {
-    final response = await listService.updateListItemType(
-        user.accessToken, user.id, widget.bookId, nextType);
-    if (response.error) {
-      print(response.errorCode);
-      print(response.errorMessage);
-    } else {
-      print('successfully updated type');
-      //pass 'true' so the snackbar message will show on the previous screen
-      Navigator.pop(context, true);
-    }
+    bookListBloc.changeBookType(
+        widget.book, user.appUser, widget.listItemIndex, nextType);
+    print('successfully updated type');
+    //pass 'true' so the snackbar message will show on the previous screen
+    Navigator.pop(context, true);
   }
 
   @override

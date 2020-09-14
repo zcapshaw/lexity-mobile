@@ -61,6 +61,23 @@ class ListService {
     );
   }
 
+  Future<APIResponse> deleteBook(accessToken, userId, listId) {
+    return http.delete(
+      API + '/list/delete/?userId=$userId&listId=$listId',
+      headers: {'access-token': accessToken},
+    ).then((res) {
+      if (res.statusCode == 200) {
+        return APIResponse<bool>(data: true);
+      }
+      return APIResponse<bool>(
+          error: true,
+          errorCode: res.statusCode,
+          errorMessage: res.reasonPhrase);
+    }).catchError(
+      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+    );
+  }
+
   Future<APIResponse> deleteNote(accessToken, userId, listId, noteId) {
     return http.delete(
       API + '/list/notes/delete/?userId=$userId&listId=$listId&noteId=$noteId',
@@ -105,6 +122,23 @@ class ListService {
       accessToken, userId, bookId) async {
     return http.get(
       API + '/list/detail/?userId=$userId&bookId=$bookId',
+      headers: {'access-token': accessToken},
+    ).then((res) {
+      if (res.statusCode == 200) {
+        return APIResponse<Object>(data: res.body);
+      }
+      return APIResponse<Object>(
+          error: true,
+          errorCode: res.statusCode,
+          errorMessage: res.reasonPhrase);
+    }).catchError(
+      (_) => APIResponse<Object>(error: true, errorMessage: 'An error occured'),
+    );
+  }
+
+  Future<APIResponse<Object>> getListItemSummary(accessToken, userId) async {
+    return http.get(
+      API + '/list/summary/?userId=$userId',
       headers: {'access-token': accessToken},
     ).then((res) {
       if (res.statusCode == 200) {

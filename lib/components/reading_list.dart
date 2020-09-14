@@ -1,33 +1,37 @@
-import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 
-import 'swipe_background.dart';
-import '../screens/book_detail_screen.dart';
-import '../models/reading_list_item.dart';
-import '../models/user.dart';
+import 'reorderable_list_w_physics.dart';
 import 'book_list_bloc.dart';
+import 'list_tile_header.dart';
+import 'list_tile_item.dart';
+import '../screens/book_detail_screen.dart';
+import '../models/list_item.dart';
+import '../models/user.dart';
 
 class ReadingList extends StatefulWidget {
   final List<String> types;
   final bool enableSwipeRight;
   final bool enableHeaders;
+  final bool
+      isHomescreen; // used for conditional indexing on homescreen (when there's no READ list)
 
-  ReadingList(
-      {@required this.types,
-      this.enableSwipeRight = true,
-      this.enableHeaders = true});
+  ReadingList({
+    @required this.types,
+    this.enableSwipeRight = true,
+    this.enableHeaders = true,
+    this.isHomescreen = false,
+  });
 
   @override
   _ReadingListState createState() => _ReadingListState();
 }
 
 class _ReadingListState extends State<ReadingList> {
-  List<ReadingListItem> readingList;
   UserModel user;
+  final ScrollController reorderScrollController = ScrollController();
 
   @override
   initState() {
@@ -36,68 +40,9 @@ class _ReadingListState extends State<ReadingList> {
     user = Provider.of<UserModel>(context, listen: false);
   }
 
-  //Construct a List of ListItems from the API response
-  Future<List<ReadingListItem>> _getReadingList() async {
-    final http.Response data = await http
-        .get('https://api.lexity.co/list/summary/?userId=${user.id}', headers: {
-      'access-token': '${user.accessToken}',
-    });
-    if (data.statusCode == 200) {
-      //Construct a 'readingList' array with a HeadingItem and BookItems
-      readingList = [];
-      var json = jsonDecode(data.body);
-
-      // Cycle through json by type, adding applicable headers
-      for (String type in widget.types) {
-        if (json[type] != null) {
-          int bookCount = json[type].length;
-          bookListBloc.addListCountItem(type, bookCount);
-          if (widget.enableHeaders) {
-            readingList.add(HeadingItem(_getHeaderText(type, bookCount)));
-          }
-          for (var b in json[type]) {
-            String title = b['title'];
-            if (b['subtitle'] != null) title = '$title: ${b['subtitle']}';
-            BookItem book = BookItem(title, b['authors'][0], b['cover'],
-                b['listId'], b['bookId'], b['type'], b['recos']);
-            readingList.add(book);
-          }
-        }
-      }
-    } else {
-      print(data.statusCode);
-      print(data.reasonPhrase);
-    }
-
-    return readingList;
-  }
-
-  // Construct Header text based on list type
-  String _getHeaderText(String type, int count) {
-    String headerText;
-    switch (type) {
-      case 'READING':
-        {
-          headerText = 'Reading ($count)';
-        }
-        break;
-      case 'TO_READ':
-        {
-          headerText = 'Want to read ($count)';
-        }
-        break;
-      default:
-        {
-          headerText = '';
-        }
-        break;
-    }
-    return headerText;
-  }
-
-  void _updateType(readingListItem) async {
+  void _updateType(ListItem book, int oldIndex) async {
     String newType;
-    switch (readingListItem.type) {
+    switch (book.bookType) {
       case 'READING':
         {
           newType = 'READ';
@@ -114,48 +59,10 @@ class _ReadingListState extends State<ReadingList> {
         }
         break;
     }
-    final jsonItem = jsonEncode({
-      'userId': user.id,
-      'bookId': readingListItem.bookId,
-      'type': newType,
-      'notes': [{}], // Temp while updating backend - should not be required
-      'labels': [], // Temp while updating backend - should not be required
-    });
-    print(jsonItem);
-    final http.Response res = await http.post(
-      'https://api.lexity.co/list/add',
-      headers: {
-        'access-token': '${user.accessToken}',
-        'Content-Type': 'application/json',
-      },
-      body: jsonItem,
-    );
-    if (res.statusCode == 200) {
-      // Calling setState will rebuild <Future> widget and trigger backend list query
-      setState(() {});
-      print('successfully update to type $newType');
-    } else {
-      print(res.statusCode);
-      print(res.reasonPhrase);
-      print(res.body);
-    }
+    bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
   }
 
-  Future<void> _deleteBook(listId) async {
-    final http.Response res = await http.delete(
-        'https://api.lexity.co/list/delete/?userId=${user.id}&listId=$listId',
-        headers: {
-          'access-token': '${user.accessToken}',
-        });
-    if (res.statusCode == 200) {
-      print('successfully deleted book');
-    } else {
-      print(res.statusCode);
-      print(res.reasonPhrase);
-    }
-  }
-
-  Future<bool> _promptUser(DismissDirection direction, book) async {
+  Future<bool> _promptUser(DismissDirection direction, ListItem book) async {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
@@ -165,7 +72,7 @@ class _ReadingListState extends State<ReadingList> {
                 child: Text("Delete"),
                 onPressed: () {
                   // Dismiss the dialog and also dismiss the swiped item
-                  _deleteBook(book.listId);
+                  bookListBloc.deleteBook(book, user.currentUser);
                   Navigator.of(context).pop(true);
                 },
               ),
@@ -182,13 +89,12 @@ class _ReadingListState extends State<ReadingList> {
         false; // In case the user dismisses the dialog by clicking away from it
   }
 
-  _navigateToBookDetails(BuildContext context, bookId) async {
+  _navigateToBookDetails(
+      BuildContext context, ListItem book, int listItemIndex) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailScreen(
-          bookId: bookId,
-        ),
+        builder: (context) => BookDetailScreen(book, listItemIndex),
       ),
     );
     setState(() {});
@@ -205,85 +111,49 @@ class _ReadingListState extends State<ReadingList> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: FutureBuilder(
-        future: _getReadingList(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.data == null) {
-            return Expanded(
-              child: Container(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              ),
-            );
-          }
-
-          return Flexible(
-            child: ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (snapshot.data[index] is HeadingItem) {
-                    return Column(
-                      children: <Widget>[
-                        ListTile(
-                          leading: snapshot.data[index].buildLeading(context),
-                          title: snapshot.data[index].buildTitle(context),
-                          subtitle: snapshot.data[index].buildSubtitle(context),
-                          trailing: snapshot.data[index].buildTrailing(context),
-                        ),
-                        Divider(
-                          height: 0,
-                        ),
-                      ],
-                    );
-                  }
-                  return Column(
-                    children: <Widget>[
-                      Dismissible(
+    return Flexible(
+      child: StreamBuilder(
+        stream: bookListBloc.listBooks, // Stream getter
+        initialData: [],
+        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+          return Container(
+            child: RefreshIndicator(
+              onRefresh: () => bookListBloc.refreshBackendBookList(
+                  user.accessToken, user.id),
+              child: CustomReorderableListView(
+                scrollController: reorderScrollController,
+                scrollDirection: Axis.vertical,
+                onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
+                    user.currentUser, oldIndex, newIndex, widget.isHomescreen),
+                children: List.generate(snapshot.data.length, (index) {
+                  if (snapshot.hasData && snapshot.data[index] != null) {
+                    if (snapshot.data[index] is ListItemHeader &&
+                        widget.enableHeaders &&
+                        widget.types
+                            .contains(snapshot.data[index].headerType)) {
+                      return ListTileHeader(
+                        type: snapshot.data[index].bookType,
                         key: UniqueKey(),
-                        confirmDismiss: (direction) {
-                          if (direction == DismissDirection.startToEnd) {
-                            return Future<bool>.value(true);
-                          } else if (direction == DismissDirection.endToStart) {
-                            return _promptUser(direction, snapshot.data[index]);
-                          }
-                        },
-                        direction: widget.enableSwipeRight
-                            ? DismissDirection.horizontal
-                            : DismissDirection.endToStart,
-                        background: SwipeRightBackground(
-                            type: snapshot.data[index].type),
-                        secondaryBackground: SwipeLeftBackground(),
-                        onDismissed: (direction) {
-                          if (direction == DismissDirection.startToEnd) {
-                            _updateType(snapshot.data[index]);
-                          } else {
-                            setState(() {
-                              readingList.remove(snapshot.data[index]);
-                            });
-                            Scaffold.of(context).showSnackBar(SnackBar(
-                                backgroundColor: Colors.grey[600],
-                                content: Text("Book deleted from list.")));
-                          }
-                        },
-                        child: ListTile(
-                          leading: snapshot.data[index].buildLeading(context),
-                          title: snapshot.data[index].buildTitle(context),
-                          subtitle: snapshot.data[index].buildSubtitle(context),
-                          trailing: snapshot.data[index].buildTrailing(context),
-                          onTap: () {
-                            _navigateToBookDetails(
-                                context, snapshot.data[index].bookId);
-                          },
-                        ),
-                      ),
-                      Divider(
-                        height: 0,
-                      ),
-                    ],
-                  );
+                      );
+                    } else if (snapshot.data[index] is ListItem &&
+                        snapshot.data[index] is! ListItemHeader &&
+                        widget.types.contains(snapshot.data[index].bookType)) {
+                      return ListTileItem(
+                        item: snapshot.data[index],
+                        tileIndex: index,
+                        enableSwipeRight: widget.enableSwipeRight,
+                        onPressTile: _navigateToBookDetails,
+                        deletePrompt: _promptUser,
+                        typeChangeAction: _updateType,
+                        key: ValueKey(snapshot.data[index].bookId),
+                      );
+                    } else {
+                      return Container(key: UniqueKey(), height: 0, width: 0);
+                    }
+                  }
                 }),
+              ),
+            ),
           );
         },
       ),

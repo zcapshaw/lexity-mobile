@@ -262,7 +262,9 @@ class _UserInfo extends StatelessWidget {
                             ),
                             children: <TextSpan>[
                               TextSpan(
-                                text: snapshot.data == 1 ? ' Book' : ' Books',
+                                text: snapshot.data['READ'] == 1
+                                    ? ' Book'
+                                    : ' Books',
                                 style: TextStyle(
                                     color: Colors.grey[800],
                                     fontWeight: FontWeight.w400),
