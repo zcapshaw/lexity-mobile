@@ -172,7 +172,10 @@ class _ReadingListState extends State<ReadingList> {
                     if (widget.isHomescreen &&
                         snapshot.data['READING'] == 0 &&
                         snapshot.data['TO_READ'] == 0) {
-                      return EmptyListIllustration();
+                      return EmptyListIllustration(widget.isHomescreen);
+                    } else if (!widget.isHomescreen &&
+                        snapshot.data['READ'] == 0) {
+                      return EmptyListIllustration(widget.isHomescreen);
                     } else {
                       return SizedBox.shrink();
                     }
