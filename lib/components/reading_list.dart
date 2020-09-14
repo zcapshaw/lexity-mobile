@@ -10,6 +10,7 @@ import 'list_tile_item.dart';
 import '../screens/book_detail_screen.dart';
 import '../models/list_item.dart';
 import '../models/user.dart';
+import '../components/empty_list_illustration.dart';
 
 class ReadingList extends StatefulWidget {
   final List<String> types;
@@ -116,44 +117,67 @@ class _ReadingListState extends State<ReadingList> {
         stream: bookListBloc.listBooks, // Stream getter
         initialData: [],
         builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return Container(
-            child: RefreshIndicator(
-              onRefresh: () => bookListBloc.refreshBackendBookList(
-                  user.accessToken, user.id),
-              child: CustomReorderableListView(
-                scrollController: reorderScrollController,
-                scrollDirection: Axis.vertical,
-                onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
-                    user.currentUser, oldIndex, newIndex, widget.isHomescreen),
-                children: List.generate(snapshot.data.length, (index) {
-                  if (snapshot.hasData && snapshot.data[index] != null) {
-                    if (snapshot.data[index] is ListItemHeader &&
-                        widget.enableHeaders &&
-                        widget.types
-                            .contains(snapshot.data[index].headerType)) {
-                      return ListTileHeader(
-                        type: snapshot.data[index].bookType,
-                        key: UniqueKey(),
-                      );
-                    } else if (snapshot.data[index] is ListItem &&
-                        snapshot.data[index] is! ListItemHeader &&
-                        widget.types.contains(snapshot.data[index].bookType)) {
-                      return ListTileItem(
-                        item: snapshot.data[index],
-                        tileIndex: index,
-                        enableSwipeRight: widget.enableSwipeRight,
-                        onPressTile: _navigateToBookDetails,
-                        deletePrompt: _promptUser,
-                        typeChangeAction: _updateType,
-                        key: ValueKey(snapshot.data[index].bookId),
-                      );
-                    } else {
-                      return Container(key: UniqueKey(), height: 0, width: 0);
-                    }
-                  }
-                }),
+          return Column(
+            children: <Widget>[
+              Flexible(
+                child: RefreshIndicator(
+                  onRefresh: () => bookListBloc.refreshBackendBookList(
+                      user.accessToken, user.id),
+                  child: CustomReorderableListView(
+                    scrollController: reorderScrollController,
+                    scrollDirection: Axis.vertical,
+                    onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
+                        user.currentUser,
+                        oldIndex,
+                        newIndex,
+                        widget.isHomescreen),
+                    children: List.generate(snapshot.data.length, (index) {
+                      if (snapshot.hasData && snapshot.data[index] != null) {
+                        if (snapshot.data[index] is ListItemHeader &&
+                            widget.enableHeaders &&
+                            widget.types
+                                .contains(snapshot.data[index].headerType)) {
+                          return ListTileHeader(
+                            type: snapshot.data[index].bookType,
+                            key: UniqueKey(),
+                          );
+                        } else if (snapshot.data[index] is ListItem &&
+                            snapshot.data[index] is! ListItemHeader &&
+                            widget.types
+                                .contains(snapshot.data[index].bookType)) {
+                          return ListTileItem(
+                            item: snapshot.data[index],
+                            tileIndex: index,
+                            enableSwipeRight: widget.enableSwipeRight,
+                            onPressTile: _navigateToBookDetails,
+                            deletePrompt: _promptUser,
+                            typeChangeAction: _updateType,
+                            key: ValueKey(snapshot.data[index].bookId),
+                          );
+                        } else {
+                          return Container(
+                              key: UniqueKey(), height: 0, width: 0);
+                        }
+                      }
+                    }),
+                  ),
+                ),
               ),
-            ),
+              StreamBuilder(
+                  stream: bookListBloc.listCount, // Stream getter
+                  initialData: {},
+                  builder:
+                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                    // conditionally show empty list illustration if reading list is empty
+                    if (widget.isHomescreen &&
+                        snapshot.data['READING'] == 0 &&
+                        snapshot.data['TO_READ'] == 0) {
+                      return EmptyListIllustration();
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  }),
+            ],
           );
         },
       ),
