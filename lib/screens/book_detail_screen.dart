@@ -96,7 +96,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           nextType = 'READING';
           break;
         case "READING":
-          actionText = 'Mark As Finished';
+          actionText = 'Mark Finished';
           actionIcon = Icons.done;
           nextType = 'READ';
           break;
@@ -359,14 +359,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                               padding: const EdgeInsets.only(top: 10.0),
                               child: Divider(),
                             ),
-                            ExpandableDescription(
-                              description: htmlDescription,
-                              title: 'Description',
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 10.0),
-                              child: Divider(),
-                            ),
+                            if (htmlDescription != null)
+                              ExpandableDescription(
+                                description: htmlDescription,
+                                title: 'Description',
+                              ),
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
                               child: ListTileHeaderText('Notes'),
@@ -416,43 +413,52 @@ class ExpandableDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ExpandablePanel(
-      header: ListTileHeaderText(title),
-      collapsed: ExpandableButton(
-        child: ShaderMask(
-          shaderCallback: (rect) {
-            return LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.black, Colors.transparent],
-            ).createShader(Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
-          },
-          blendMode: BlendMode.dstIn,
-          child: Container(
-            height: 100,
+    return Column(
+      children: <Widget>[
+        ExpandablePanel(
+          header: ListTileHeaderText(title),
+          collapsed: ExpandableButton(
+            child: ShaderMask(
+              shaderCallback: (rect) {
+                return LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.black, Colors.transparent],
+                ).createShader(
+                    Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
+              },
+              blendMode: BlendMode.dstIn,
+              child: Container(
+                height: 100,
+                child: Html(
+                  data: description ?? '',
+                  style: {
+                    "p": Style(
+                      padding: EdgeInsets.only(top: 10),
+                      margin: EdgeInsets.only(top: 10),
+                    ),
+                  },
+                ),
+              ),
+            ),
+          ),
+          expanded: ExpandableButton(
             child: Html(
-              data: description,
+              data: description ?? '',
               style: {
                 "p": Style(
                   padding: EdgeInsets.only(top: 10),
                   margin: EdgeInsets.only(top: 10),
-                ),
+                )
               },
             ),
           ),
         ),
-      ),
-      expanded: ExpandableButton(
-        child: Html(
-          data: description,
-          style: {
-            "p": Style(
-              padding: EdgeInsets.only(top: 10),
-              margin: EdgeInsets.only(top: 10),
-            )
-          },
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Divider(),
         ),
-      ),
+      ],
     );
   }
 }
