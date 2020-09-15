@@ -42,23 +42,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     authNav(context);
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Container(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.15),
-                child: Text(
-                  'Lexity.',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline3,
-                ),
-              ),
-            ],
-          ),
+          child: Center(child: Image.asset('assets/180.png')),
         ),
       ),
     );

@@ -14,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/bookSearch');
+          Navigator.pushNamed(context, '/splash');
         },
         child: Icon(Icons.add),
       ),
