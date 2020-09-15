@@ -96,7 +96,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           nextType = 'READING';
           break;
         case "READING":
-          actionText = 'Mark As Finished';
+          actionText = 'Mark Finished';
           actionIcon = Icons.done;
           nextType = 'READ';
           break;
