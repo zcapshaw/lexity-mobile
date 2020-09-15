@@ -24,9 +24,12 @@ Tap the + button to add some books.'''
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.subtitle2),
           ),
-          Container(
-            padding: EdgeInsets.fromLTRB(110, 0, 110, 110),
-            child: Image.asset('assets/undraw_note_list.png'),
+          Flexible(
+            flex: 1,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 100),
+              child: Image.asset('assets/undraw_note_list.png'),
+            ),
           ),
         ],
       ),
