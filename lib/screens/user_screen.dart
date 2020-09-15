@@ -181,7 +181,7 @@ class _UserInfo extends StatelessWidget {
                         builder: (BuildContext context) => _UserMenu(),
                       )
                     },
-                    child: Icon(Icons.menu),
+                    child: Icon(Icons.menu, color: Colors.grey[700]),
                   ),
                 ),
               ],
@@ -343,7 +343,7 @@ class _ToggleButtons extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: listStatus[0] ? Colors.grey[800] : Colors.transparent,
+                  color: listStatus[0] ? Colors.grey[700] : Colors.transparent,
                   width: 1.5,
                 ),
               ),
@@ -356,7 +356,7 @@ class _ToggleButtons extends StatelessWidget {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: listStatus[1] ? Colors.grey[800] : Colors.transparent,
+                  color: listStatus[1] ? Colors.grey[700] : Colors.transparent,
                   width: 1.5,
                 ),
               ),
@@ -372,7 +372,7 @@ class _ToggleButtons extends StatelessWidget {
         //borderRadius: BorderRadius.circular(4),
         fillColor: Colors.transparent,
         //selectedBorderColor: Colors.teal,
-        selectedColor: Colors.grey[800],
+        selectedColor: Colors.grey[700],
         color: Colors.grey[500],
         constraints: BoxConstraints(minHeight: 30, minWidth: 110),
       ),

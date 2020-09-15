@@ -9,7 +9,13 @@ import 'package:lexity_mobile/screens/add_book_screen.dart';
 import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/models/book.dart';
 
+enum Origin { fab, navSearch }
+
 class BookSearchScreen extends StatefulWidget {
+  final Origin origin;
+
+  BookSearchScreen({this.origin});
+
   @override
   _BookSearchScreenState createState() => _BookSearchScreenState();
 }
@@ -144,14 +150,17 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                       SizedBox(
                         width: 5,
                       ),
-                      FlatButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Cancel'),
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
-                      )
+                      //this button should not be shown on main_screen under search
+                      //it should only be shown in the add a book flow
+                      if (widget.origin == Origin.fab)
+                        FlatButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text('Cancel'),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                        )
                     ],
                   ),
                 ),

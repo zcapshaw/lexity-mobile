@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:lexity_mobile/components/reading_list.dart';
+import 'package:lexity_mobile/screens/book_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
@@ -14,7 +15,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/splash');
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => BookSearchScreen(origin: Origin.fab)));
         },
         child: Icon(Icons.add),
       ),
