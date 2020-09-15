@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:lexity_mobile/screens/home_screen.dart';
 import 'package:lexity_mobile/screens/user_screen.dart';
+import 'book_search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
@@ -12,7 +13,13 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  List<Widget> _widgetScreens = [HomeScreen(), HomeScreen(), UserScreen()];
+  List<Widget> _widgetScreens = [
+    HomeScreen(),
+    BookSearchScreen(
+      origin: Origin.navSearch,
+    ),
+    UserScreen()
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
