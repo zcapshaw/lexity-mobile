@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lexity_mobile/features/book_details/view/book_details_page.dart';
 import 'package:provider/provider.dart';
 
 import 'reorderable_list_w_physics.dart';
@@ -95,7 +96,8 @@ class _ReadingListState extends State<ReadingList> {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailScreen(book, listItemIndex),
+        // builder: (context) => BookDetailScreen(book, listItemIndex),
+        builder: (context) => BookDetailsPage(),
       ),
     );
     setState(() {});

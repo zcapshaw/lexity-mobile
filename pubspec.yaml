@@ -42,6 +42,8 @@ dependencies:
   rxdart: ^0.24.1
   get_it: ^4.0.4
   expandable: ^4.1.4
+  bloc: ^6.0.3
+  flutter_bloc: ^6.0.5
 
 dev_dependencies:
   json_serializable: ^3.3.0
