@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lexity_mobile/services/list_service.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:get_it/get_it.dart';
@@ -13,7 +14,7 @@ import 'screens/login_screen.dart';
 import 'screens/user_screen.dart';
 import 'screens/splash_screen.dart';
 import 'models/user.dart';
-import 'services/list_service.dart';
+import 'blocs/blocs.dart';
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => ListService());
@@ -34,7 +35,18 @@ Future main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return BlocProvider<BookDetailsCubit>(
+      create: (context) => BookDetailsCubit(),
+      child: MaterialApp(
+        initialRoute: '/splash',
+        routes: {
+          '/': (context) => MainScreen(),
+          '/home': (context) => HomeScreen(),
+          '/user': (context) => UserScreen(),
+          '/login': (context) => LoginScreen(),
+          '/splash': (context) => SplashScreen(),
+          '/bookSearch': (context) => BookSearchScreen(),
+        },
         theme: ThemeData(
           primarySwatch: Colors.teal,
           appBarTheme: AppBarTheme(
@@ -87,14 +99,7 @@ class MyApp extends StatelessWidget {
           ),
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: '/splash',
-        routes: {
-          '/': (context) => MainScreen(),
-          '/home': (context) => HomeScreen(),
-          '/user': (context) => UserScreen(),
-          '/login': (context) => LoginScreen(),
-          '/splash': (context) => SplashScreen(),
-          '/bookSearch': (context) => BookSearchScreen(),
-        });
+      ),
+    );
   }
 }

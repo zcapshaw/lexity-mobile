@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:lexity_mobile/features/book_details/view/book_details_page.dart';
+import 'package:lexity_mobile/screens/book_details_screen.dart';
+import '../blocs/blocs.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'reorderable_list_w_physics.dart';
 import 'book_list_bloc.dart';
 import 'list_tile_header.dart';
 import 'list_tile_item.dart';
-import '../screens/book_detail_screen.dart';
+import '../screens/book_detail_screen_old.dart';
 import '../models/list_item.dart';
 import '../models/user.dart';
 import '../components/empty_list_illustration.dart';
@@ -93,11 +95,12 @@ class _ReadingListState extends State<ReadingList> {
 
   _navigateToBookDetails(
       BuildContext context, ListItem book, int listItemIndex) async {
+    context.bloc<BookDetailsCubit>().viewBookDetails(book);
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
         // builder: (context) => BookDetailScreen(book, listItemIndex),
-        builder: (context) => BookDetailsPage(),
+        builder: (context) => BookDetailsScreen(),
       ),
     );
     setState(() {});

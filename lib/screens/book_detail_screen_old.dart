@@ -20,17 +20,17 @@ import '../components/text_input_modal.dart';
 import '../components/book_list_bloc.dart';
 import '../services/list_service.dart';
 
-class BookDetailScreen extends StatefulWidget {
+class BookDetailScreenOld extends StatefulWidget {
   final ListItem book;
   final int listItemIndex;
 
-  BookDetailScreen(this.book, this.listItemIndex);
+  BookDetailScreenOld(this.book, this.listItemIndex);
 
   @override
-  _BookDetailScreenState createState() => _BookDetailScreenState();
+  _BookDetailScreenOldState createState() => _BookDetailScreenOldState();
 }
 
-class _BookDetailScreenState extends State<BookDetailScreen> {
+class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
   UserModel user;
   String htmlDescription = '';
   List<Note> notes = [];
