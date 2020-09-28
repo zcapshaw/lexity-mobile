@@ -8,6 +8,14 @@ class BookDetailsCubit extends Cubit<BookDetailsState> {
   BookDetailsCubit() : super(BookDetailsLoading());
 
   void viewBookDetails(ListItem book) {
-    emit(BookDetailsReading(book));
+    if (book.type == 'READING') {
+      emit(BookDetailsReading(book));
+    } else if (book.type == 'TO_READ') {
+      emit(BookDetailsWantToRead(book));
+    } else if (book.type == 'READ') {
+      emit(BookDetailsFinished(book));
+    } else {
+      emit(BookDetailsUnlisted(book));
+    }
   }
 }

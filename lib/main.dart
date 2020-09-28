@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lexity_mobile/blocs/simple_bloc_observer.dart';
 import 'package:lexity_mobile/services/list_service.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +23,7 @@ void setupLocator() {
 
 Future main() async {
   await DotEnv().load('.env');
-  Bloc.observer = BlocObserver();
+  Bloc.observer = SimpleBlocObserver();
   setupLocator();
   runApp(
     ChangeNotifierProvider(

@@ -56,3 +56,6 @@ class ListItemHeader extends ListItem {
 
   String get headerType => this.type;
 }
+
+// we should consider changing the type of 'type' from string to enum
+enum BookType { READING, READ, TO_READ }

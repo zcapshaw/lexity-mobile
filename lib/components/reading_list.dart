@@ -95,7 +95,9 @@ class _ReadingListState extends State<ReadingList> {
 
   _navigateToBookDetails(
       BuildContext context, ListItem book, int listItemIndex) async {
+    //dispatch a function to update BookDetailsCubit state
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
+    //Navigate to book details screen
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
