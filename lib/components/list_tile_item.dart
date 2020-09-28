@@ -49,9 +49,12 @@ class ListTileItem extends StatelessWidget {
           }
         },
         child: ListTile(
-          leading: Image.network(item.bookCover),
-          title: Text(item.titleWithSubtitle),
-          subtitle: Text(item.bookAuthors[0]),
+          leading: Hero(
+            tag: '${item.bookCover}__heroTag',
+            child: Image.network(item.bookCover ?? ''),
+          ),
+          title: Text(item.titleWithSubtitle ?? ''),
+          subtitle: Text(item.bookAuthors[0] ?? ''),
           trailing: RecoTileTrailing(item.bookRecos),
           onTap: () => onPressTile(context, item, tileIndex),
         ),

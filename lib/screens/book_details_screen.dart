@@ -19,7 +19,6 @@ class BookDetailsScreen extends StatelessWidget {
       ),
       body: BlocBuilder<BookDetailsCubit, BookDetailsState>(
         builder: (context, state) {
-          print(state.book.cover == '');
           if (state is BookDetailsLoading) {
             return Center(
               child: CircularProgressIndicator(),
@@ -35,7 +34,7 @@ class BookDetailsScreen extends StatelessWidget {
                   parent: ClampingScrollPhysics(),
                 ),
                 children: <Widget>[
-                  buildCoverArt(state?.book?.cover, coverArtHeight),
+                  buildCoverArt(state.book.cover ?? '', coverArtHeight),
                   Container(
                     padding:
                         EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
@@ -79,7 +78,8 @@ class BookDetailsScreen extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   heightFactor: 0.85,
                   widthFactor: 1.0,
-                  child: Container(
+                  child: Hero(
+                    tag: '${imageUrl}__heroTag',
                     child: Image.network(
                       imageUrl,
                       fit: BoxFit.contain,
