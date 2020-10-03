@@ -5,7 +5,7 @@ import 'reco_tile_trailing.dart';
 import '../models/list_item.dart';
 
 class ListTileItem extends StatelessWidget {
-  final ListItem item;
+  final ListedBook item;
   final int tileIndex;
   final bool enableSwipeRight;
   final Function onPressTile;
@@ -50,12 +50,12 @@ class ListTileItem extends StatelessWidget {
         },
         child: ListTile(
           leading: Hero(
-            tag: '${item.bookCover}__heroTag',
-            child: Image.network(item.bookCover ?? ''),
+            tag: '${item.cover}__heroTag',
+            child: Image.network(item.cover ?? ''),
           ),
           title: Text(item.titleWithSubtitle ?? ''),
-          subtitle: Text(item.bookAuthors[0] ?? ''),
-          trailing: RecoTileTrailing(item.bookRecos),
+          subtitle: Text(item.authorsAsString ?? ''),
+          trailing: RecoTileTrailing(item.recos),
           onTap: () => onPressTile(context, item, tileIndex),
         ),
       ),

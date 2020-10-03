@@ -4,9 +4,9 @@ import 'package:lexity_mobile/blocs/book_details/book_details_cubit.dart';
 import 'package:lexity_mobile/models/list_item.dart';
 
 void main() {
-  ListItem readingBook = ListItem(type: 'READING');
-  ListItem wantToReadBook = ListItem(type: 'TO_READ');
-  ListItem readBook = ListItem(type: 'READ');
+  ListedBook readingBook = ListedBook(type: 'READING');
+  ListedBook wantToReadBook = ListedBook(type: 'TO_READ');
+  ListedBook readBook = ListedBook(type: 'READ');
 
   group('BookDetailsCubit', () {
     test('initial state is loading', () {

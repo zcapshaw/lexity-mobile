@@ -21,7 +21,7 @@ import '../components/book_list_bloc.dart';
 import '../services/list_service.dart';
 
 class BookDetailScreenOld extends StatefulWidget {
-  final ListItem book;
+  final ListedBook book;
   final int listItemIndex;
 
   BookDetailScreenOld(this.book, this.listItemIndex);
@@ -113,11 +113,11 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
       book = Book(
         title: bookJson['title'],
         subtitle: bookJson['subtitle'],
-        author: bookJson['authors'][0],
+        authors: bookJson['authors'],
         thumbnail: bookJson['cover'],
         listId: bookJson['listId'],
         genre: genre,
-        listType: bookJson['type'],
+        type: bookJson['type'],
       );
       listId = book.listId;
     } else {
@@ -130,8 +130,8 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
   void _addNote(text) async {
     final Note note = Note(comment: text);
     final List notes = [note.toJson()];
-    ListItem item =
-        ListItem(userId: user.id, bookId: widget.book.bookId, notes: notes);
+    ListedBook item =
+        ListedBook(userId: user.id, bookId: widget.book.bookId, notes: notes);
 
     final response =
         await listService.addOrUpdateListItem(user.accessToken, item);

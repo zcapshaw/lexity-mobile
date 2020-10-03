@@ -17,21 +17,21 @@ class BookDetailsLoading extends BookDetailsState {
 
 //The following 4 states allow the screen to conditionally show correct action buttons
 class BookDetailsReading extends BookDetailsState {
-  final ListItem book;
+  final ListedBook book;
   const BookDetailsReading(this.book);
 }
 
 class BookDetailsWantToRead extends BookDetailsState {
-  final ListItem book;
+  final ListedBook book;
   const BookDetailsWantToRead(this.book);
 }
 
 class BookDetailsFinished extends BookDetailsState {
-  final ListItem book;
+  final ListedBook book;
   const BookDetailsFinished(this.book);
 }
 
 class BookDetailsUnlisted extends BookDetailsState {
-  final ListItem book;
+  final ListedBook book;
   const BookDetailsUnlisted(this.book);
 }

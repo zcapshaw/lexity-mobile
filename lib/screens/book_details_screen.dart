@@ -46,7 +46,7 @@ class BookDetailsScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         buildTitle(state.book.titleWithSubtitle, context),
-                        buildAuthors(state.book.authors, context),
+                        buildAuthors(state.book.authorsAsString, context),
                         //TODO: add Genre to ListItem model and pass genre in next line
                         buildGenre('Fiction'),
                         Row(
@@ -131,10 +131,8 @@ class BookDetailsScreen extends StatelessWidget {
   }
 
   Widget buildAuthors(authors, context) {
-    String authorsString = authors.join(', ');
-
     return Text(
-      authorsString,
+      authors,
       style: Theme.of(context).textTheme.subtitle1,
     );
   }

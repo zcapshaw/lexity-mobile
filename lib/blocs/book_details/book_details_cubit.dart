@@ -8,7 +8,11 @@ part 'book_details_state.dart';
 class BookDetailsCubit extends Cubit<BookDetailsState> {
   BookDetailsCubit() : super(BookDetailsLoading());
 
-  void viewBookDetails(ListItem book) {
+  void closeBookDetails() {
+    emit(BookDetailsLoading());
+  }
+
+  void viewBookDetails(ListedBook book) {
     if (book.type == 'READING') {
       emit(BookDetailsReading(book));
     } else if (book.type == 'TO_READ') {

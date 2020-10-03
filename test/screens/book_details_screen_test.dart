@@ -40,7 +40,7 @@ void main() {
 
     testWidgets('renders properly when a listed book is provided',
         (WidgetTester tester) async {
-      ListItem testBook = ListItem(
+      ListedBook testBook = ListedBook(
         title: 'Sapiens',
         authors: ['Yuval Noah Harrari'],
       );

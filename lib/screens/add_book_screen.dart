@@ -57,19 +57,19 @@ class _AddBookScreenState extends State<AddBookScreen> {
         note['comment'] != null && note['comment'].toString().length > 0 ||
         note['sourceName'] != null && note['sourceName'].toString().length > 0);
 
-    ListItem item = ListItem(
+    ListedBook item = ListedBook(
         userId: user.id,
         bookId: widget.bookId,
         type: type,
         labels: labels,
         notes: notes);
 
-    ListItem book = ListItem(
+    ListedBook book = ListedBook(
       bookId: widget.bookId,
-      title: widget.book.bookTitle,
-      subtitle: widget.book.bookSubtitle,
-      authors: widget.book.bookAuthors,
-      cover: widget.book.bookCover,
+      title: widget.book.title,
+      subtitle: widget.book.subtitle,
+      authors: widget.book.authors,
+      cover: widget.book.thumbnail,
       type: listType,
       recos: recoSource != null ? newReco : [],
     );
@@ -125,7 +125,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               title: Text(widget.book.titleWithSubtitle),
-              subtitle: Text(widget.book.author),
+              subtitle: Text(widget.book.authorsAsString),
               leading: Image.network(widget.book.thumbnail),
             ),
             Divider(),
