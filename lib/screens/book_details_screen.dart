@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
+import '../components/components.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   @override
@@ -41,7 +43,31 @@ class BookDetailsScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        buildTitle(state.book.title ?? '', context),
+                        buildTitle(state.book.titleWithSubtitle, context),
+                        buildAuthors(state.book.authors, context),
+                        //TODO: add Genre to ListItem model and pass genre in next line
+                        buildGenre('Fiction'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            if (state is BookDetailsWantToRead)
+                              startReadingButton(),
+                            if (state is BookDetailsFinished) readAgainButton(),
+                            if (state is BookDetailsReading)
+                              markFinishedButton(),
+                            if (state is BookDetailsUnlisted) addToListButton(),
+                            ActionButton(
+                              icon: Icons.comment,
+                              labelText: 'Add Note',
+                              callback: () {},
+                            ),
+                            ActionButton(
+                              icon: CupertinoIcons.share_up,
+                              labelText: 'Share Book',
+                              callback: () {},
+                            ),
+                          ],
+                        )
                       ],
                     ),
                   ),
@@ -92,13 +118,75 @@ class BookDetailsScreen extends StatelessWidget {
           );
   }
 
-  Widget buildTitle(text, context) {
+  Widget buildTitle(title, context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Text(
-        text,
+        title,
         style: Theme.of(context).textTheme.headline1,
       ),
+    );
+  }
+
+  Widget buildAuthors(authors, context) {
+    String authorsString = authors.join(', ');
+
+    return Text(
+      authorsString,
+      style: Theme.of(context).textTheme.subtitle1,
+    );
+  }
+
+  Widget buildGenre(genre) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10.0),
+      child: Chip(
+        label: Text(genre.toUpperCase()),
+        backgroundColor: Colors.teal[700],
+        labelPadding: EdgeInsets.symmetric(horizontal: 10),
+        labelStyle: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget startReadingButton() {
+    return ActionButton(
+      icon: Icons.play_arrow,
+      labelText: 'Start Reading',
+      callback: () {},
+    );
+  }
+
+  Widget markFinishedButton() {
+    return ActionButton(
+      icon: Icons.done,
+      labelText: 'Mark Finished',
+      callback: () {},
+    );
+  }
+
+  Widget readAgainButton() {
+    return ActionButton(
+      icon: Icons.replay,
+      labelText: 'Read Again',
+      callback: () {},
+    );
+  }
+
+  Widget addToListButton() {
+    return ActionButton(
+      icon: Icons.add,
+      labelText: 'Add To My List',
+      callback: () {},
     );
   }
 }
