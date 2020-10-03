@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
+import 'package:lexity_mobile/utils/test_keys.dart';
 import '../components/components.dart';
 
 class BookDetailsScreen extends StatelessWidget {
@@ -23,6 +24,7 @@ class BookDetailsScreen extends StatelessWidget {
         builder: (context, state) {
           if (state is BookDetailsLoading) {
             return Center(
+              key: TestKeys.bookDetailsLoadingSpinner,
               child: CircularProgressIndicator(),
             );
           } else if (state.book != null) {

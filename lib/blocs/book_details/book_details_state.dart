@@ -1,8 +1,11 @@
 part of 'book_details_cubit.dart';
 
 @immutable
-abstract class BookDetailsState {
+abstract class BookDetailsState extends Equatable {
   const BookDetailsState();
+
+  @override
+  List<Object> get props => [];
 
   get book => null;
 }
@@ -32,6 +35,3 @@ class BookDetailsUnlisted extends BookDetailsState {
   final ListItem book;
   const BookDetailsUnlisted(this.book);
 }
-
-//Note I omitted some boilerplate from the Equatable.dart library that was shown in bloclibrary tutorials
-//we may want to revisit if that code is needed if we see buggy behavior with state changes
