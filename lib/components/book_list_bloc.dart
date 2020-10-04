@@ -26,27 +26,32 @@ class BookListBloc {
       if (!_listBookController.isClosed) {
         List<ListedBook> readingList = [];
 
-        // Update list counts based on backend array lengths
-        int readingCount = bookJson['READING'].length;
-        int toReadCount = bookJson['TO_READ'].length;
-        int readCount = bookJson['READ'].length;
-        addListCountItem('READING', readingCount);
-        addListCountItem('TO_READ', toReadCount);
-        addListCountItem('READ', readCount);
+        // Create lists by type
+        List userReadingList =
+            bookJson.where((b) => b['type'] == 'READING').toList();
+        List userToReadList =
+            bookJson.where((b) => b['type'] == 'TO_READ').toList();
+        List userReadList = bookJson.where((b) => b['type'] == 'READ').toList();
+        print(
+            'reading: ${userReadingList.length}, to read: ${userToReadList.length}, read: ${userReadList.length}');
+
+        addListCountItem('READING', userReadingList.length);
+        addListCountItem('TO_READ', userToReadList.length);
+        addListCountItem('READ', userReadList.length);
 
         // Create ListedBooks fromJson and add to readingList
         readingList.add(ListItemHeader('READING'));
-        for (var item in bookJson['READING']) {
+        for (var item in userReadingList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
         readingList.add(ListItemHeader('TO_READ'));
-        for (var item in bookJson['TO_READ']) {
+        for (var item in userToReadList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
         readingList.add(ListItemHeader('READ'));
-        for (var item in bookJson['READ']) {
+        for (var item in userReadList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
         }

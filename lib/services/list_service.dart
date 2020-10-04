@@ -138,10 +138,11 @@ class ListService {
 
   Future<APIResponse<Object>> getListItemSummary(accessToken, userId) async {
     return http.get(
-      API + '/list/summary/?userId=$userId',
+      API + '/list/book/?userId=$userId',
       headers: {'access-token': accessToken},
     ).then((res) {
       if (res.statusCode == 200) {
+        print(res.body);
         return APIResponse<Object>(data: res.body);
       }
       return APIResponse<Object>(
