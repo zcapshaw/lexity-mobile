@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -51,6 +52,18 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Future<void> _launchInBrowser(String url) async {
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: false,
+        forceWebView: false,
+      );
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
   Future<void> _retrieveAndPopulateUser(
       String userId, String accessToken) async {
     final http.Response res = await http
@@ -84,7 +97,13 @@ class _LoginScreenState extends State<LoginScreen> {
         await http.get('https://api.lexity.co/auth/twitter/signin');
     if (res.statusCode == 200) {
       final Map decoded = jsonDecode(res.body);
-      _launchInWebViewOrVC(decoded['url']);
+      if (Platform.isIOS) {
+        _launchInWebViewOrVC(decoded['url']);
+      } else if (Platform.isAndroid) {
+        _launchInBrowser(decoded['url']);
+      } else {
+        print('Warning: Platform is NOT iOS or Android');
+      }
     } else {
       print('Error with Twitter signin - status: ${res.statusCode}');
       print(res.reasonPhrase);
