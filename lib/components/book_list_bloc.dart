@@ -5,49 +5,54 @@ import 'package:rxdart/rxdart.dart';
 import 'package:get_it/get_it.dart';
 
 import '../services/list_service.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 
 class BookListBloc {
   ListService get listService => GetIt.I<ListService>();
   final BehaviorSubject<Map<String, int>> _listCountController =
       BehaviorSubject<Map<String, int>>();
-  final BehaviorSubject<List<ListItem>> _listBookController =
-      BehaviorSubject<List<ListItem>>();
+  final BehaviorSubject<List<ListedBook>> _listBookController =
+      BehaviorSubject<List<ListedBook>>();
 
   final Map<String, int> _listCountItems = {};
 
   Stream<Map<String, int>> get listCount => _listCountController.stream;
-  Stream<List<ListItem>> get listBooks => _listBookController.stream;
+  Stream<List<ListedBook>> get listBooks => _listBookController.stream;
 
   Future<void> refreshBackendBookList(String accessToken, String userId) async {
     final response = await listService.getListItemSummary(accessToken, userId);
     if (!response.error) {
       var bookJson = jsonDecode(response.data);
       if (!_listBookController.isClosed) {
-        List<ListItem> readingList = [];
+        List<ListedBook> readingList = [];
 
-        // Update list counts based on backend array lengths
-        int readingCount = bookJson['READING'].length;
-        int toReadCount = bookJson['TO_READ'].length;
-        int readCount = bookJson['READ'].length;
-        addListCountItem('READING', readingCount);
-        addListCountItem('TO_READ', toReadCount);
-        addListCountItem('READ', readCount);
+        // Create lists by type
+        List userReadingList =
+            bookJson.where((b) => b['type'] == 'READING').toList();
+        List userToReadList =
+            bookJson.where((b) => b['type'] == 'TO_READ').toList();
+        List userReadList = bookJson.where((b) => b['type'] == 'READ').toList();
+        print(
+            'reading: ${userReadingList.length}, to read: ${userToReadList.length}, read: ${userReadList.length}');
 
-        // Create ListItems fromJson and add to readingList
+        addListCountItem('READING', userReadingList.length);
+        addListCountItem('TO_READ', userToReadList.length);
+        addListCountItem('READ', userReadList.length);
+
+        // Create ListedBooks fromJson and add to readingList
         readingList.add(ListItemHeader('READING'));
-        for (var item in bookJson['READING']) {
-          var book = ListItem.fromJson(item);
+        for (var item in userReadingList) {
+          var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
         readingList.add(ListItemHeader('TO_READ'));
-        for (var item in bookJson['TO_READ']) {
-          var book = ListItem.fromJson(item);
+        for (var item in userToReadList) {
+          var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
         readingList.add(ListItemHeader('READ'));
-        for (var item in bookJson['READ']) {
-          var book = ListItem.fromJson(item);
+        for (var item in userReadList) {
+          var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
 
@@ -88,7 +93,7 @@ class BookListBloc {
         newIndex -= 1;
       }
 
-      final ListItem book = readingList.removeAt(oldIndex);
+      final ListedBook book = readingList.removeAt(oldIndex);
       if (newIndexType == oldIndexType) {
         readingList.insert(newIndex, book);
         _listBookController.sink.add(readingList);
@@ -99,7 +104,7 @@ class BookListBloc {
         _listBookController.sink.add(readingList);
         try {
           listService.updateListItemType(
-              user.accessToken, user.id, book.id, newIndexType);
+              user.accessToken, user.id, book.bookId, newIndexType);
         } catch (err) {
           print('Could not update list type on the backend: $err');
         }
@@ -132,17 +137,18 @@ class BookListBloc {
     addListCountItem(prevType, --_listCountItems[prevType]);
   }
 
-  void changeBookType(ListItem book, User user, int oldIndex, String newType) {
+  void changeBookType(
+      ListedBook book, User user, int oldIndex, String newType) {
     final readingList = _listBookController.value;
-    final String prevType = book.bookType;
-    final ListItem item = readingList.removeAt(oldIndex);
+    final String prevType = book.type;
+    final ListedBook item = readingList.removeAt(oldIndex);
     item.changeType = newType;
     readingList.insert(_getTypeChangeIndex(newType), item);
     _listBookController.sink.add(readingList);
     _typeChangeCounter(newType, prevType);
     try {
       listService.updateListItemType(
-          user.accessToken, user.id, book.id, newType);
+          user.accessToken, user.id, book.bookId, newType);
     } catch (err) {
       print('Could not update list type on the backend: $err');
     }
@@ -175,13 +181,13 @@ class BookListBloc {
     return newIndex;
   }
 
-  void addBook(ListItem list, ListItem book, String accessToken) {
+  void addBook(ListedBook list, ListedBook book, String accessToken) {
     final readingList = _listBookController.value;
     final int matchingIndex = _getIndexIfExists(book.bookId);
-    int insertIndex = _getTypeChangeIndex(book.bookType);
+    int insertIndex = _getTypeChangeIndex(book.type);
 
     if (matchingIndex >= 0) {
-      ListItem oldBook = readingList.removeAt(matchingIndex);
+      ListedBook oldBook = readingList.removeAt(matchingIndex);
       if (insertIndex > matchingIndex) {
         insertIndex -= 1;
       }
@@ -190,21 +196,21 @@ class BookListBloc {
       book.mergeRecos = oldBook.recos ?? [];
 
       // If type is NOT changing, then replace the book in the matchingIndex
-      if (book.bookType == oldBook.bookType) {
+      if (book.type == oldBook.type) {
         readingList.insert(matchingIndex, book);
       } else {
         readingList.insert(insertIndex, book);
       }
 
       // decrease associated type counter by 1
-      addListCountItem(oldBook.bookType, --_listCountItems[oldBook.bookType]);
+      addListCountItem(oldBook.type, --_listCountItems[oldBook.type]);
     } else {
       readingList.insert(insertIndex, book);
     }
     _listBookController.sink.add(readingList);
 
     // increase associated type counter by 1
-    addListCountItem(book.bookType, ++_listCountItems[book.bookType]);
+    addListCountItem(book.type, ++_listCountItems[book.type]);
 
     try {
       listService.addOrUpdateListItem(accessToken, list);
@@ -220,14 +226,14 @@ class BookListBloc {
     return bookIdList.indexOf(bookId); // returns -1 if element is not found
   }
 
-  void deleteBook(ListItem book, User user) {
+  void deleteBook(ListedBook book, User user) {
     final readingList = _listBookController.value;
     readingList.remove(book);
     _listBookController.sink.add(readingList);
     // reduce associated type counter by 1
-    addListCountItem(book.bookType, --_listCountItems[book.bookType]);
+    addListCountItem(book.type, --_listCountItems[book.type]);
     try {
-      listService.deleteBook(user.accessToken, user.id, book.bookListId);
+      listService.deleteBook(user.accessToken, user.id, book.listId);
     } catch (err) {
       print('Could not delete the book in the backend: $err');
     }

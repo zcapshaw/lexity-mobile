@@ -7,20 +7,17 @@ part 'note.g.dart';
   includeIfNull: false,
 )
 class Note {
-  Note(
-      {this.comment,
-      this.created,
-      this.sourceName,
-      this.sourceId,
-      this.id,
-      this.isReco});
+  Note({this.comment, this.created, this.sourceName, this.sourceId, this.id});
 
   String comment;
   int created;
   String sourceName;
   String sourceId;
   String id;
-  bool isReco;
+
+  bool get isReco {
+    return this.sourceName == null;
+  }
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 

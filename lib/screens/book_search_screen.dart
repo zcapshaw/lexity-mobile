@@ -56,16 +56,20 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         final bool inUserList = b['inUserList'];
         final bool userRead = b['userRead'];
         String title = b['title'] ?? '';
-        String author = b['authors'] != null ? b['authors'][0] : '';
+        List authors = b['authors'] ?? [''];
+        String description = b['description'] ?? '';
+        List categories = b['categories'];
 
         //construct a Book object and add it to the books array
         Book book = Book(
             title: title,
             subtitle: subtitle,
-            author: author,
+            authors: authors,
             inUserList: inUserList,
             userRead: userRead,
             thumbnail: cover,
+            categories: categories,
+            description: description,
             googleId: b['googleId']);
         books.add(book);
       }
@@ -100,10 +104,10 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   }
 
   String _modifiedAuthorText(Book book) {
-    String author = book.bookAuthors[0] ?? '';
-    if (book.bookInUserList && book.userReadBook) {
+    String author = book.authorsAsString ?? '';
+    if (book.inUserList && book.userRead) {
       author = '$author • Previously read';
-    } else if (book.bookInUserList) {
+    } else if (book.inUserList) {
       author = '$author • On my list';
     }
     return author;
@@ -185,6 +189,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                                 leading: Image.network(
                                     snapshot.data[index].thumbnail),
                                 onTap: () {
+                                  print(snapshot.data[index].title);
+                                  print(snapshot.data[index].subtitle == '');
                                   _createBook(snapshot.data[index]);
                                 }),
                             Divider(),

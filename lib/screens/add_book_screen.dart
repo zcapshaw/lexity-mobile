@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import '../models/user.dart';
 import '../models/note.dart';
 import '../models/book.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 import '../components/book_list_bloc.dart';
 import '../components/list_tile_header_text.dart';
 import '../components/list_tile_text_field.dart';
@@ -44,7 +44,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final List labels = [];
     final Note note = Note(comment: noteText);
     final Note reco = Note(sourceName: recoSource, comment: recoText);
-    final List notes = [note.toJson(), reco.toJson()];
+    final List<Note> notes = [note, reco];
 
     // Temporary instantiation without image - eventually, user search will provide img if available
     final List newReco = [
@@ -54,22 +54,26 @@ class _AddBookScreenState extends State<AddBookScreen> {
     // Only retain non-null notes objects with text.length > 0
     // E.g. if there are NO notes OR recos, this will return an empty list []
     notes.retainWhere((note) =>
-        note['comment'] != null && note['comment'].toString().length > 0 ||
-        note['sourceName'] != null && note['sourceName'].toString().length > 0);
+        note.comment != null && note.comment.length > 0 ||
+        note.sourceName != null && note.sourceName.length > 0);
 
-    ListItem item = ListItem(
+    print('notes are $notes');
+
+    ListedBook item = ListedBook(
         userId: user.id,
         bookId: widget.bookId,
         type: type,
         labels: labels,
         notes: notes);
 
-    ListItem book = ListItem(
+    ListedBook book = ListedBook(
       bookId: widget.bookId,
-      title: widget.book.bookTitle,
-      subtitle: widget.book.bookSubtitle,
-      authors: widget.book.bookAuthors,
-      cover: widget.book.bookCover,
+      title: widget.book.title,
+      subtitle: widget.book.subtitle,
+      authors: widget.book.authors,
+      cover: widget.book.thumbnail,
+      description: widget.book.description,
+      categories: widget.book.categories,
       type: listType,
       recos: recoSource != null ? newReco : [],
     );
@@ -125,7 +129,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
               contentPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               title: Text(widget.book.titleWithSubtitle),
-              subtitle: Text(widget.book.author),
+              subtitle: Text(widget.book.authorsAsString),
               leading: Image.network(widget.book.thumbnail),
             ),
             Divider(),

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'swipe_background.dart';
 import 'reco_tile_trailing.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 
 class ListTileItem extends StatelessWidget {
-  final ListItem item;
+  final ListedBook item;
   final int tileIndex;
   final bool enableSwipeRight;
   final Function onPressTile;
@@ -49,10 +49,13 @@ class ListTileItem extends StatelessWidget {
           }
         },
         child: ListTile(
-          leading: Image.network(item.bookCover),
-          title: Text(item.titleWithSubtitle),
-          subtitle: Text(item.bookAuthors[0]),
-          trailing: RecoTileTrailing(item.bookRecos),
+          leading: Hero(
+            tag: '${item.cover}__heroTag',
+            child: Image.network(item.cover ?? ''),
+          ),
+          title: Text(item.titleWithSubtitle ?? ''),
+          subtitle: Text(item.authorsAsString ?? ''),
+          trailing: RecoTileTrailing(item.recos),
           onTap: () => onPressTile(context, item, tileIndex),
         ),
       ),

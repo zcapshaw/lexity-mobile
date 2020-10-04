@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lexity_mobile/screens/book_details_screen.dart';
+import '../blocs/blocs.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'reorderable_list_w_physics.dart';
 import 'book_list_bloc.dart';
 import 'list_tile_header.dart';
 import 'list_tile_item.dart';
-import '../screens/book_detail_screen.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 import '../models/user.dart';
 import '../components/empty_list_illustration.dart';
 
@@ -41,9 +43,9 @@ class _ReadingListState extends State<ReadingList> {
     user = Provider.of<UserModel>(context, listen: false);
   }
 
-  void _updateType(ListItem book, int oldIndex) async {
+  void _updateType(ListedBook book, int oldIndex) async {
     String newType;
-    switch (book.bookType) {
+    switch (book.type) {
       case 'READING':
         {
           newType = 'READ';
@@ -63,7 +65,7 @@ class _ReadingListState extends State<ReadingList> {
     bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
   }
 
-  Future<bool> _promptUser(DismissDirection direction, ListItem book) async {
+  Future<bool> _promptUser(DismissDirection direction, ListedBook book) async {
     return await showCupertinoDialog<bool>(
           context: context,
           builder: (context) => CupertinoAlertDialog(
@@ -91,13 +93,20 @@ class _ReadingListState extends State<ReadingList> {
   }
 
   _navigateToBookDetails(
-      BuildContext context, ListItem book, int listItemIndex) async {
+      BuildContext context, ListedBook book, int listItemIndex) async {
+    //dispatch a function to update BookDetailsCubit state
+    print(book.notes);
+    context.bloc<BookDetailsCubit>().viewBookDetails(book);
+    //Navigate to book details screen
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailScreen(book, listItemIndex),
+        // builder: (context) => BookDetailScreen(book, listItemIndex),
+        builder: (context) => BookDetailsScreen(),
       ),
     );
+    //reset state upon return
+
     setState(() {});
     if (result == true) {
       Scaffold.of(context)
@@ -138,13 +147,12 @@ class _ReadingListState extends State<ReadingList> {
                             widget.types
                                 .contains(snapshot.data[index].headerType)) {
                           return ListTileHeader(
-                            type: snapshot.data[index].bookType,
+                            type: snapshot.data[index].type,
                             key: UniqueKey(),
                           );
-                        } else if (snapshot.data[index] is ListItem &&
+                        } else if (snapshot.data[index] is ListedBook &&
                             snapshot.data[index] is! ListItemHeader &&
-                            widget.types
-                                .contains(snapshot.data[index].bookType)) {
+                            widget.types.contains(snapshot.data[index].type)) {
                           return ListTileItem(
                             item: snapshot.data[index],
                             tileIndex: index,

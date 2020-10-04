@@ -12,7 +12,7 @@ import 'package:expandable/expandable.dart';
 import '../models/book.dart';
 import '../models/user.dart';
 import '../models/note.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 import '../components/list_tile_header_text.dart';
 import '../components/action_button.dart';
 import '../components/note_view.dart';
@@ -20,17 +20,17 @@ import '../components/text_input_modal.dart';
 import '../components/book_list_bloc.dart';
 import '../services/list_service.dart';
 
-class BookDetailScreen extends StatefulWidget {
-  final ListItem book;
+class BookDetailScreenOld extends StatefulWidget {
+  final ListedBook book;
   final int listItemIndex;
 
-  BookDetailScreen(this.book, this.listItemIndex);
+  BookDetailScreenOld(this.book, this.listItemIndex);
 
   @override
-  _BookDetailScreenState createState() => _BookDetailScreenState();
+  _BookDetailScreenOldState createState() => _BookDetailScreenOldState();
 }
 
-class _BookDetailScreenState extends State<BookDetailScreen> {
+class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
   UserModel user;
   String htmlDescription = '';
   List<Note> notes = [];
@@ -67,7 +67,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
           created: n['created'],
           id: n['id'],
           sourceName: n['sourceName'],
-          isReco: (n['sourceName'] != null),
+          // isReco: (n['sourceName'] != null),
         );
         notesArray.add(note);
         print(note.isReco);
@@ -113,11 +113,11 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       book = Book(
         title: bookJson['title'],
         subtitle: bookJson['subtitle'],
-        author: bookJson['authors'][0],
+        authors: bookJson['authors'],
         thumbnail: bookJson['cover'],
         listId: bookJson['listId'],
-        genre: genre,
-        listType: bookJson['type'],
+        // categories: categories,
+        type: bookJson['type'],
       );
       listId = book.listId;
     } else {
@@ -130,8 +130,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   void _addNote(text) async {
     final Note note = Note(comment: text);
     final List notes = [note.toJson()];
-    ListItem item =
-        ListItem(userId: user.id, bookId: widget.book.bookId, notes: notes);
+    ListedBook item =
+        ListedBook(userId: user.id, bookId: widget.book.bookId, notes: notes);
 
     final response =
         await listService.addOrUpdateListItem(user.accessToken, item);

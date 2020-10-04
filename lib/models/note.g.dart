@@ -13,7 +13,6 @@ Note _$NoteFromJson(Map<String, dynamic> json) {
     sourceName: json['sourceName'] as String,
     sourceId: json['sourceId'] as String,
     id: json['id'] as String,
-    isReco: json['isReco'] as bool,
   );
 }
 
@@ -31,6 +30,5 @@ Map<String, dynamic> _$NoteToJson(Note instance) {
   writeNotNull('sourceName', instance.sourceName);
   writeNotNull('sourceId', instance.sourceId);
   writeNotNull('id', instance.id);
-  writeNotNull('isReco', instance.isReco);
   return val;
 }

@@ -1,13 +1,13 @@
 class Book {
   final String title;
   final String subtitle;
-  final String author;
+  final List authors;
   final String thumbnail;
   final String googleId;
   final String description;
-  final String genre;
+  final List categories;
   final String listId;
-  final String listType;
+  final String type;
   final List recos;
   final bool inUserList;
   final bool userRead;
@@ -15,29 +15,36 @@ class Book {
   Book(
       {this.title,
       this.subtitle,
-      this.author,
+      this.authors,
       this.thumbnail,
       this.googleId,
       this.description,
-      this.genre,
+      this.categories,
       this.listId,
-      this.listType,
+      this.type,
       this.recos,
       this.inUserList,
       this.userRead});
 
-  String get bookListId => this.listId;
-  String get bookType => this.listType;
-  String get bookCover => this.thumbnail;
-  String get bookTitle => this.title;
-  String get bookSubtitle => this.subtitle;
-  List get bookAuthors => [this.author];
-  List get bookRecos => this.recos;
-  bool get bookInUserList => this.inUserList;
-  bool get userReadBook => this.userRead;
+  //returns the complete list of authors as a comma-separated string
+  String get authorsAsString => this.authors.join(', ');
+
+  //returns the first genre in the array, if present
+  String get primaryGenre {
+    if (this.categories == null) {
+      return '';
+    } else if (this.categories.isEmpty) {
+      return '';
+    } else {
+      return this.categories.first;
+    }
+  }
+
+  //returns title: subtitle if a subtitle exists
   String get titleWithSubtitle {
     String title = this.title;
-    if (this.subtitle != null) title = '$title: ${this.subtitle}';
+    if (this.subtitle != null && this.subtitle != '')
+      title = '$title: ${this.subtitle}';
     return title;
   }
 }
