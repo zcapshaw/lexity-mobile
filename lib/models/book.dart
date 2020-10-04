@@ -5,7 +5,7 @@ class Book {
   final String thumbnail;
   final String googleId;
   final String description;
-  final String genre;
+  final List categories;
   final String listId;
   final String type;
   final List recos;
@@ -19,7 +19,7 @@ class Book {
       this.thumbnail,
       this.googleId,
       this.description,
-      this.genre,
+      this.categories,
       this.listId,
       this.type,
       this.recos,
@@ -29,6 +29,18 @@ class Book {
   //returns the complete list of authors as a comma-separated string
   String get authorsAsString => this.authors.join(', ');
 
+  //returns the first genre in the array, if present
+  String get primaryGenre {
+    if (this.categories == null) {
+      return '';
+    } else if (this.categories.isEmpty) {
+      return '';
+    } else {
+      return this.categories.first;
+    }
+  }
+
+  //returns title: subtitle if a subtitle exists
   String get titleWithSubtitle {
     String title = this.title;
     if (this.subtitle != null && this.subtitle != '')

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lexity_mobile/blocs/book_details/book_details_cubit.dart';
-import 'package:lexity_mobile/models/list_item.dart';
+import 'package:lexity_mobile/models/listed_book.dart';
 import 'package:lexity_mobile/screens/book_details_screen.dart';
 import 'package:lexity_mobile/utils/test_keys.dart';
 import 'package:mockito/mockito.dart';

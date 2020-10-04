@@ -12,7 +12,7 @@ import 'package:expandable/expandable.dart';
 import '../models/book.dart';
 import '../models/user.dart';
 import '../models/note.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 import '../components/list_tile_header_text.dart';
 import '../components/action_button.dart';
 import '../components/note_view.dart';
@@ -116,7 +116,7 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
         authors: bookJson['authors'],
         thumbnail: bookJson['cover'],
         listId: bookJson['listId'],
-        genre: genre,
+        // categories: categories,
         type: bookJson['type'],
       );
       listId = book.listId;

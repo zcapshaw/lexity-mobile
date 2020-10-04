@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'list_item.dart';
+part of 'listed_book.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -14,7 +14,7 @@ ListedBook _$ListedBookFromJson(Map<String, dynamic> json) {
     cover: json['cover'] as String,
     googleId: json['googleId'] as String,
     description: json['description'] as String,
-    genre: json['genre'] as String,
+    categories: json['categories'] as List,
     listId: json['listId'] as String,
     userId: json['userId'] as String,
     bookId: json['bookId'] as String,
@@ -42,7 +42,7 @@ Map<String, dynamic> _$ListedBookToJson(ListedBook instance) {
   writeNotNull('cover', instance.cover);
   writeNotNull('googleId', instance.googleId);
   writeNotNull('description', instance.description);
-  writeNotNull('genre', instance.genre);
+  writeNotNull('categories', instance.categories);
   writeNotNull('listId', instance.listId);
   writeNotNull('userId', instance.userId);
   writeNotNull('bookId', instance.bookId);

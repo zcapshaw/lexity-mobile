@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'swipe_background.dart';
 import 'reco_tile_trailing.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 
 class ListTileItem extends StatelessWidget {
   final ListedBook item;

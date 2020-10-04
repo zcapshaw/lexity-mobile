@@ -10,7 +10,7 @@ import 'reorderable_list_w_physics.dart';
 import 'book_list_bloc.dart';
 import 'list_tile_header.dart';
 import 'list_tile_item.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 import '../models/user.dart';
 import '../components/empty_list_illustration.dart';
 
@@ -95,7 +95,7 @@ class _ReadingListState extends State<ReadingList> {
   _navigateToBookDetails(
       BuildContext context, ListedBook book, int listItemIndex) async {
     //dispatch a function to update BookDetailsCubit state
-    print(book.title);
+    print(book.categories);
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
     //Navigate to book details screen
     final result = await Navigator.push(

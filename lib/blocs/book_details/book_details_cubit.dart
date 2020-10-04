@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:lexity_mobile/models/list_item.dart';
+import 'package:lexity_mobile/models/listed_book.dart';
 import 'package:meta/meta.dart';
 
 part 'book_details_state.dart';

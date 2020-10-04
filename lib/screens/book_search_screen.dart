@@ -57,6 +57,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
         final bool userRead = b['userRead'];
         String title = b['title'] ?? '';
         List authors = b['authors'] ?? [''];
+        String description = b['description'] ?? '';
+        List categories = b['categories'];
 
         //construct a Book object and add it to the books array
         Book book = Book(
@@ -66,6 +68,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
             inUserList: inUserList,
             userRead: userRead,
             thumbnail: cover,
+            categories: categories,
+            description: description,
             googleId: b['googleId']);
         books.add(book);
       }

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 import 'book.dart';
 
-part 'list_item.g.dart';
+part 'listed_book.g.dart';
 
 @JsonSerializable(includeIfNull: false)
 class ListedBook extends Book {
@@ -13,7 +13,7 @@ class ListedBook extends Book {
       this.cover,
       this.googleId,
       this.description,
-      this.genre,
+      this.categories,
       this.listId,
       this.userId,
       this.bookId,
@@ -30,7 +30,7 @@ class ListedBook extends Book {
           thumbnail: cover,
           googleId: googleId,
           description: description,
-          genre: genre,
+          categories: categories,
           listId: listId,
           type: type,
           recos: recos,
@@ -44,7 +44,7 @@ class ListedBook extends Book {
   final String cover;
   final String googleId;
   final String description;
-  final String genre;
+  final List categories;
   final String listId;
   final String userId;
   final String bookId;
@@ -68,6 +68,3 @@ class ListItemHeader extends ListedBook {
 
   String get headerType => this.type;
 }
-
-// we should consider changing the type of 'type' from string to enum
-enum BookType { READING, READ, TO_READ }

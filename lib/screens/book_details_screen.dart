@@ -48,7 +48,7 @@ class BookDetailsScreen extends StatelessWidget {
                         buildTitle(state.book.titleWithSubtitle, context),
                         buildAuthors(state.book.authorsAsString, context),
                         //TODO: add Genre to ListItem model and pass genre in next line
-                        buildGenre('Fiction'),
+                        buildGenre(state.book.primaryGenre),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -138,24 +138,26 @@ class BookDetailsScreen extends StatelessWidget {
   }
 
   Widget buildGenre(genre) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0),
-      child: Chip(
-        label: Text(genre.toUpperCase()),
-        backgroundColor: Colors.teal[700],
-        labelPadding: EdgeInsets.symmetric(horizontal: 10),
-        labelStyle: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w600,
-          fontSize: 12,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-            Radius.circular(10),
-          ),
-        ),
-      ),
-    );
+    return genre == null || genre == ''
+        ? SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: Chip(
+              label: Text(genre.toUpperCase()),
+              backgroundColor: Colors.teal[700],
+              labelPadding: EdgeInsets.symmetric(horizontal: 10),
+              labelStyle: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(
+                  Radius.circular(10),
+                ),
+              ),
+            ),
+          );
   }
 
   Widget startReadingButton() {

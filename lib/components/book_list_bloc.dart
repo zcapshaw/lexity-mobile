@@ -5,7 +5,7 @@ import 'package:rxdart/rxdart.dart';
 import 'package:get_it/get_it.dart';
 
 import '../services/list_service.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 
 class BookListBloc {
   ListService get listService => GetIt.I<ListService>();

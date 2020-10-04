@@ -5,7 +5,7 @@ import 'package:get_it/get_it.dart';
 import '../models/user.dart';
 import '../models/note.dart';
 import '../models/book.dart';
-import '../models/list_item.dart';
+import '../models/listed_book.dart';
 import '../components/book_list_bloc.dart';
 import '../components/list_tile_header_text.dart';
 import '../components/list_tile_text_field.dart';
@@ -70,6 +70,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
       subtitle: widget.book.subtitle,
       authors: widget.book.authors,
       cover: widget.book.thumbnail,
+      description: widget.book.description,
+      categories: widget.book.categories,
       type: listType,
       recos: recoSource != null ? newReco : [],
     );

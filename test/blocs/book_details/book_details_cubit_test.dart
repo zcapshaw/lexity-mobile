@@ -1,7 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lexity_mobile/blocs/book_details/book_details_cubit.dart';
-import 'package:lexity_mobile/models/list_item.dart';
+import 'package:lexity_mobile/models/listed_book.dart';
 
 void main() {
   ListedBook readingBook = ListedBook(type: 'READING');
