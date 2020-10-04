@@ -141,6 +141,7 @@ class BookDetailsScreen extends StatelessWidget {
     return genre == null || genre == ''
         ? SizedBox.shrink()
         : Padding(
+            key: TestKeys.bookDetailsGenreChip,
             padding: const EdgeInsets.only(top: 10.0),
             child: Chip(
               label: Text(genre.toUpperCase()),

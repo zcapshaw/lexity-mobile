@@ -4,4 +4,5 @@ import 'package:flutter/widgets.dart';
 class TestKeys {
   static final bookDetailsLoadingSpinner =
       const Key('__bookDetailsLoadingSpinner__');
+  static final bookDetailsGenreChip = const Key('__bookDetailsGenreChip__');
 }

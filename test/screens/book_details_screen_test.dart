@@ -43,6 +43,7 @@ void main() {
       ListedBook testBook = ListedBook(
         title: 'Sapiens',
         authors: ['Yuval Noah Harrari'],
+        categories: ['History', 'World'],
       );
       when(bookDetailsCubit.state).thenReturn(
         BookDetailsReading(testBook),
@@ -58,6 +59,7 @@ void main() {
       expect(find.text('Yuval Noah Harrari'), findsOneWidget);
       expect(find.text('Sapiens'), findsOneWidget);
       expect(find.text('Mark Finished'), findsOneWidget);
+      expect(find.byKey(TestKeys.bookDetailsGenreChip), findsOneWidget);
     });
   });
 }
