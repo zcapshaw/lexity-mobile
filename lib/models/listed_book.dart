@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import 'book.dart';
+import 'note.dart';
 
 part 'listed_book.g.dart';
 
@@ -53,7 +54,7 @@ class ListedBook extends Book {
   String type;
   List recos;
   List labels;
-  List notes;
+  List<Note> notes;
 
   set changeType(String newType) => this.type = newType;
   set mergeRecos(List newRecos) => this.recos.addAll(newRecos);

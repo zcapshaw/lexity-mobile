@@ -44,7 +44,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final List labels = [];
     final Note note = Note(comment: noteText);
     final Note reco = Note(sourceName: recoSource, comment: recoText);
-    final List notes = [note.toJson(), reco.toJson()];
+    final List<Note> notes = [note, reco];
 
     // Temporary instantiation without image - eventually, user search will provide img if available
     final List newReco = [
@@ -54,8 +54,10 @@ class _AddBookScreenState extends State<AddBookScreen> {
     // Only retain non-null notes objects with text.length > 0
     // E.g. if there are NO notes OR recos, this will return an empty list []
     notes.retainWhere((note) =>
-        note['comment'] != null && note['comment'].toString().length > 0 ||
-        note['sourceName'] != null && note['sourceName'].toString().length > 0);
+        note.comment != null && note.comment.length > 0 ||
+        note.sourceName != null && note.sourceName.length > 0);
+
+    print('notes are $notes');
 
     ListedBook item = ListedBook(
         userId: user.id,

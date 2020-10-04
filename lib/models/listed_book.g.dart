@@ -23,7 +23,10 @@ ListedBook _$ListedBookFromJson(Map<String, dynamic> json) {
     userRead: json['userRead'] as bool,
     recos: json['recos'] as List,
     labels: json['labels'] as List,
-    notes: json['notes'] as List,
+    notes: (json['notes'] as List)
+        ?.map(
+            (e) => e == null ? null : Note.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
   );
 }
 

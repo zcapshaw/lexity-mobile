@@ -22,28 +22,31 @@ class NoteView extends StatelessWidget {
       this.sourceName});
 
   _handleNoteTap(BuildContext context) async {
-    final action = await showCupertinoModalPopup(
-        context: context, builder: (BuildContext context) => NoteActionSheet());
+    // final action = await showCupertinoModalPopup(
+    //     context: context, builder: (BuildContext context) => NoteActionSheet());
 
-    if (action == 'delete') {
-      deleteCallback(context, noteId);
-    }
+    // if (action == 'delete') {
+    //   deleteCallback(context, noteId);
+    // }
 
-    if (action == 'edit') {
-      editCallback(noteId, comment);
-    }
+    // if (action == 'edit') {
+    //   editCallback(noteId, comment);
+    // }
   }
 
   String _getInitials() {
-    //create an array of words, split by spaces in sourceName
-    List<String> splitWords = sourceName.toUpperCase().split(' ');
     String initials = '';
 
-    //populate `initials` with first character of each word, up to 2
-    for (var word in splitWords) {
-      initials = initials + '${word[0]}';
-      if (initials.length >= 2) {
-        break;
+    if (sourceName != null) {
+      //create an array of words, split by spaces in sourceName
+      List<String> splitWords = sourceName?.toUpperCase()?.split(' ');
+
+      //populate `initials` with first character of each word, up to 2
+      for (var word in splitWords) {
+        initials = initials + '${word[0]}';
+        if (initials.length >= 2) {
+          break;
+        }
       }
     }
 
@@ -60,7 +63,7 @@ class NoteView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                if (isReco)
+                if (sourceName != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
@@ -73,7 +76,7 @@ class NoteView extends StatelessWidget {
             ),
           ),
           subtitle: Text(created),
-          leading: isReco
+          leading: sourceName != null
               ? CircleAvatar(
                   backgroundColor: Colors.grey[600],
                   child: Text(
@@ -83,7 +86,7 @@ class NoteView extends StatelessWidget {
                   ),
                 )
               : CircleAvatar(
-                  backgroundImage: NetworkImage(leadingImg),
+                  backgroundImage: NetworkImage(leadingImg ?? ''),
                   backgroundColor: Colors.grey[600],
                 ),
           onTap: () => _handleNoteTap(context),

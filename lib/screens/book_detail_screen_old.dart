@@ -67,7 +67,7 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
           created: n['created'],
           id: n['id'],
           sourceName: n['sourceName'],
-          isReco: (n['sourceName'] != null),
+          // isReco: (n['sourceName'] != null),
         );
         notesArray.add(note);
         print(note.isReco);

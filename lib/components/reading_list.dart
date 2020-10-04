@@ -95,7 +95,7 @@ class _ReadingListState extends State<ReadingList> {
   _navigateToBookDetails(
       BuildContext context, ListedBook book, int listItemIndex) async {
     //dispatch a function to update BookDetailsCubit state
-    print(book.description);
+    print(book.notes);
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
     //Navigate to book details screen
     final result = await Navigator.push(
@@ -106,7 +106,7 @@ class _ReadingListState extends State<ReadingList> {
       ),
     );
     //reset state upon return
-    context.bloc<BookDetailsCubit>().closeBookDetails();
+
     setState(() {});
     if (result == true) {
       Scaffold.of(context)

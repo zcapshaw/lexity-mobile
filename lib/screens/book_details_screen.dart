@@ -1,10 +1,14 @@
 import 'dart:ui';
 
+import 'package:expandable/expandable.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_html/style.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/utils/test_keys.dart';
+import 'package:time_formatter/time_formatter.dart';
 import '../components/components.dart';
 
 class BookDetailsScreen extends StatelessWidget {
@@ -19,6 +23,13 @@ class BookDetailsScreen extends StatelessWidget {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+            context.bloc<BookDetailsCubit>().closeBookDetails();
+          },
+        ),
       ),
       body: BlocBuilder<BookDetailsCubit, BookDetailsState>(
         builder: (context, state) {
@@ -69,7 +80,17 @@ class BookDetailsScreen extends StatelessWidget {
                               callback: () {},
                             ),
                           ],
-                        )
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10.0),
+                          child: Divider(),
+                        ),
+                        if (state.book.description != null)
+                          ExpandableDescription(
+                            description: state.book.description,
+                            title: 'Description',
+                          ),
+                        buildNotes(state.book.notes),
                       ],
                     ),
                   ),
@@ -190,6 +211,99 @@ class BookDetailsScreen extends StatelessWidget {
       icon: Icons.add,
       labelText: 'Add To My List',
       callback: () {},
+    );
+  }
+
+  Widget buildNotes(notes) {
+    return notes == null
+        ? SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: ListTileHeaderText('Notes'),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    for (var note in notes)
+                      NoteView(
+                        comment: note.comment,
+                        created: formatTime(note.created),
+                        noteId: note.id,
+                        // need to add access to user image
+                        // from a new bloc
+                        // leadingImg: user.profileImg,
+                        deleteCallback: () {},
+                        editCallback: () {},
+                        sourceName: note.sourceName,
+                        isReco: note.isReco,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          );
+  }
+}
+
+class ExpandableDescription extends StatelessWidget {
+  final String title;
+  final String description;
+
+  ExpandableDescription({this.title, this.description});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        ExpandablePanel(
+          header: ListTileHeaderText(title),
+          collapsed: ExpandableButton(
+            child: ShaderMask(
+              shaderCallback: (rect) {
+                return LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.black, Colors.transparent],
+                ).createShader(
+                    Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
+              },
+              blendMode: BlendMode.dstIn,
+              child: Container(
+                height: 100,
+                child: Html(
+                  data: description ?? '',
+                  style: {
+                    "p": Style(
+                      padding: EdgeInsets.only(top: 10),
+                      margin: EdgeInsets.only(top: 10),
+                    ),
+                  },
+                ),
+              ),
+            ),
+          ),
+          expanded: ExpandableButton(
+            child: Html(
+              data: description ?? '',
+              style: {
+                "p": Style(
+                  padding: EdgeInsets.only(top: 10),
+                  margin: EdgeInsets.only(top: 10),
+                )
+              },
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Divider(),
+        ),
+      ],
     );
   }
 }
