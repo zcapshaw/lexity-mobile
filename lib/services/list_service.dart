@@ -136,6 +136,7 @@ class ListService {
     );
   }
 
+  //TODO: With new API, should eventually name getListedBooksByUser (or something like this)
   Future<APIResponse<Object>> getListItemSummary(accessToken, userId) async {
     return http.get(
       API + '/list/book/?userId=$userId',

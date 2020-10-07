@@ -8,7 +8,7 @@ abstract class ReadingListEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ReadingListLoadSuccess extends ReadingListEvent {}
+class ReadingListLoaded extends ReadingListEvent {}
 
 class ReadingListRefreshed extends ReadingListEvent {}
 
