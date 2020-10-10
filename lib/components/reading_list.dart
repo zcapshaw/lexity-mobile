@@ -142,14 +142,22 @@ class _ReadingListState extends State<ReadingList> {
                         if (readingList[index] is ListItemHeader && widget.enableHeaders) {
 =======
                         if (readingList[index] is ListedBookHeader &&
+<<<<<<< HEAD
                             widget.enableHeaders) {
 >>>>>>> Rename to more descriptive class of ListedBookHeader
+=======
+                            widget.enableHeaders &&
+                            widget.includedTypes
+                                .contains(readingList[index].type)) {
+>>>>>>> Change injectHeaders method to sortByTypeAndInjectHeaders
                           return ListTileHeader(
-                            type: 'READING', // TEMPORARY
+                            type: readingList[index].type,
                             key: UniqueKey(),
                           );
                         } else if (readingList[index] is ListedBook &&
-                            readingList[index] is! ListedBookHeader) {
+                            readingList[index] is! ListedBookHeader &&
+                            widget.includedTypes
+                                .contains(readingList[index].type)) {
                           return ListTileItem(
                             item: readingList[index],
                             tileIndex: index,

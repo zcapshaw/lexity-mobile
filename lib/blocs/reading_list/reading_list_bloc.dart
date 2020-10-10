@@ -34,7 +34,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       List<ListedBook> readingList =
           decodedList.map((book) => ListedBook.fromJson(book)).toList();
       yield ReadingListLoadSuccess(
-          readingListService.injectHeaders(readingList));
+          readingListService.sortByTypeAndInjectHeaders(readingList));
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();
@@ -49,7 +49,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       List<ListedBook> readingList =
           decodedList.map((book) => ListedBook.fromJson(book)).toList();
       yield ReadingListLoadSuccess(
-          readingListService.injectHeaders(readingList));
+          readingListService.sortByTypeAndInjectHeaders(readingList));
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();

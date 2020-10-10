@@ -16,19 +16,18 @@ class ReadingListService {
 
   saveReadingList() async {}
 
-  injectHeaders(List<ListedBook> readingList) {
-    int readingCount =
-        readingList.where((book) => book.reading).toList().length;
-    int toReadCount = readingList.where((book) => book.toRead).toList().length;
+  sortByTypeAndInjectHeaders(List<ListedBook> readingList) {
+    List<ListedBook> sortedReadingListWithHeaders = [];
+    final List<String> typeSortOrder = ['READING', 'TO_READ', 'READ'];
 
-    // This insertion approach assumes that the readingList types
-    // will always be ordered as [READING, TO_READ, READ]
-    readingList.insert(
-        readingCount + toReadCount - 1, ListedBookHeader('READ'));
-    readingList.insert(readingCount - 1, ListedBookHeader('TO_READ'));
-    readingList.insert(0, ListedBookHeader('READING'));
+    typeSortOrder.forEach((type) {
+      List<ListedBook> readingListByType =
+          readingList.where((book) => book.type == type).toList();
+      sortedReadingListWithHeaders.add(ListedBookHeader(type));
+      sortedReadingListWithHeaders.addAll(readingListByType);
+    });
 
-    return readingList;
+    return sortedReadingListWithHeaders;
   }
 
   stripHeaders(List<ListedBook> readingList) {}
