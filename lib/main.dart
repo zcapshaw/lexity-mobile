@@ -1,21 +1,17 @@
+import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:get_it/get_it.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+
 import 'package:lexity_mobile/blocs/simple_bloc_observer.dart';
 import 'package:lexity_mobile/services/list_service.dart';
-import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:get_it/get_it.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:bloc/bloc.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'screens/book_search_screen.dart';
-import 'screens/main_screen.dart';
-import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/user_screen.dart';
-import 'screens/splash_screen.dart';
-import 'models/user.dart';
 import 'blocs/blocs.dart';
+import 'models/user.dart';
+import 'screens/screens.dart';
 
 void setupLocator() {
   GetIt.I.registerLazySingleton(() => ListService());
@@ -68,7 +64,7 @@ class MyApp extends StatelessWidget {
             ),
             headline4: GoogleFonts.ibmPlexSerif(
               fontWeight: FontWeight.w600,
-              color: Color(0xFF1A6978),
+              color: const Color(0xFF1A6978),
               fontSize: 36,
             ),
             headline6: GoogleFonts.roboto(

@@ -17,7 +17,7 @@ void main() {
 
   setUp(() {
     bookDetailsCubit = MockBookDetailscubit();
-    when(bookDetailsCubit.state).thenReturn(BookDetailsLoading());
+    when(bookDetailsCubit.state).thenReturn(const BookDetailsLoading());
   });
 
   tearDown(() {
@@ -27,7 +27,7 @@ void main() {
   group('BookDetailsScreen', () {
     testWidgets('renders a spinner when in the loading state',
         (WidgetTester tester) async {
-      when(bookDetailsCubit.state).thenReturn(BookDetailsLoading());
+      when(bookDetailsCubit.state).thenReturn(const BookDetailsLoading());
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider.value(
@@ -41,11 +41,11 @@ void main() {
 
     testWidgets('renders properly when a listed book is provided',
         (WidgetTester tester) async {
-      Note testNote = Note(
+      var testNote = Note(
           comment: 'Great book',
           created: 1599787528208,
           sourceName: 'Daniel Rediger');
-      ListedBook testBook = ListedBook(
+      var testBook = ListedBook(
         title: 'Sapiens',
         authors: ['Yuval Noah Harrari'],
         categories: ['History', 'World'],

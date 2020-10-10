@@ -4,13 +4,13 @@ import 'package:lexity_mobile/blocs/book_details/book_details_cubit.dart';
 import 'package:lexity_mobile/models/listed_book.dart';
 
 void main() {
-  ListedBook readingBook = ListedBook(type: 'READING');
-  ListedBook wantToReadBook = ListedBook(type: 'TO_READ');
-  ListedBook readBook = ListedBook(type: 'READ');
+  var readingBook = ListedBook(type: 'READING');
+  var wantToReadBook = ListedBook(type: 'TO_READ');
+  var readBook = ListedBook(type: 'READ');
 
   group('BookDetailsCubit', () {
     test('initial state is loading', () {
-      expect(BookDetailsCubit().state, BookDetailsLoading());
+      expect(BookDetailsCubit().state, const BookDetailsLoading());
     });
 
     blocTest<BookDetailsCubit, BookDetailsState>(

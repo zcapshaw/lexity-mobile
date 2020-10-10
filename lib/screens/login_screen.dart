@@ -1,15 +1,16 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:provider/provider.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:url_launcher/url_launcher.dart';
-import 'package:uni_links/uni_links.dart';
+import 'dart:io';
 
-import 'package:lexity_mobile/models/user.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:uni_links/uni_links.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../models/user.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -48,7 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
         forceWebView: true,
       );
     } else {
-      throw 'Could not launch $url';
+      throw Exception('Could not launch $url');
     }
   }
 
@@ -60,13 +61,13 @@ class _LoginScreenState extends State<LoginScreen> {
         forceWebView: false,
       );
     } else {
-      throw 'Could not launch $url';
+      throw Exception('Could not launch $url');
     }
   }
 
   Future<void> _retrieveAndPopulateUser(
       String userId, String accessToken) async {
-    final http.Response res = await http
+    final res = await http
         .get('https://api.lexity.co/user/info/?userId=$userId', headers: {
       'access-token': '$accessToken',
     });
@@ -93,14 +94,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _signUpWithTwitter() async {
-    final http.Response res =
-        await http.get('https://api.lexity.co/auth/twitter/signin');
+    final res = await http.get('https://api.lexity.co/auth/twitter/signin');
     if (res.statusCode == 200) {
       final Map decoded = jsonDecode(res.body);
       if (Platform.isIOS) {
-        _launchInWebViewOrVC(decoded['url']);
+        await _launchInWebViewOrVC(decoded['url']);
       } else if (Platform.isAndroid) {
-        _launchInBrowser(decoded['url']);
+        await _launchInBrowser(decoded['url']);
       } else {
         print('Warning: Platform is NOT iOS or Android');
       }
@@ -113,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // Temporary for quick quick auth testing
   void signUpWithApple() async {
-    _retrieveAndPopulateUser(user.id, user.accessToken);
+    await _retrieveAndPopulateUser(user.id, user.accessToken);
   }
 
   // TODO: need setup app linking for Android as well
@@ -129,9 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print(uri.queryParameters['error']);
       }
       closeWebView();
-    }, onError: (err) {
-      print(err);
-    });
+    }, onError: print);
   }
 
   void _toggleSignin() {
@@ -146,6 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
@@ -165,11 +164,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               Container(
-                margin: EdgeInsets.fromLTRB(20, 80, 20, 0),
+                margin: const EdgeInsets.fromLTRB(20, 80, 20, 0),
                 child: Column(
                   children: <Widget>[
                     Container(
-                        padding: EdgeInsets.fromLTRB(70, 0, 70, 20),
+                        padding: const EdgeInsets.fromLTRB(70, 0, 70, 20),
                         child: Image.asset('assets/undraw_book_lover.png')),
                     Container(
                       child: Text(
@@ -178,33 +177,31 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.fromLTRB(0, 5, 0, 30),
+                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 30),
                       child: Text('Read great books. Share big ideas.',
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.subtitle2),
                     ),
                     SignUpButton(
                       buttonText: twitterButtonText,
-                      callback: () => _signUpWithTwitter(),
+                      callback: _signUpWithTwitter,
                       icon: FaIcon(
                         FontAwesomeIcons.twitter,
-                        color: Color(0xFF00ACEE),
+                        color: const Color(0xFF00ACEE),
                       ),
                     ),
                     SignUpButton(
                       buttonText: appleButtonText,
-                      callback: () => signUpWithApple(),
+                      callback: signUpWithApple,
                       icon: FaIcon(
                         FontAwesomeIcons.apple,
-                        color: Color(0xFF000000),
+                        color: const Color(0xFF000000),
                       ),
                     ),
                     Container(
-                      padding: EdgeInsets.only(top: 20),
+                      padding: const EdgeInsets.only(top: 20),
                       child: GestureDetector(
-                        onTap: () {
-                          _toggleSignin();
-                        },
+                        onTap: _toggleSignin,
                         child: RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(
@@ -233,19 +230,19 @@ class _LoginScreenState extends State<LoginScreen> {
 }
 
 class SignUpButton extends StatelessWidget {
+  const SignUpButton({this.callback, this.buttonText, this.icon});
+
   final Function callback;
   final String buttonText;
   final FaIcon icon;
-
-  SignUpButton({this.callback, this.buttonText, this.icon});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width * 0.75,
-      margin: EdgeInsets.only(top: 5),
+      margin: const EdgeInsets.only(top: 5),
       child: OutlineButton.icon(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         borderSide: BorderSide(color: Colors.grey[400]),
         label: Text(
           buttonText,
@@ -255,9 +252,7 @@ class SignUpButton extends StatelessWidget {
           ),
         ),
         icon: icon,
-        onPressed: () {
-          callback();
-        },
+        onPressed: callback,
       ),
     );
   }

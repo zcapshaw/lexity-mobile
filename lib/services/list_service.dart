@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import '../models/book.dart';
 
-//TODO: add all my API call functions to this service
+// TODO: add all my API call functions to this service
 class ListService {
   static const API = 'https://api.lexity.co';
 
@@ -156,11 +156,11 @@ class ListService {
 }
 
 class APIResponse<T> {
-  T data;
-  bool error;
-  int errorCode;
-  String errorMessage;
-
-  APIResponse(
+  const APIResponse(
       {this.data, this.errorMessage, this.errorCode, this.error = false});
+
+  final T data;
+  final bool error;
+  final int errorCode;
+  final String errorMessage;
 }

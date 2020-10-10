@@ -19,6 +19,7 @@ import '../components/note_view.dart';
 import '../components/text_input_modal.dart';
 import '../components/book_list_bloc.dart';
 import '../services/list_service.dart';
+import 'book_details_screen.dart';
 
 class BookDetailScreenOld extends StatefulWidget {
   final ListedBook book;
@@ -402,63 +403,5 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
             },
           ),
         ));
-  }
-}
-
-class ExpandableDescription extends StatelessWidget {
-  final String title;
-  final String description;
-
-  ExpandableDescription({this.title, this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        ExpandablePanel(
-          header: ListTileHeaderText(title),
-          collapsed: ExpandableButton(
-            child: ShaderMask(
-              shaderCallback: (rect) {
-                return LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black, Colors.transparent],
-                ).createShader(
-                    Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
-              },
-              blendMode: BlendMode.dstIn,
-              child: Container(
-                height: 100,
-                child: Html(
-                  data: description ?? '',
-                  style: {
-                    "p": Style(
-                      padding: EdgeInsets.only(top: 10),
-                      margin: EdgeInsets.only(top: 10),
-                    ),
-                  },
-                ),
-              ),
-            ),
-          ),
-          expanded: ExpandableButton(
-            child: Html(
-              data: description ?? '',
-              style: {
-                "p": Style(
-                  padding: EdgeInsets.only(top: 10),
-                  margin: EdgeInsets.only(top: 10),
-                )
-              },
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Divider(),
-        ),
-      ],
-    );
   }
 }

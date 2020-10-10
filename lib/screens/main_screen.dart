@@ -13,7 +13,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  List<Widget> _widgetScreens = [
+  final List<Widget> _widgetScreens = [
     HomeScreen(),
     BookSearchScreen(
       origin: Origin.navSearch,

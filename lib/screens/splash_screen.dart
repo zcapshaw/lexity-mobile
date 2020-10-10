@@ -13,16 +13,19 @@ class SplashScreen extends StatefulWidget {
 bool authenticated; // maintain local authenticated state
 
 void authNav(context) {
-  UserModel user = Provider.of<UserModel>(context, listen: true);
+  var user = Provider.of<UserModel>(context, listen: true);
   if (authenticated != user.authN && user.createComplete == true) {
     authenticated = user.authN;
     // Refresh the users Book List upon login
     bookListBloc.refreshBackendBookList(user.accessToken, user.id);
     print(
-        'User created: ${user.createComplete}, User authenticated: ${user.authN}');
+      'User created: ${user.createComplete}, User authenticated: ${user.authN}',
+    );
     if (user.createComplete && user.authN) {
-      // SchedulerBinding allows for frame transitions AFTER all current transitions are done
-      // It's essentially used to prevent conflict errors by awaiting transitions in progress
+      /// SchedulerBinding allows for frame transitions AFTER all
+      /// current transitions are done
+      /// It's essentially used to prevent conflict errors by awaiting
+      /// transitions in progress
       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
         Navigator.of(context).pushNamed('/');
       });
