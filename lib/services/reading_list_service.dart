@@ -30,4 +30,6 @@ class ReadingListService {
 
     return readingList;
   }
+
+  stripHeaders(List<ListedBook> readingList) {}
 }
