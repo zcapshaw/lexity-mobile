@@ -56,6 +56,18 @@ class ListedBook extends Book {
   List labels;
   List<Note> notes;
 
+  bool get toRead {
+    return type == 'TO_READ';
+  }
+
+  bool get reading {
+    return type == 'READING';
+  }
+
+  bool get read {
+    return type == 'READ';
+  }
+
   set changeType(String newType) => this.type = newType;
   set mergeRecos(List newRecos) => this.recos.addAll(newRecos);
 
@@ -66,6 +78,4 @@ class ListedBook extends Book {
 
 class ListedBookHeader extends ListedBook {
   ListedBookHeader(String type) : super(type: type);
-
-  String get headerType => this.type;
 }

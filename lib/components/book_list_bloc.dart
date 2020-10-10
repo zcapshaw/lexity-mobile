@@ -38,17 +38,17 @@ class BookListBloc {
         addListCountItem('READ', userReadList.length);
 
         // Create ListedBooks fromJson and add to readingList
-        readingList.add(ListItemHeader('READING'));
+        readingList.add(ListedBookHeader('READING'));
         for (var item in userReadingList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
-        readingList.add(ListItemHeader('TO_READ'));
+        readingList.add(ListedBookHeader('TO_READ'));
         for (var item in userToReadList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
-        readingList.add(ListItemHeader('READ'));
+        readingList.add(ListedBookHeader('READ'));
         for (var item in userReadList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);

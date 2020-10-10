@@ -40,14 +40,16 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     }
   }
 
+  // Same action as _mapReadingListLoadedToState, but unique event driver of ReadingListRefreshed
   Stream<ReadingListState> _mapReadingListRefreshedToState() async* {
     try {
-      final books = await this.readingListService.loadReadingList();
-      yield ReadingListLoadSuccess(
-          // Potentially use the from entity to convert json to typed object
-          // books.map(ListedBook.fromEntity).toList(),
-          );
-    } catch (_) {
+      final list = await this.readingListService.loadReadingList();
+      var decodedList = jsonDecode(list.data) as List;
+      List<ListedBook> readingList =
+          decodedList.map((book) => ListedBook.fromJson(book)).toList();
+      yield ReadingListLoadSuccess(readingList);
+    } catch (err) {
+      print(err);
       yield ReadingListLoadFailure();
     }
   }
