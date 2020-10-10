@@ -35,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ReadingList(
-                types: ['READING', 'TO_READ'],
+                includedTypes: ['READING', 'TO_READ'],
                 isHomescreen: true,
               ),
             ],

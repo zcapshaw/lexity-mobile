@@ -18,7 +18,7 @@ User user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
   final readList = ReadingList(
-      types: ['READ'], enableHeaders: false, enableSwipeRight: false);
+      includedTypes: ['READ'], enableHeaders: false, enableSwipeRight: false);
   int selectedIndex = 0;
   List<bool> listStatus = [true, false];
 

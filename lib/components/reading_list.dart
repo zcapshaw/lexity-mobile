@@ -15,14 +15,14 @@ import 'list_tile_item.dart';
 import 'reorderable_list_w_physics.dart';
 
 class ReadingList extends StatefulWidget {
-  final List<String> types;
+  final List<String> includedTypes;
   final bool enableSwipeRight;
   final bool enableHeaders;
   final bool
       isHomescreen; // used for conditional indexing on homescreen (when there's no READ list)
 
   ReadingList({
-    @required this.types,
+    @required this.includedTypes,
     this.enableSwipeRight = true,
     this.enableHeaders = true,
     this.isHomescreen = false,
