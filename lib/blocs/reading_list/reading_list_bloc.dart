@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:lexity_mobile/blocs/reading_list/reading_list.dart';
@@ -28,12 +29,13 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   Stream<ReadingListState> _mapReadingListLoadedToState() async* {
     try {
-      final books = await this.readingListService.loadReadingList();
-      yield ReadingListLoadSuccess(
-          // Potentially use the from entity to convert json to typed object
-          // books.map(ListedBook.fromEntity).toList(),
-          );
-    } catch (_) {
+      final list = await this.readingListService.loadReadingList();
+      var decodedList = jsonDecode(list.data) as List;
+      List<ListedBook> readingList =
+          decodedList.map((book) => ListedBook.fromJson(book)).toList();
+      yield ReadingListLoadSuccess(readingList);
+    } catch (err) {
+      print(err);
       yield ReadingListLoadFailure();
     }
   }

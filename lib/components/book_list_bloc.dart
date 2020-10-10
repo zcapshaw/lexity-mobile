@@ -32,8 +32,6 @@ class BookListBloc {
         List userToReadList =
             bookJson.where((b) => b['type'] == 'TO_READ').toList();
         List userReadList = bookJson.where((b) => b['type'] == 'READ').toList();
-        print(
-            'reading: ${userReadingList.length}, to read: ${userToReadList.length}, read: ${userReadList.length}');
 
         addListCountItem('READING', userReadingList.length);
         addListCountItem('TO_READ', userToReadList.length);

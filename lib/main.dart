@@ -2,26 +2,31 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:lexity_mobile/repositories/authentication_repository.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:lexity_mobile/theme.dart';
 
-import 'package:lexity_mobile/blocs/simple_bloc_observer.dart';
-import 'package:lexity_mobile/services/list_service.dart';
-
-import 'blocs/blocs.dart';
-import 'screens/screens.dart';
+import './blocs/blocs.dart';
+import './blocs/simple_bloc_observer.dart';
+import './repositories/authentication_repository.dart';
+import './repositories/user_repository.dart';
+import './screens/screens.dart';
+import './services/list_service.dart';
+import './services/reading_list_service.dart';
+import './theme.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
   GetIt.I.registerLazySingleton(() => ListService());
-  runApp(
-    App(
+  runApp(BlocProvider(
+    lazy: false, // load BLoC immediately
+    create: (context) {
+      return ReadingListBloc(
+        readingListService: ReadingListService(),
+      )..add(ReadingListLoaded());
+    },
+    child: App(
       authenticationRepository: AuthenticationRepository(),
       userRepository: UserRepository(),
     ),
-  );
+  ));
 }
 
 class App extends StatelessWidget {
@@ -45,8 +50,7 @@ class App extends StatelessWidget {
         ),
         BlocProvider<AuthenticationBloc>(
           create: (context) => AuthenticationBloc(
-              authenticationRepository: authenticationRepository,
-              userRepository: userRepository),
+              authenticationRepository: authenticationRepository, userRepository: userRepository),
         ),
       ],
       child: AppView(),

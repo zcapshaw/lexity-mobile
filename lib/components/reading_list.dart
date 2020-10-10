@@ -92,8 +92,7 @@ class _ReadingListState extends State<ReadingList> {
         false; // In case the user dismisses the dialog by clicking away from it
   }
 
-  _navigateToBookDetails(
-      BuildContext context, ListedBook book, int listItemIndex) async {
+  _navigateToBookDetails(BuildContext context, ListedBook book, int listItemIndex) async {
     //dispatch a function to update BookDetailsCubit state
     print(book.notes);
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
@@ -122,64 +121,107 @@ class _ReadingListState extends State<ReadingList> {
   @override
   Widget build(BuildContext context) {
     return Flexible(
-      child: StreamBuilder(
-        stream: bookListBloc.listBooks, // Stream getter
-        initialData: [],
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+      child: BlocBuilder<ReadingListBloc, ReadingListState>(builder: (context, state) {
+        if (state is ReadingListLoadInProgress) {
+          return CircularProgressIndicator();
+        } else if (state is ReadingListLoadSuccess) {
+          final readingList = state.readingList;
           return Column(
             children: <Widget>[
               Flexible(
                 child: RefreshIndicator(
-                  onRefresh: () => bookListBloc.refreshBackendBookList(
-                      user.accessToken, user.id),
+                  onRefresh: () => bookListBloc.refreshBackendBookList(user.accessToken, user.id),
                   child: CustomReorderableListView(
                     scrollController: reorderScrollController,
                     scrollDirection: Axis.vertical,
-                    onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
-                        user, oldIndex, newIndex, widget.isHomescreen),
-                    children: List.generate(snapshot.data.length, (index) {
-                      if (snapshot.hasData && snapshot.data[index] != null) {
-                        if (snapshot.data[index] is ListItemHeader &&
-                            widget.enableHeaders &&
-                            widget.types
-                                .contains(snapshot.data[index].headerType)) {
+                    onReorder: (oldIndex, newIndex) =>
+                        bookListBloc.reorderBook(user, oldIndex, newIndex, widget.isHomescreen),
+                    children: List.generate(readingList.length, (index) {
+                      if (readingList[index] != null) {
+                        if (readingList[index] is ListItemHeader && widget.enableHeaders) {
                           return ListTileHeader(
-                            type: snapshot.data[index].type,
+                            type: 'READING', // TEMPORARY
                             key: UniqueKey(),
                           );
-                        } else if (snapshot.data[index] is ListedBook &&
-                            snapshot.data[index] is! ListItemHeader &&
-                            widget.types.contains(snapshot.data[index].type)) {
+                        } else if (readingList[index] is ListedBook &&
+                            readingList[index] is! ListItemHeader) {
                           return ListTileItem(
-                            item: snapshot.data[index],
+                            item: readingList[index],
                             tileIndex: index,
                             enableSwipeRight: widget.enableSwipeRight,
                             onPressTile: _navigateToBookDetails,
                             deletePrompt: _promptUser,
                             typeChangeAction: _updateType,
-                            key: ValueKey(snapshot.data[index].bookId),
+                            key: ValueKey(readingList[index].bookId),
                           );
                         } else {
-                          return Container(
-                              key: UniqueKey(), height: 0, width: 0);
+                          return Container(key: UniqueKey(), height: 0, width: 0);
                         }
                       }
                     }),
                   ),
                 ),
               ),
+
+              // child: StreamBuilder(
+              //   stream: bookListBloc.listBooks, // Stream getter
+              //   initialData: [],
+              //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              //     return Column(
+              //       children: <Widget>[
+              //         Flexible(
+              //           child: RefreshIndicator(
+              //             onRefresh: () => bookListBloc.refreshBackendBookList(
+              //                 user.accessToken, user.id),
+              //             child: CustomReorderableListView(
+              //               scrollController: reorderScrollController,
+              //               scrollDirection: Axis.vertical,
+              //               onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
+              //                   user.currentUser,
+              //                   oldIndex,
+              //                   newIndex,
+              //                   widget.isHomescreen),
+              //               children: List.generate(snapshot.data.length, (index) {
+              //                 if (snapshot.hasData && snapshot.data[index] != null) {
+              //                   if (snapshot.data[index] is ListItemHeader &&
+              //                       widget.enableHeaders &&
+              //                       widget.types
+              //                           .contains(snapshot.data[index].headerType)) {
+              //                     return ListTileHeader(
+              //                       type: snapshot.data[index].type,
+              //                       key: UniqueKey(),
+              //                     );
+              //                   } else if (snapshot.data[index] is ListedBook &&
+              //                       snapshot.data[index] is! ListItemHeader &&
+              //                       widget.types.contains(snapshot.data[index].type)) {
+              //                     return ListTileItem(
+              //                       item: snapshot.data[index],
+              //                       tileIndex: index,
+              //                       enableSwipeRight: widget.enableSwipeRight,
+              //                       onPressTile: _navigateToBookDetails,
+              //                       deletePrompt: _promptUser,
+              //                       typeChangeAction: _updateType,
+              //                       key: ValueKey(snapshot.data[index].bookId),
+              //                     );
+              //                   } else {
+              //                     return Container(
+              //                         key: UniqueKey(), height: 0, width: 0);
+              //                   }
+              //                 }
+              //               }),
+              //             ),
+              //           ),
+              //         ),
               StreamBuilder(
                   stream: bookListBloc.listCount, // Stream getter
                   initialData: {},
-                  builder:
-                      (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                     // conditionally show empty list illustration if reading list is empty
                     if (widget.isHomescreen &&
                         snapshot.data['READING'] == 0 &&
                         snapshot.data['TO_READ'] == 0) {
                       return EmptyListIllustration(widget.isHomescreen);
-                    } else if (!widget.isHomescreen &&
-                        snapshot.data['READ'] == 0) {
+                    } else if (!widget.isHomescreen && snapshot.data['READ'] == 0) {
                       return EmptyListIllustration(widget.isHomescreen);
                     } else {
                       return SizedBox.shrink();
@@ -187,8 +229,8 @@ class _ReadingListState extends State<ReadingList> {
                   }),
             ],
           );
-        },
-      ),
+        }
+      }),
     );
   }
 }

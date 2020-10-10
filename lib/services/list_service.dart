@@ -136,14 +136,13 @@ class ListService {
     );
   }
 
-  //TODO: With new API, should eventually name getListedBooksByUser (or something like this)
+  //TODO: With new API, should eventually name getListedBooksByUser (or something like this) - it should also be passed a User type
   Future<APIResponse<Object>> getListItemSummary(accessToken, userId) async {
     return http.get(
       API + '/list/book/?userId=$userId',
       headers: {'access-token': accessToken},
     ).then((res) {
       if (res.statusCode == 200) {
-        print(res.body);
         return APIResponse<Object>(data: res.body);
       }
       return APIResponse<Object>(
