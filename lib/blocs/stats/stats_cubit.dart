@@ -13,15 +13,13 @@ class StatsCubit extends Cubit<StatsState> {
   StatsCubit({@required this.readingListBloc}) : super(StatsLoadInProgress()) {
     readingListSubscription = readingListBloc.listen((state) {
       if (state is ReadingListLoadSuccess) {
-        int toReadCount =
-            state.readingList.where((book) => book.toRead).toList().length;
-
         int readingCount =
             state.readingList.where((book) => book.reading).toList().length;
-
+        int toReadCount =
+            state.readingList.where((book) => book.toRead).toList().length;
         int readCount =
             state.readingList.where((book) => book.read).toList().length;
-        emit(StatsLoadSuccess(toReadCount, readingCount, readCount));
+        emit(StatsLoadSuccess(readingCount, toReadCount, readCount));
       }
     });
   }

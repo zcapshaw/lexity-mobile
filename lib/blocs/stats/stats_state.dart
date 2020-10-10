@@ -11,17 +11,17 @@ abstract class StatsState extends Equatable {
 class StatsLoadInProgress extends StatsState {}
 
 class StatsLoadSuccess extends StatsState {
-  final int toReadCount;
   final int readingCount;
+  final int toReadCount;
   final int readCount;
 
-  const StatsLoadSuccess(this.toReadCount, this.readingCount, this.readCount);
+  const StatsLoadSuccess(this.readingCount, this.toReadCount, this.readCount);
 
   @override
-  List<Object> get props => [toReadCount, readingCount, readCount];
+  List<Object> get props => [readingCount, toReadCount, readCount];
 
   @override
   String toString() {
-    return 'StatsLoadSuccess { toReadCount: $toReadCount, readingCount: $readingCount, readCount: $readCount }';
+    return 'StatsLoadSuccess { readingCount: $readingCount, toReadCount: $toReadCount, readCount: $readCount }';
   }
 }
