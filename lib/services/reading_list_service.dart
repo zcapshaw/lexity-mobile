@@ -1,6 +1,7 @@
-import 'list_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'list_service.dart';
+import '../models/models.dart';
 
 class ReadingListService {
   ListService get listService => GetIt.I<ListService>();
@@ -14,4 +15,19 @@ class ReadingListService {
   }
 
   saveReadingList() async {}
+
+  injectHeaders(List<ListedBook> readingList) {
+    int readingCount =
+        readingList.where((book) => book.reading).toList().length;
+    int toReadCount = readingList.where((book) => book.toRead).toList().length;
+
+    // This insertion approach assumes that the readingList types
+    // will always be ordered as [READING, TO_READ, READ]
+    readingList.insert(
+        readingCount + toReadCount - 1, ListedBookHeader('READ'));
+    readingList.insert(readingCount - 1, ListedBookHeader('TO_READ'));
+    readingList.insert(0, ListedBookHeader('READING'));
+
+    return readingList;
+  }
 }
