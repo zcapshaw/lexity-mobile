@@ -138,13 +138,18 @@ class _ReadingListState extends State<ReadingList> {
                         bookListBloc.reorderBook(user, oldIndex, newIndex, widget.isHomescreen),
                     children: List.generate(readingList.length, (index) {
                       if (readingList[index] != null) {
+<<<<<<< HEAD
                         if (readingList[index] is ListItemHeader && widget.enableHeaders) {
+=======
+                        if (readingList[index] is ListedBookHeader &&
+                            widget.enableHeaders) {
+>>>>>>> Rename to more descriptive class of ListedBookHeader
                           return ListTileHeader(
                             type: 'READING', // TEMPORARY
                             key: UniqueKey(),
                           );
                         } else if (readingList[index] is ListedBook &&
-                            readingList[index] is! ListItemHeader) {
+                            readingList[index] is! ListedBookHeader) {
                           return ListTileItem(
                             item: readingList[index],
                             tileIndex: index,
@@ -183,7 +188,7 @@ class _ReadingListState extends State<ReadingList> {
               //                   widget.isHomescreen),
               //               children: List.generate(snapshot.data.length, (index) {
               //                 if (snapshot.hasData && snapshot.data[index] != null) {
-              //                   if (snapshot.data[index] is ListItemHeader &&
+              //                   if (snapshot.data[index] is ListedBookHeader &&
               //                       widget.enableHeaders &&
               //                       widget.types
               //                           .contains(snapshot.data[index].headerType)) {
@@ -192,7 +197,7 @@ class _ReadingListState extends State<ReadingList> {
               //                       key: UniqueKey(),
               //                     );
               //                   } else if (snapshot.data[index] is ListedBook &&
-              //                       snapshot.data[index] is! ListItemHeader &&
+              //                       snapshot.data[index] is! ListedBookHeader &&
               //                       widget.types.contains(snapshot.data[index].type)) {
               //                     return ListTileItem(
               //                       item: snapshot.data[index],

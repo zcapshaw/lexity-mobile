@@ -64,8 +64,8 @@ class ListedBook extends Book {
   Map<String, dynamic> toJson() => _$ListedBookToJson(this);
 }
 
-class ListItemHeader extends ListedBook {
-  ListItemHeader(String type) : super(type: type);
+class ListedBookHeader extends ListedBook {
+  ListedBookHeader(String type) : super(type: type);
 
   String get headerType => this.type;
 }
