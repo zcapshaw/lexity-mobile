@@ -1,17 +1,16 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:async';
 
-import 'package:lexity_mobile/utils/parse_bool.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UserModel extends ChangeNotifier {
-  final storage = new FlutterSecureStorage(); // Create storage
-  User appUser = new User();
-
   UserModel() {
     //_deleteAll(); // used to temporarily clear storage during testing
     _init();
   }
+
+  final storage = const FlutterSecureStorage(); // Create storage
+  User appUser = User();
 
   void addOrUpdateUser(bool authN,
       {String id,
@@ -26,19 +25,20 @@ class UserModel extends ChangeNotifier {
       int joined,
       int followers,
       int friends}) {
-    appUser.authN = authN;
-    appUser.id = id ?? appUser.id;
-    appUser.accessToken = accessToken ?? appUser.accessToken;
-    appUser.name = name ?? appUser.name;
-    appUser.username = username ?? appUser.username;
-    appUser.profileImg = profileImg ?? appUser.profileImg;
-    appUser.email = email ?? appUser.email;
-    appUser.verified = verified ?? appUser.verified;
-    appUser.bio = bio ?? appUser.bio;
-    appUser.website = website ?? appUser.website;
-    appUser.joined = joined ?? appUser.joined;
-    appUser.followers = followers ?? appUser.followers;
-    appUser.friends = friends ?? appUser.friends;
+    appUser
+      ..authN = authN
+      ..id = id ?? appUser.id
+      ..accessToken = accessToken ?? appUser.accessToken
+      ..name = name ?? appUser.name
+      ..username = username ?? appUser.username
+      ..profileImg = profileImg ?? appUser.profileImg
+      ..email = email ?? appUser.email
+      ..verified = verified ?? appUser.verified
+      ..bio = bio ?? appUser.bio
+      ..website = website ?? appUser.website
+      ..joined = joined ?? appUser.joined
+      ..followers = followers ?? appUser.followers
+      ..friends = friends ?? appUser.friends;
     _writeStorage('userId', appUser.id);
     _writeStorage('accessToken', appUser.accessToken);
     _writeStorage('authN', appUser.authN.toString());
@@ -81,8 +81,8 @@ class UserModel extends ChangeNotifier {
   // initialize the new user from values in local secure storage
   Future<void> _init() async {
     appUser = await User.create();
-    print(
-        'id: ${appUser.id}, token: ${appUser.accessToken}, authN: ${appUser.authN}, createComplete: ${appUser.createComplete}');
+    print('id: ${appUser.id}, token: ${appUser.accessToken}');
+    print('authN: ${appUser.authN}, createComplete: ${appUser.createComplete}');
     notifyListeners();
   }
 
@@ -96,6 +96,14 @@ class UserModel extends ChangeNotifier {
 }
 
 class User {
+  // Default constructor
+  User() {
+    createComplete = false;
+    id = '';
+    accessToken = '';
+    authN = null;
+  }
+
   bool createComplete;
   String id;
   String accessToken;
@@ -111,49 +119,35 @@ class User {
   int followers;
   int friends;
 
-  // Default constructor
-  User() {
-    createComplete = false;
-    id = '';
-    accessToken = '';
-    authN = null;
-  }
-
-  // Private constructor
-  User._create() {
-    print('_create() (private constructor)');
-  }
-
   /// Public factory
   static Future<User> create() async {
-    print('create() (public factory)');
-
     // Call the private constructor
-    var appUser = User._create();
+    var appUser = User();
 
     // Do initialization that requires async
-    final storage = new FlutterSecureStorage(); // Create storage
-    Map<String, String> allValues = await storage.readAll();
-    appUser.createComplete = true;
-    appUser.id = allValues['userId'];
-    appUser.accessToken = allValues['accessToken'];
-    appUser.authN = allValues['authN'].parseBool();
-    appUser.name = allValues['name'] ?? '';
-    appUser.username = allValues['username'] ?? '';
-    appUser.profileImg = allValues['profileImg'] ?? '';
-    appUser.email = allValues['email'] ?? '';
-    appUser.verified = allValues['verified'].parseBool();
-    appUser.bio = allValues['bio'] ?? '';
-    appUser.website = allValues['website'] ?? '';
-    appUser.joined = allValues['joined'] == null
-        ? 0
-        : int.tryParse(allValues['joined']) ?? 0;
-    appUser.followers = allValues['followers'] == null
-        ? 0
-        : int.tryParse(allValues['followers']) ?? 0;
-    appUser.friends = allValues['friends'] == null
-        ? 0
-        : int.tryParse(allValues['friends']) ?? 0;
+    final storage = const FlutterSecureStorage(); // Create storage
+    Map allValues = await storage.readAll();
+    appUser
+      ..createComplete = true
+      ..id = allValues['userId']
+      ..accessToken = allValues['accessToken']
+      ..authN = allValues['authN'].toLowerCase() == 'true'
+      ..name = allValues['name'] ?? ''
+      ..username = allValues['username'] ?? ''
+      ..profileImg = allValues['profileImg'] ?? ''
+      ..email = allValues['email'] ?? ''
+      ..verified = allValues['verified'].toLowerCase() == 'true'
+      ..bio = allValues['bio'] ?? ''
+      ..website = allValues['website'] ?? ''
+      ..joined = allValues['joined'] == null
+          ? 0
+          : int.tryParse(allValues['joined']) ?? 0
+      ..followers = allValues['followers'] == null
+          ? 0
+          : int.tryParse(allValues['followers']) ?? 0
+      ..friends = allValues['friends'] == null
+          ? 0
+          : int.tryParse(allValues['friends']) ?? 0;
 
     // Return the fully initialized object
     return appUser;

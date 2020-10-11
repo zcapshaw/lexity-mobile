@@ -2,7 +2,7 @@
 extension BoolParsing on String {
   bool parseBool() {
     if (this != null) {
-      return this.toLowerCase() == 'true';
+      return toLowerCase() == 'true';
     } else {
       return false;
     }
