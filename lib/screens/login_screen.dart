@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -14,13 +15,18 @@ import '../models/user.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
+
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => LoginScreen());
+  }
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   StreamSubscription _sub; // subscribe to stream of incoming lexity:// URIs
-  UserModel user; // global user for use in class methods
+  UserRepository user; // global user for use in class methods
   String twitterButtonText = 'SIGN UP WITH TWITTER';
   String appleButtonText = 'SIGN UP WITH APPLE';
   String sentenceOne = 'Already have an account? ';
@@ -31,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserModel>(context, listen: false);
+    user = Provider.of<UserRepository>(context, listen: false);
     initUniLinks(); // initialize the URI stream
   }
 

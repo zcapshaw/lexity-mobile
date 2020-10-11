@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:lexity_mobile/screens/book_details_screen.dart';
 import '../blocs/blocs.dart';
 import 'package:provider/provider.dart';
@@ -33,14 +34,14 @@ class ReadingList extends StatefulWidget {
 }
 
 class _ReadingListState extends State<ReadingList> {
-  UserModel user;
+  UserRepository user;
   final ScrollController reorderScrollController = ScrollController();
 
   @override
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserModel>(context, listen: false);
+    user = Provider.of<UserRepository>(context, listen: false);
   }
 
   void _updateType(ListedBook book, int oldIndex) async {

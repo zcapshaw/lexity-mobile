@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
@@ -32,7 +33,7 @@ class BookDetailScreenOld extends StatefulWidget {
 }
 
 class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
-  UserModel user;
+  UserRepository user;
   String htmlDescription = '';
   List<Note> notes = [];
   String genre;
@@ -46,7 +47,7 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserModel>(context, listen: false);
+    user = Provider.of<UserRepository>(context, listen: false);
   }
 
   Future<Book> _getListItemDetail() async {

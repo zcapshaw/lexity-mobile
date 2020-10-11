@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:provider/provider.dart';
 
 import '../components/components.dart';
@@ -23,14 +24,14 @@ class _AddBookScreenState extends State<AddBookScreen> {
   String noteText;
   String recoSource;
   String recoText;
-  UserModel user;
+  UserRepository user;
   ListService get listService => GetIt.I<ListService>();
 
   @override
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserModel>(context, listen: false);
+    user = Provider.of<UserRepository>(context, listen: false);
   }
 
   void _saveListItem() async {

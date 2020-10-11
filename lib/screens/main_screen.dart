@@ -6,6 +6,11 @@ import 'book_search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
+
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => MainScreen());
+  }
+
   @override
   _MainScreen createState() => _MainScreen();
 }

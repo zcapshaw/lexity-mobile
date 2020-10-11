@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/screens/add_book_screen.dart';
@@ -23,13 +24,13 @@ class BookSearchScreen extends StatefulWidget {
 class _BookSearchScreenState extends State<BookSearchScreen> {
   final String illustration = 'assets/undraw_reading_time_gvg0.svg';
   String queryText = '';
-  UserModel user;
+  UserRepository user;
 
   @override
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserModel>(context, listen: false);
+    user = Provider.of<UserRepository>(context, listen: false);
   }
 
   //This async function returns a List of Books from the API response

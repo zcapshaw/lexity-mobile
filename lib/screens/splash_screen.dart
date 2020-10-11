@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:lexity_mobile/models/user.dart';
 import '../components/book_list_bloc.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key key}) : super(key: key);
+
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => SplashScreen());
+  }
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
+/// TODO: remove all this logic and converst SplashScreen
+/// to stateless widget
 bool authenticated; // maintain local authenticated state
 
 void authNav(context) {
-  var user = Provider.of<UserModel>(context, listen: true);
+  var user = Provider.of<UserRepository>(context, listen: true);
   if (authenticated != user.authN && user.createComplete == true) {
     authenticated = user.authN;
     // Refresh the users Book List upon login
@@ -43,7 +51,7 @@ void authNav(context) {
 class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
-    authNav(context);
+    // authNav(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(

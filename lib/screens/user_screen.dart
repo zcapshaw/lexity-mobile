@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -13,7 +16,7 @@ class UserScreen extends StatefulWidget {
   _UserScreenState createState() => _UserScreenState();
 }
 
-UserModel user; //declare global variable
+UserRepository user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
   final readList = ReadingList(
@@ -40,7 +43,7 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user = Provider.of<UserModel>(context, listen: true);
+    user = Provider.of<UserRepository>(context, listen: true);
     return Scaffold(
       body: Container(
         color: Color(0xFFC3E0E0),
@@ -285,39 +288,46 @@ class _UserInfo extends StatelessWidget {
 
 class _UserMenu extends StatelessWidget {
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.topCenter,
-      padding: EdgeInsets.symmetric(vertical: 5),
-      child: Column(
-        children: <Widget>[
-          Container(
-            child: Icon(
-              Icons.maximize,
-              size: 36,
-              color: Colors.grey[700],
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.75,
-            child: OutlineButton(
-              padding: EdgeInsets.symmetric(vertical: 15),
-              borderSide: BorderSide(
-                color: Color(0xFF1A6978),
-              ),
-              onPressed: () => user.logout(),
-              child: Text(
-                'Logout',
-                style: TextStyle(
-                  color: Color(0xFF1A6978),
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.3,
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+      builder: (context, state) {
+        return Container(
+          alignment: Alignment.topCenter,
+          padding: EdgeInsets.symmetric(vertical: 5),
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Icon(
+                  Icons.maximize,
+                  size: 36,
+                  color: Colors.grey[700],
                 ),
               ),
-            ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.75,
+                child: OutlineButton(
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  borderSide: BorderSide(
+                    color: Color(0xFF1A6978),
+                  ),
+                  onPressed: () {
+                    // user.logout();
+                    context.bloc<AuthenticationBloc>().add(const LoggedOut());
+                  },
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Color(0xFF1A6978),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
