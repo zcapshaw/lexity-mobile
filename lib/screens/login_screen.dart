@@ -1,12 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
-
-import '../models/user.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -20,27 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  StreamSubscription _sub; // subscribe to stream of incoming lexity:// URIs
-  User user; // global user for use in class methods
-  String twitterButtonText = 'SIGN UP WITH TWITTER';
-  String appleButtonText = 'SIGN UP WITH APPLE';
-  String sentenceOne = 'Already have an account? ';
-  String sentenceTwo = 'Sign in';
   bool signUp = true;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  initState() {
-    super.initState();
-    // assign user for access to UserModel methods
-    user = context.bloc<AuthenticationBloc>().state.user;
-  }
-
-  @override
-  dispose() {
-    if (_sub != null) _sub.cancel();
-    super.dispose();
-  }
 
   void _logInWithTwitter() {
     context.bloc<AuthenticationBloc>().add(const LogInWithTwitter());
@@ -54,12 +30,6 @@ class _LoginScreenState extends State<LoginScreen> {
   void _toggleSignin() {
     setState(() {
       signUp = !signUp;
-      twitterButtonText =
-          signUp ? 'SIGN UP WITH TWITTER' : 'SIGN IN WITH TWITTER';
-      appleButtonText = signUp ? 'SIGN UP WITH APPLE' : 'SIGN IN WITH APPLE';
-      sentenceOne =
-          signUp ? 'Already have an account? ' : 'Don\'t have an account? ';
-      sentenceTwo = signUp ? 'Sign in' : 'Sign up';
     });
   }
 
@@ -72,7 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
             return false;
           },
           child: Scaffold(
-            key: _scaffoldKey,
             backgroundColor: Colors.white,
             body: SafeArea(
               bottom: false,
@@ -105,7 +74,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               style: Theme.of(context).textTheme.subtitle2),
                         ),
                         SignUpButton(
-                          buttonText: twitterButtonText,
+                          buttonText: signUp
+                              ? 'SIGN UP WITH TWITTER'
+                              : 'SIGN IN WITH TWITTER',
                           callback: _logInWithTwitter,
                           icon: FaIcon(
                             FontAwesomeIcons.twitter,
@@ -113,7 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         SignUpButton(
-                          buttonText: appleButtonText,
+                          buttonText: signUp
+                              ? 'SIGN UP WITH APPLE'
+                              : 'SIGN IN WITH APPLE',
                           callback: signUpWithApple,
                           icon: FaIcon(
                             FontAwesomeIcons.apple,
@@ -127,11 +100,13 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
-                                text: sentenceOne,
+                                text: signUp
+                                    ? 'Already have an account? '
+                                    : 'Don\'t have an account? ',
                                 style: Theme.of(context).textTheme.subtitle2,
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: sentenceTwo,
+                                    text: signUp ? 'Sign in' : 'Sign up',
                                     style: TextStyle(
                                         decoration: TextDecoration.underline),
                                   ),
