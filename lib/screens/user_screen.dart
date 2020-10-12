@@ -1,14 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lexity_mobile/blocs/blocs.dart';
 
+import '../components/book_list_bloc.dart';
 import '../components/reading_list.dart';
 import '../models/user.dart';
 import '../utils/follower_numbers.dart';
-import '../components/book_list_bloc.dart';
 
 class UserScreen extends StatefulWidget {
   UserScreen({Key key}) : super(key: key);

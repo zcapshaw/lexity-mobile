@@ -2,7 +2,6 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';

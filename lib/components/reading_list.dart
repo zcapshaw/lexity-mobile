@@ -1,20 +1,18 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:lexity_mobile/screens/book_details_screen.dart';
-import '../blocs/blocs.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'reorderable_list_w_physics.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/screens/screens.dart';
+
+import '../blocs/blocs.dart';
+import '../components/empty_list_illustration.dart';
+import '../models/listed_book.dart';
+import '../models/user.dart';
 import 'book_list_bloc.dart';
 import 'list_tile_header.dart';
 import 'list_tile_item.dart';
-import '../models/listed_book.dart';
-import '../models/user.dart';
-import '../components/empty_list_illustration.dart';
+import 'reorderable_list_w_physics.dart';
 
 class ReadingList extends StatefulWidget {
   final List<String> types;

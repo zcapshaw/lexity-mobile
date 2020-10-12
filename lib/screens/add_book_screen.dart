@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:provider/provider.dart';
 
 import '../components/components.dart';
 import '../models/models.dart';

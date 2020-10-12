@@ -1,16 +1,15 @@
-import 'dart:convert';
 import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:provider/provider.dart';
 
-import 'package:lexity_mobile/screens/add_book_screen.dart';
-import 'package:lexity_mobile/models/user.dart';
+import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
 import 'package:lexity_mobile/models/book.dart';
+import 'package:lexity_mobile/models/user.dart';
+import 'package:lexity_mobile/screens/add_book_screen.dart';
 
 enum Origin { fab, navSearch }
 
