@@ -3,15 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
+import 'package:lexity_mobile/repositories/authentication_repository.dart';
 import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:lexity_mobile/theme.dart';
-import 'package:provider/provider.dart';
 
 import 'package:lexity_mobile/blocs/simple_bloc_observer.dart';
 import 'package:lexity_mobile/services/list_service.dart';
 
 import 'blocs/blocs.dart';
-import 'models/user.dart';
 import 'screens/screens.dart';
 
 void setupLocator() {
@@ -22,26 +21,42 @@ Future main() async {
   Bloc.observer = SimpleBlocObserver();
   setupLocator();
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => UserRepository(),
-      child: App(),
+    App(
+      authenticationRepository: AuthenticationRepository(),
+      userRepository: UserRepository(),
     ),
   );
 }
 
 class App extends StatelessWidget {
+  const App({
+    Key key,
+    @required this.authenticationRepository,
+    @required this.userRepository,
+  })  : assert(authenticationRepository != null),
+        assert(userRepository != null),
+        super(key: key);
+
+  final AuthenticationRepository authenticationRepository;
+  final UserRepository userRepository;
+
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider<BookDetailsCubit>(
-          create: (context) => BookDetailsCubit(),
-        ),
-        BlocProvider<AuthenticationBloc>(
-          create: (context) => AuthenticationBloc(),
-        ),
-      ],
-      child: AppView(),
+    return RepositoryProvider.value(
+      value: authenticationRepository,
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<BookDetailsCubit>(
+            create: (context) => BookDetailsCubit(),
+          ),
+          BlocProvider<AuthenticationBloc>(
+            create: (context) => AuthenticationBloc(
+                authenticationRepository: authenticationRepository,
+                userRepository: userRepository),
+          ),
+        ],
+        child: AppView(),
+      ),
     );
   }
 }
@@ -64,14 +79,24 @@ class _AppViewState extends State<AppView> {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
             if (state is Authenticated) {
-              print('state is Authenticated');
               _navigator.pushAndRemoveUntil<void>(
                 MainScreen.route(),
                 (route) => false,
               );
             }
             if (state is Unauthenticated) {
-              print('state is Unauthenticated');
+              _navigator.pushAndRemoveUntil<void>(
+                LoginScreen.route(),
+                (route) => false,
+              );
+            }
+            if (state is AuthenticationLoading) {
+              _navigator.pushAndRemoveUntil<void>(
+                LoadingScreen.route(),
+                (route) => false,
+              );
+            }
+            if (state is AuthenticationFailed) {
               _navigator.pushAndRemoveUntil<void>(
                 LoginScreen.route(),
                 (route) => false,

@@ -16,7 +16,7 @@ class UserScreen extends StatefulWidget {
   _UserScreenState createState() => _UserScreenState();
 }
 
-UserRepository user; //declare global variable
+User user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
   final readList = ReadingList(
@@ -43,7 +43,7 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user = Provider.of<UserRepository>(context, listen: true);
+    user = context.bloc<AuthenticationBloc>().state.user;
     return Scaffold(
       body: Container(
         color: Color(0xFFC3E0E0),

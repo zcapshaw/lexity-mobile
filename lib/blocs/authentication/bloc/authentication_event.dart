@@ -8,6 +8,11 @@ abstract class AuthenticationEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// User taps Sign In/Up with Twitter
+class LogInWithTwitter extends AuthenticationEvent {
+  const LogInWithTwitter();
+}
+
 // User has logged in
 class LoggedIn extends AuthenticationEvent {
   const LoggedIn();
@@ -16,4 +21,9 @@ class LoggedIn extends AuthenticationEvent {
 // User has logged out
 class LoggedOut extends AuthenticationEvent {
   const LoggedOut();
+}
+
+class InboundUriLinkReceived extends AuthenticationEvent {
+  const InboundUriLinkReceived(this.uri);
+  final Uri uri;
 }

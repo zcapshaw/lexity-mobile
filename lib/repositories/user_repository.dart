@@ -1,8 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lexity_mobile/models/models.dart';
+import 'package:http/http.dart' as http;
 
-class UserRepository extends ChangeNotifier {
+class UserRepository {
   UserRepository() {
     //_deleteAll(); // used to temporarily clear storage during testing
     _init();
@@ -11,7 +14,43 @@ class UserRepository extends ChangeNotifier {
   final storage = const FlutterSecureStorage(); // Create storage
   User appUser = User();
 
-  void addOrUpdateUser(bool authN,
+  Future<bool> getLexityUserFromUri(Uri uri) async {
+    final accessToken = uri.queryParameters['access_token'];
+    final userId = uri.queryParameters['user_id'];
+
+    if (accessToken.isNotEmpty && userId.isNotEmpty) {
+      final res = await http
+          .get('https://api.lexity.co/user/info/?userId=$userId', headers: {
+        'access-token': '$accessToken',
+      });
+      if (res.statusCode == 200) {
+        final Map decoded = jsonDecode(res.body);
+        _addOrUpdateUser(true,
+            id: userId,
+            accessToken: accessToken,
+            name: decoded['name'],
+            username: decoded['username'],
+            profileImg: decoded['profileImg'],
+            email: decoded['email'],
+            verified: decoded['verified'],
+            bio: decoded['bio'],
+            website: decoded['website'],
+            joined: decoded['joined'],
+            followers: decoded['followers'],
+            friends: decoded['friends']);
+        return true;
+      } else {
+        print('Error loaded user from database - status: ${res.statusCode}');
+        return false;
+      }
+    } else {
+      // TODO: Consider showing a SnackBar with login error to user
+      print('Could not authenticate user');
+      return false;
+    }
+  }
+
+  void _addOrUpdateUser(bool authN,
       {String id,
       String accessToken,
       String name,
@@ -51,13 +90,11 @@ class UserRepository extends ChangeNotifier {
     _writeStorage('joined', appUser.joined.toString());
     _writeStorage('followers', appUser.followers.toString());
     _writeStorage('friends', appUser.friends.toString());
-    notifyListeners();
   }
 
   void logout() {
     appUser.authN = false;
     _writeStorage('authN', authN.toString());
-    notifyListeners();
   }
 
   // create getters
@@ -82,7 +119,6 @@ class UserRepository extends ChangeNotifier {
     appUser = await User.create();
     print('id: ${appUser.id}, token: ${appUser.accessToken}');
     print('authN: ${appUser.authN}, createComplete: ${appUser.createComplete}');
-    notifyListeners();
   }
 
   Future<Null> _writeStorage(String key, String value) async {

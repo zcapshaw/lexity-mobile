@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
 import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:lexity_mobile/screens/book_details_screen.dart';
 import '../blocs/blocs.dart';
@@ -34,14 +35,14 @@ class ReadingList extends StatefulWidget {
 }
 
 class _ReadingListState extends State<ReadingList> {
-  UserRepository user;
+  User user;
   final ScrollController reorderScrollController = ScrollController();
 
   @override
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserRepository>(context, listen: false);
+    user = context.bloc<AuthenticationBloc>().state.user;
   }
 
   void _updateType(ListedBook book, int oldIndex) async {
@@ -63,7 +64,7 @@ class _ReadingListState extends State<ReadingList> {
         }
         break;
     }
-    bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
+    bookListBloc.changeBookType(book, user, oldIndex, newType);
   }
 
   Future<bool> _promptUser(DismissDirection direction, ListedBook book) async {
@@ -76,7 +77,7 @@ class _ReadingListState extends State<ReadingList> {
                 child: Text("Delete"),
                 onPressed: () {
                   // Dismiss the dialog and also dismiss the swiped item
-                  bookListBloc.deleteBook(book, user.currentUser);
+                  bookListBloc.deleteBook(book, user);
                   Navigator.of(context).pop(true);
                 },
               ),
@@ -137,10 +138,7 @@ class _ReadingListState extends State<ReadingList> {
                     scrollController: reorderScrollController,
                     scrollDirection: Axis.vertical,
                     onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
-                        user.currentUser,
-                        oldIndex,
-                        newIndex,
-                        widget.isHomescreen),
+                        user, oldIndex, newIndex, widget.isHomescreen),
                     children: List.generate(snapshot.data.length, (index) {
                       if (snapshot.hasData && snapshot.data[index] != null) {
                         if (snapshot.data[index] is ListItemHeader &&

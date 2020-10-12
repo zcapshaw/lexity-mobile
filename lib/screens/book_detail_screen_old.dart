@@ -47,7 +47,6 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserRepository>(context, listen: false);
   }
 
   Future<Book> _getListItemDetail() async {

@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
 import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'package:provider/provider.dart';
 
@@ -24,13 +26,13 @@ class BookSearchScreen extends StatefulWidget {
 class _BookSearchScreenState extends State<BookSearchScreen> {
   final String illustration = 'assets/undraw_reading_time_gvg0.svg';
   String queryText = '';
-  UserRepository user;
+  User user;
 
   @override
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserRepository>(context, listen: false);
+    user = context.bloc<AuthenticationBloc>().state.user;
   }
 
   //This async function returns a List of Books from the API response
@@ -116,97 +118,100 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Container(
-          child: Column(
-            children: <Widget>[
-              Container(
-                margin: EdgeInsets.all(20),
-                child: Center(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: CupertinoTextField(
-                          autofocus: true,
-                          autocorrect: false,
-                          clearButtonMode: OverlayVisibilityMode.editing,
-                          decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(10)),
-                          textInputAction: TextInputAction.search,
-                          //TODO: add debouncing to onChange logic
-                          onChanged: (text) {
-                            setState(() {
-                              queryText = text;
-                            });
-                          },
-                          placeholder: 'Search for books',
-                          prefix: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              Icons.search,
-                              color: Colors.grey[600],
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Container(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(20),
+                  child: Center(
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: CupertinoTextField(
+                            autofocus: true,
+                            autocorrect: false,
+                            clearButtonMode: OverlayVisibilityMode.editing,
+                            decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(10)),
+                            textInputAction: TextInputAction.search,
+                            //TODO: add debouncing to onChange logic
+                            onChanged: (text) {
+                              setState(() {
+                                queryText = text;
+                              });
+                            },
+                            placeholder: 'Search for books',
+                            prefix: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Icon(
+                                Icons.search,
+                                color: Colors.grey[600],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 5,
-                      ),
-                      //this button should not be shown on main_screen under search
-                      //it should only be shown in the add a book flow
-                      if (widget.origin == Origin.fab)
-                        FlatButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text('Cancel'),
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                        )
-                    ],
+                        SizedBox(
+                          width: 5,
+                        ),
+                        //this button should not be shown on main_screen under search
+                        //it should only be shown in the add a book flow
+                        if (widget.origin == Origin.fab)
+                          FlatButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text('Cancel'),
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                          )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: FutureBuilder(
-                  future: _fetchResults(),
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.data == null || queryText == '') {
-                      return AddBookBackground();
-                    }
-                    return ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Column(
-                          children: <Widget>[
-                            ListTile(
-                                title: Text(
-                                    snapshot.data[index].titleWithSubtitle),
-                                subtitle: Text(
-                                    _modifiedAuthorText(snapshot.data[index])),
-                                leading: Image.network(
-                                    snapshot.data[index].thumbnail),
-                                onTap: () {
-                                  print(snapshot.data[index].title);
-                                  print(snapshot.data[index].subtitle == '');
-                                  _createBook(snapshot.data[index]);
-                                }),
-                            Divider(),
-                          ],
-                        );
-                      },
-                    );
-                  },
+                Expanded(
+                  child: FutureBuilder(
+                    future: _fetchResults(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.data == null || queryText == '') {
+                        return AddBookBackground();
+                      }
+                      return ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: <Widget>[
+                              ListTile(
+                                  title: Text(
+                                      snapshot.data[index].titleWithSubtitle),
+                                  subtitle: Text(_modifiedAuthorText(
+                                      snapshot.data[index])),
+                                  leading: Image.network(
+                                      snapshot.data[index].thumbnail),
+                                  onTap: () {
+                                    print(snapshot.data[index].title);
+                                    print(snapshot.data[index].subtitle == '');
+                                    _createBook(snapshot.data[index]);
+                                  }),
+                              Divider(),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 }
 

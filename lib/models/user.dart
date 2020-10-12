@@ -31,30 +31,30 @@ class User {
     // Call the private constructor
     var appUser = User();
 
-    // Do initialization that requires async
-    final storage = const FlutterSecureStorage(); // Create storage
-    Map allValues = await storage.readAll();
-    appUser
-      ..createComplete = true
-      ..id = allValues['userId']
-      ..accessToken = allValues['accessToken']
-      ..authN = allValues['authN'].toLowerCase() == 'true'
-      ..name = allValues['name'] ?? ''
-      ..username = allValues['username'] ?? ''
-      ..profileImg = allValues['profileImg'] ?? ''
-      ..email = allValues['email'] ?? ''
-      ..verified = allValues['verified'].toLowerCase() == 'true'
-      ..bio = allValues['bio'] ?? ''
-      ..website = allValues['website'] ?? ''
-      ..joined = allValues['joined'] == null
-          ? 0
-          : int.tryParse(allValues['joined']) ?? 0
-      ..followers = allValues['followers'] == null
-          ? 0
-          : int.tryParse(allValues['followers']) ?? 0
-      ..friends = allValues['friends'] == null
-          ? 0
-          : int.tryParse(allValues['friends']) ?? 0;
+    // // Do initialization that requires async
+    // final storage = const FlutterSecureStorage(); // Create storage
+    // Map allValues = await storage.readAll();
+    // appUser
+    //   ..createComplete = true
+    //   ..id = allValues['userId']
+    //   ..accessToken = allValues['accessToken']
+    //   ..authN = allValues['authN'].toLowerCase() == 'true'
+    //   ..name = allValues['name'] ?? ''
+    //   ..username = allValues['username'] ?? ''
+    //   ..profileImg = allValues['profileImg'] ?? ''
+    //   ..email = allValues['email'] ?? ''
+    //   ..verified = allValues['verified'].toLowerCase() == 'true'
+    //   ..bio = allValues['bio'] ?? ''
+    //   ..website = allValues['website'] ?? ''
+    //   ..joined = allValues['joined'] == null
+    //       ? 0
+    //       : int.tryParse(allValues['joined']) ?? 0
+    //   ..followers = allValues['followers'] == null
+    //       ? 0
+    //       : int.tryParse(allValues['followers']) ?? 0
+    //   ..friends = allValues['friends'] == null
+    //       ? 0
+    //       : int.tryParse(allValues['friends']) ?? 0;
 
     // Return the fully initialized object
     return appUser;
