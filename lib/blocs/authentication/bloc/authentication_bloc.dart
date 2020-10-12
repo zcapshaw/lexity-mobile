@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:lexity_mobile/components/book_list_bloc.dart';
 import 'package:lexity_mobile/models/user.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
@@ -52,9 +53,13 @@ class AuthenticationBloc
     if (event is InboundUriLinkReceived) {
       var success = await _userRepository.getLexityUserFromUri(event.uri);
       if (success) {
+        // if user successfully retreived, set state to Authenticated
         yield Authenticated(_userRepository.appUser);
+        // automaticaly refresh the reading list
+        await bookListBloc.refreshBackendBookList(
+            _userRepository.appUser.accessToken, _userRepository.appUser.id);
+        // close the twitter web view
         await closeWebView();
-        print(_userRepository.appUser.id);
       } else {
         yield const AuthenticationFailed();
         await closeWebView();

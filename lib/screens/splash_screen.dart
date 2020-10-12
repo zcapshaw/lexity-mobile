@@ -1,57 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:provider/provider.dart';
-import 'package:lexity_mobile/models/user.dart';
-import '../components/book_list_bloc.dart';
 
-class SplashScreen extends StatefulWidget {
-  SplashScreen({Key key}) : super(key: key);
-
+class SplashScreen extends StatelessWidget {
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => SplashScreen());
   }
 
   @override
-  _SplashScreenState createState() => _SplashScreenState();
-}
-
-/// TODO: remove all this logic and converst SplashScreen
-/// to stateless widget
-bool authenticated; // maintain local authenticated state
-
-// void authNav(context) {
-//   var user = Provider.of<UserRepository>(context, listen: true);
-//   if (authenticated != user.authN && user.createComplete == true) {
-//     authenticated = user.authN;
-//     // Refresh the users Book List upon login
-//     bookListBloc.refreshBackendBookList(user.accessToken, user.id);
-//     print(
-//       'User created: ${user.createComplete}, User authenticated: ${user.authN}',
-//     );
-//     if (user.createComplete && user.authN) {
-//       /// SchedulerBinding allows for frame transitions AFTER all
-//       /// current transitions are done
-//       /// It's essentially used to prevent conflict errors by awaiting
-//       /// transitions in progress
-//       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-//         Navigator.of(context).pushNamed('/');
-//       });
-//     } else if (user.createComplete && !user.authN) {
-//       SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-//         // When authN == false, remove all pages in stack except /splash
-//         // SplashPage is where authN conditional routing logic is held
-//         Navigator.of(context)
-//             .pushNamedAndRemoveUntil('/login', ModalRoute.withName('/splash'));
-//       });
-//     }
-//   }
-// }
-
-class _SplashScreenState extends State<SplashScreen> {
-  @override
   Widget build(BuildContext context) {
-    // authNav(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
