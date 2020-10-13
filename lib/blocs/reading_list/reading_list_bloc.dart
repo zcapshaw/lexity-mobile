@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
-import 'package:lexity_mobile/extensions/reading_list.dart';
 import 'package:meta/meta.dart';
 import 'package:lexity_mobile/blocs/reading_list/reading_list.dart';
 import 'package:lexity_mobile/models/models.dart';
 import 'package:lexity_mobile/services/reading_list_service.dart';
-import 'package:lexity_mobile/extensions/extensions.dart';
 
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   final ReadingListService readingListService;
@@ -16,10 +14,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   @override
   Stream<ReadingListState> mapEventToState(ReadingListEvent event) async* {
-    if (event is ReadingListLoaded) {
+    if (event is ReadingListLoaded || event is ReadingListRefreshed) {
       yield* _mapReadingListLoadedToState();
-    } else if (event is ReadingListRefreshed) {
-      yield* _mapReadingListRefreshedToState();
     } else if (event is ReadingListAdded) {
       yield* _mapReadingListAddedToState(event);
     } else if (event is ReadingListUpdated) {
@@ -45,21 +41,6 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     }
   }
 
-  // Same action as _mapReadingListLoadedToState, but unique event driver of ReadingListRefreshed
-  Stream<ReadingListState> _mapReadingListRefreshedToState() async* {
-    try {
-      final list = await this.readingListService.loadReadingList();
-      var decodedList = jsonDecode(list.data) as List;
-      List<ListedBook> readingList =
-          decodedList.map((book) => ListedBook.fromJson(book)).toList();
-      yield ReadingListLoadSuccess(
-          readingListService.sortByTypeAndInjectHeaders(readingList));
-    } catch (err) {
-      print(err);
-      yield ReadingListLoadFailure();
-    }
-  }
-
   Stream<ReadingListState> _mapReadingListAddedToState(
       ReadingListAdded event) async* {
     if (state is ReadingListLoadSuccess) {
@@ -67,7 +48,6 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
           List.from((state as ReadingListLoadSuccess).readingList)
             ..add(event.book);
       yield ReadingListLoadSuccess(updatedReadingList);
-      _saveReadingList(updatedReadingList);
     }
   }
 
@@ -119,12 +99,5 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield ReadingListLoadSuccess(updatedReadingList);
       readingListService.deleteBook(event.book);
     }
-  }
-
-  Future _saveReadingList(List<ListedBook> readingList) {
-    return readingListService.saveReadingList(
-        // Use the convert ListBook to json and store it locally
-        // readingList.map((todo) => todo.toEntity()).toList(),
-        );
   }
 }

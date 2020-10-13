@@ -60,80 +60,14 @@ class App extends StatelessWidget {
         BlocProvider<BookDetailsCubit>(
           create: (context) => BookDetailsCubit(),
         ),
-<<<<<<< HEAD
         BlocProvider<AuthenticationBloc>(
           create: (context) => AuthenticationBloc(
               authenticationRepository: authenticationRepository, userRepository: userRepository),
-=======
-        BlocProvider<StatsCubit>(
+        ),BlocProvider<StatsCubit>(
           lazy: false, // load cubit immediately, for list header counts
           create: (context) => StatsCubit(
             readingListBloc: BlocProvider.of<ReadingListBloc>(context),
           ),
-        ),
-      ],
-      child: MaterialApp(
-        initialRoute: '/splash',
-        routes: {
-          '/': (context) => MainScreen(),
-          '/home': (context) => HomeScreen(),
-          '/user': (context) => UserScreen(),
-          '/login': (context) => LoginScreen(),
-          '/splash': (context) => SplashScreen(),
-          '/bookSearch': (context) => BookSearchScreen(),
-        },
-        theme: ThemeData(
-          primarySwatch: Colors.teal,
-          appBarTheme: AppBarTheme(
-              color: Colors.grey[200],
-              brightness: Brightness.light,
-              iconTheme: IconThemeData(
-                color: Colors.grey[700],
-              )),
-          textTheme: TextTheme(
-            headline1: GoogleFonts.ibmPlexSerif(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-              fontSize: 24,
-            ),
-            headline3: GoogleFonts.ibmPlexSerif(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey[700],
-            ),
-            headline4: GoogleFonts.ibmPlexSerif(
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF1A6978),
-              fontSize: 36,
-            ),
-            headline6: GoogleFonts.roboto(
-              fontWeight: FontWeight.w700,
-              color: Colors.grey[700],
-              fontSize: 18,
-            ),
-            bodyText1: GoogleFonts.roboto(
-              color: Colors.grey[700],
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.75,
-            ),
-            bodyText2: GoogleFonts.roboto(
-              color: Colors.grey[700],
-            ),
-            caption: GoogleFonts.roboto(
-              color: Colors.grey[400],
-              fontSize: 12,
-            ),
-            subtitle1: GoogleFonts.roboto(
-              color: Colors.grey[700],
-            ),
-            subtitle2: GoogleFonts.roboto(
-              color: Colors.grey[600],
-              fontSize: 16,
-              letterSpacing: 0.4,
-              height: 1.5,
-            ),
-          ),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
->>>>>>> Integrate StatsCubit into MultiBlocProvider
         ),
       ],
       child: AppView(),

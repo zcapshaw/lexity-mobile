@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/screens/screens.dart';
 
+<<<<<<< HEAD
 import '../blocs/blocs.dart';
 import '../components/empty_list_illustration.dart';
 import '../models/listed_book.dart';
 import '../models/user.dart';
 import 'book_list_bloc.dart';
+=======
+import 'reorderable_list_w_physics.dart';
+>>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
 import 'list_tile_header.dart';
 import 'list_tile_item.dart';
 import 'reorderable_list_w_physics.dart';
@@ -69,9 +73,12 @@ class _ReadingListState extends State<ReadingList> {
     context.bloc<ReadingListBloc>().add(ReadingListUpdated(book));
 =======
     context.bloc<ReadingListBloc>().add(ReadingListUpdated(updatedBook));
+<<<<<<< HEAD
 >>>>>>> Complete the ReadingListUpdated event and associated BLoC and Services functionality
     //bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
 >>>>>>> Setup ReadingList extension to provide custom getters for List<ListedBook>
+=======
+>>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
   }
 
   Future<bool> _promptUser(DismissDirection direction, ListedBook book) async {
@@ -155,6 +162,7 @@ class _ReadingListState extends State<ReadingList> {
                   child: CustomReorderableListView(
                     scrollController: reorderScrollController,
                     scrollDirection: Axis.vertical,
+<<<<<<< HEAD
                     onReorder: (oldIndex, newIndex) =>
 <<<<<<< HEAD
                         bookListBloc.reorderBook(user, oldIndex, newIndex, widget.isHomescreen),
@@ -163,6 +171,12 @@ class _ReadingListState extends State<ReadingList> {
                             ReadingListReordered(oldIndex, newIndex,
                                 isHomescreen: widget.isHomescreen)),
 >>>>>>> Finalize ReadingListReordered event and associated BLoC services
+=======
+                    onReorder: (oldIndex, newIndex) => context
+                        .bloc<ReadingListBloc>()
+                        .add(ReadingListReordered(oldIndex, newIndex,
+                            isHomescreen: widget.isHomescreen)),
+>>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
                     children: List.generate(readingList.length, (index) {
                       if (readingList[index] != null) {
 <<<<<<< HEAD
@@ -202,6 +216,7 @@ class _ReadingListState extends State<ReadingList> {
                   ),
                 ),
               ),
+<<<<<<< HEAD
 
               // child: StreamBuilder(
               //   stream: bookListBloc.listBooks, // Stream getter
@@ -269,6 +284,8 @@ class _ReadingListState extends State<ReadingList> {
                     }
                   }),
 =======
+=======
+>>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
               BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
                 // conditionally show empty list illustration if reading list is empty
                 if (state is StatsLoadInProgress) {
@@ -291,6 +308,9 @@ class _ReadingListState extends State<ReadingList> {
     );
   }
 
+  // Method to provide required Future<void> to onRefreshed()
+  // As mentioned in TODO, the event trigger is not an async process,
+  // So the refresh indicator doesn't work exactly right - to be fixed
   Future<void> refreshReadingList(BuildContext context) async {
     BlocProvider.of<ReadingListBloc>(context).add(ReadingListRefreshed());
   }

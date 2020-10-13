@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+=======
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+>>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -5,6 +11,7 @@ import 'package:lexity_mobile/blocs/blocs.dart';
 
 import '../components/book_list_bloc.dart';
 import '../components/reading_list.dart';
+import '../blocs/blocs.dart';
 import '../models/user.dart';
 import '../utils/follower_numbers.dart';
 
@@ -245,35 +252,33 @@ class _UserInfo extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  child: StreamBuilder(
-                      stream: bookListBloc.listCount, // Stream getter
-                      initialData: {},
-                      builder: (BuildContext context,
-                          AsyncSnapshot<dynamic> snapshot) {
-                        return RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text: FollowerNumbers.converter(
-                                snapshot.data['READ'] ?? 0),
-                            style: TextStyle(
-                              color: Color(0xFF1A6978),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 13,
-                              height: 1.5,
-                            ),
-                            children: <TextSpan>[
-                              TextSpan(
-                                text: snapshot.data['READ'] == 1
-                                    ? ' Book'
-                                    : ' Books',
-                                style: TextStyle(
-                                    color: Colors.grey[800],
-                                    fontWeight: FontWeight.w400),
-                              ),
-                            ],
+                  child: BlocBuilder<StatsCubit, StatsState>(
+                      builder: (context, state) {
+                    if (state is StatsLoadSuccess) {
+                      return RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: FollowerNumbers.converter(state.readCount ?? 0),
+                          style: TextStyle(
+                            color: Color(0xFF1A6978),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            height: 1.5,
                           ),
-                        );
-                      }),
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: state.readCount == 1 ? ' Book' : ' Books',
+                              style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.w400),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
+                  }),
                 ),
               ],
             ),
