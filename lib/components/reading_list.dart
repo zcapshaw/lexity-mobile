@@ -44,25 +44,29 @@ class _ReadingListState extends State<ReadingList> {
   }
 
   void _updateType(ListedBook book, int oldIndex) async {
-    String newType;
     switch (book.type) {
       case 'READING':
         {
-          newType = 'READ';
+          book.changeType = 'READ';
         }
         break;
       case 'TO_READ':
         {
-          newType = 'READING';
+          book.changeType = 'READING';
         }
         break;
       default:
         {
-          newType = 'TO_READ';
+          book.changeType = 'TO_READ';
         }
         break;
     }
+<<<<<<< HEAD
     bookListBloc.changeBookType(book, user, oldIndex, newType);
+=======
+    context.bloc<ReadingListBloc>().add(ReadingListUpdated(book));
+    //bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
+>>>>>>> Setup ReadingList extension to provide custom getters for List<ListedBook>
   }
 
   Future<bool> _promptUser(DismissDirection direction, ListedBook book) async {
@@ -75,7 +79,11 @@ class _ReadingListState extends State<ReadingList> {
                 child: Text("Delete"),
                 onPressed: () {
                   // Dismiss the dialog and also dismiss the swiped item
+<<<<<<< HEAD
                   bookListBloc.deleteBook(book, user);
+=======
+                  context.bloc<ReadingListBloc>().add(ReadingListDeleted(book));
+>>>>>>> Setup ReadingList extension to provide custom getters for List<ListedBook>
                   Navigator.of(context).pop(true);
                 },
               ),

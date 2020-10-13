@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'list_service.dart';
 import '../models/models.dart';
+import '../extensions/extensions.dart';
 
 class ReadingListService {
   ListService get listService => GetIt.I<ListService>();
@@ -34,7 +35,7 @@ class ReadingListService {
 
   reorderBook(List<ListedBook> readingList, int oldIndex, int newIndex,
       bool isHomescreen) async {
-    final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
+    //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
 
     // // This is an inflexible, somewhat 'hacky', solution.
     // // Given that the List BLoC is shared between the UserScreen and HomeScreen
@@ -45,13 +46,13 @@ class ReadingListService {
     // // To solve this, isHomescreen bool was created, so that a drag to an index that is
     // // beyond the scope of HomeScreen - that is, an index that would be 'READ' - will be
     // // automatically reassigned to the last acceptable HomeScreen view index of readingList
-    if (isHomescreen && newIndex > listIndexes.lengthWithoutRead)
-      newIndex = listIndexes.lengthWithoutRead;
+    if (isHomescreen && newIndex > readingList.lengthWithoutRead)
+      newIndex = readingList.lengthWithoutRead;
 
     String newIndexType = _getTypeByIndex(
-        newIndex, listIndexes.readingCount, listIndexes.toReadCount);
+        newIndex, readingList.readingCount, readingList.toReadCount);
     String oldIndexType = _getTypeByIndex(
-        oldIndex, listIndexes.readingCount, listIndexes.toReadCount);
+        oldIndex, readingList.readingCount, readingList.toReadCount);
 
     // // If the newer position is lower in the list, all tiles will 'slide'
     // // up the list, therefore the new index should be decreased by one
@@ -79,6 +80,14 @@ class ReadingListService {
     return readingList;
   }
 
+  deleteBook(ListedBook book) {
+    try {
+      listService.deleteBook(accessToken, userId, book.listId);
+    } catch (err) {
+      print('Could not delete the book in the backend: $err');
+    }
+  }
+
   String _getTypeByIndex(int index, int readingCount, int toReadCount) {
     String type;
 
@@ -93,27 +102,27 @@ class ReadingListService {
   }
 }
 
-class ReadingListIndexes {
-  final List<ListedBook> readingList;
-  final int headerPlaceholder = 1;
+// class ReadingListIndexes {
+//   final List<ListedBook> readingList;
+//   final int headerPlaceholder = 1;
 
-  ReadingListIndexes(this.readingList);
+//   ReadingListIndexes(this.readingList);
 
-  int get readingCount {
-    return readingList.where((book) => book.reading).toList().length;
-  }
+//   int get readingCount {
+//     return readingList.where((book) => book.reading).toList().length;
+//   }
 
-  int get toReadCount {
-    return readingList.where((book) => book.toRead).toList().length;
-  }
+//   int get toReadCount {
+//     return readingList.where((book) => book.toRead).toList().length;
+//   }
 
-  int get readCount {
-    return readingList.where((book) => book.read).toList().length;
-  }
+//   int get readCount {
+//     return readingList.where((book) => book.read).toList().length;
+//   }
 
-  int get lengthWithoutRead {
-    return readingList.length - this.readCount;
-  }
+//   int get lengthWithoutRead {
+//     return readingList.length - this.readCount;
+//   }
 
-  int get listLength => readingList.length;
-}
+//   int get listLength => readingList.length;
+// }

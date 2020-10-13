@@ -25,6 +25,18 @@ class ReadingListAdded extends ReadingListEvent {
   String toString() => 'ReadingListAdded { book: $book }';
 }
 
+class ReadingListUpdated extends ReadingListEvent {
+  final ListedBook book;
+
+  const ReadingListUpdated(this.book);
+
+  @override
+  List<Object> get props => [book];
+
+  @override
+  String toString() => 'ReadingListUpdated { book: $book }';
+}
+
 class ReadingListReordered extends ReadingListEvent {
   final int oldIndex;
   final int newIndex;

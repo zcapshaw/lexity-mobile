@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:bloc/bloc.dart';
+import 'package:lexity_mobile/extensions/reading_list.dart';
 import 'package:meta/meta.dart';
 import 'package:lexity_mobile/blocs/reading_list/reading_list.dart';
 import 'package:lexity_mobile/models/models.dart';
 import 'package:lexity_mobile/services/reading_list_service.dart';
+import 'package:lexity_mobile/extensions/extensions.dart';
 
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   final ReadingListService readingListService;
@@ -20,6 +22,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapReadingListRefreshedToState();
     } else if (event is ReadingListAdded) {
       yield* _mapReadingListAddedToState(event);
+    } else if (event is ReadingListUpdated) {
+      yield* _mapReadingListUpdatedToState(event);
     } else if (event is ReadingListReordered) {
       yield* _mapReadingListReorderedToState(event);
     } else if (event is ReadingListDeleted) {
@@ -67,6 +71,16 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     }
   }
 
+  Stream<ReadingListState> _mapReadingListUpdatedToState(
+      ReadingListUpdated event) async* {
+    if (state is ReadingListLoadSuccess) {
+      final List<ListedBook> updatedReadingList =
+          List.from((state as ReadingListLoadSuccess).readingList)
+            ..add(event.book);
+      yield ReadingListLoadSuccess(updatedReadingList);
+    }
+  }
+
   Stream<ReadingListState> _mapReadingListReorderedToState(
       ReadingListReordered event) async* {
     if (state is ReadingListLoadSuccess) {
@@ -77,7 +91,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
               event.newIndex,
               event.isHomescreen);
       yield ReadingListLoadSuccess(updatedReadingList);
-      //_saveReadingList(updatedReadingList);
+      //TODO: Soon the reorder needs to be saved to local and/or DB
     }
   }
 
@@ -89,7 +103,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
           .where((book) => book.bookId != event.book.bookId)
           .toList();
       yield ReadingListLoadSuccess(updatedReadingList);
-      _saveReadingList(updatedReadingList);
+      readingListService.deleteBook(event.book);
     }
   }
 
