@@ -71,6 +71,26 @@ class ListedBook extends Book {
   set changeType(String newType) => this.type = newType;
   set mergeRecos(List newRecos) => this.recos.addAll(newRecos);
 
+  ListedBook clone() {
+    return ListedBook(
+        title: this.title,
+        subtitle: this.subtitle,
+        authors: this.authors,
+        cover: this.cover,
+        googleId: this.googleId,
+        description: this.description,
+        categories: this.categories,
+        listId: this.listId,
+        userId: this.userId,
+        bookId: this.bookId,
+        type: this.type,
+        inUserList: this.inUserList,
+        userRead: this.userRead,
+        recos: this.recos,
+        labels: this.labels,
+        notes: this.notes);
+  }
+
   factory ListedBook.fromJson(Map<String, dynamic> json) =>
       _$ListedBookFromJson(json);
   Map<String, dynamic> toJson() => _$ListedBookToJson(this);

@@ -41,7 +41,7 @@ class ListTileItem extends StatelessWidget {
         secondaryBackground: SwipeLeftBackground(),
         onDismissed: (direction) {
           if (direction == DismissDirection.startToEnd) {
-            typeChangeAction(item, tileIndex);
+            typeChangeAction(item);
           } else {
             Scaffold.of(context).showSnackBar(SnackBar(
                 backgroundColor: Colors.grey[600],

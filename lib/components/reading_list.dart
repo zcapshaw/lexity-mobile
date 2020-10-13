@@ -43,28 +43,33 @@ class _ReadingListState extends State<ReadingList> {
     user = context.bloc<AuthenticationBloc>().state.user;
   }
 
-  void _updateType(ListedBook book, int oldIndex) async {
+  void _updateType(ListedBook book) async {
+    ListedBook updatedBook = book.clone();
     switch (book.type) {
       case 'READING':
         {
-          book.changeType = 'READ';
+          updatedBook.changeType = 'READ';
         }
         break;
       case 'TO_READ':
         {
-          book.changeType = 'READING';
+          updatedBook.changeType = 'READING';
         }
         break;
       default:
         {
-          book.changeType = 'TO_READ';
+          updatedBook.changeType = 'TO_READ';
         }
         break;
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
     bookListBloc.changeBookType(book, user, oldIndex, newType);
 =======
     context.bloc<ReadingListBloc>().add(ReadingListUpdated(book));
+=======
+    context.bloc<ReadingListBloc>().add(ReadingListUpdated(updatedBook));
+>>>>>>> Complete the ReadingListUpdated event and associated BLoC and Services functionality
     //bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
 >>>>>>> Setup ReadingList extension to provide custom getters for List<ListedBook>
   }

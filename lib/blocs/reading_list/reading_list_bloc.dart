@@ -74,9 +74,22 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   Stream<ReadingListState> _mapReadingListUpdatedToState(
       ReadingListUpdated event) async* {
     if (state is ReadingListLoadSuccess) {
-      final List<ListedBook> updatedReadingList =
-          List.from((state as ReadingListLoadSuccess).readingList)
-            ..add(event.book);
+      bool typeChange = false;
+      List<ListedBook> updatedReadingList =
+          (state as ReadingListLoadSuccess).readingList.map((book) {
+        if (book.bookId == event.updatedBook.bookId) {
+          typeChange = book.type != event.updatedBook.type ? true : false;
+          return event.updatedBook;
+        } else {
+          return book;
+        }
+      }).toList();
+      if (typeChange) {
+        updatedReadingList = await readingListService.updateBookTypeIndex(
+          event.updatedBook,
+          updatedReadingList,
+        );
+      }
       yield ReadingListLoadSuccess(updatedReadingList);
     }
   }

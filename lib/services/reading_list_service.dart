@@ -33,6 +33,33 @@ class ReadingListService {
 
   removeHeaders(List<ListedBook> readingList) {}
 
+  updateBookTypeIndex(ListedBook updatedBook, List<ListedBook> readingList) {
+    final int oldIndex =
+        readingList.indexWhere((b) => b.bookId == updatedBook.bookId);
+
+    // oldIndex returns -1 if no matching bookId is found
+    if (oldIndex > 0) {
+      print(
+          'currentType: ${readingList[oldIndex].type}, newType: ${updatedBook.type}');
+      int newIndex = _getTypeChangeIndex(updatedBook.type, readingList);
+      print('newIndex: $newIndex, oldIndex: $oldIndex');
+
+      // // If the newer position is lower in the list, all tiles will 'slide'
+      // // up the list, therefore the new index should be decreased by one
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+
+      readingList.removeAt(oldIndex);
+      readingList.insert(newIndex ?? oldIndex, updatedBook);
+      return readingList;
+    } else {
+      print(
+          'Could not find matching bookID to update - returning original ReadingList');
+      return readingList;
+    }
+  }
+
   reorderBook(List<ListedBook> readingList, int oldIndex, int newIndex,
       bool isHomescreen) async {
     //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
@@ -102,27 +129,27 @@ class ReadingListService {
   }
 }
 
-// class ReadingListIndexes {
-//   final List<ListedBook> readingList;
-//   final int headerPlaceholder = 1;
-
-//   ReadingListIndexes(this.readingList);
-
-//   int get readingCount {
-//     return readingList.where((book) => book.reading).toList().length;
-//   }
-
-//   int get toReadCount {
-//     return readingList.where((book) => book.toRead).toList().length;
-//   }
-
-//   int get readCount {
-//     return readingList.where((book) => book.read).toList().length;
-//   }
-
-//   int get lengthWithoutRead {
-//     return readingList.length - this.readCount;
-//   }
-
-//   int get listLength => readingList.length;
-// }
+int _getTypeChangeIndex(String newType, List<ListedBook> readingList) {
+  int newIndex;
+  switch (newType) {
+    case 'READING':
+      {
+        newIndex = readingList.readingCountExcludingHeader;
+        print('My new index is: $newIndex');
+        break;
+      }
+    case 'TO_READ':
+      {
+        newIndex = readingList.readingCountExcludingHeader +
+            readingList.toReadCountExcludingHeader;
+        break;
+      }
+    default:
+      {
+        // Move read books to the top of the READ array
+        newIndex = readingList.length - readingList.readCount;
+        break;
+      }
+  }
+  return newIndex;
+}
