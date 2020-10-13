@@ -1,15 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../models/book.dart';
+import '../models/models.dart';
 
 // TODO: add all my API call functions to this service
 class ListService {
   static const API = 'https://api.lexity.co';
 
-  Future<APIResponse> addOrUpdateListItem(accessToken, item) {
-    print(accessToken);
-    print(jsonEncode(item));
+  Future<APIResponse> addOrUpdateListItem(accessToken, ListedBook book) {
+    print('Book json: ${book.listElementsToJson()}');
     return http
         .post(
       API + '/list/add',
@@ -17,7 +16,7 @@ class ListService {
         'access-token': accessToken,
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(item),
+      body: jsonEncode(book.listElementsToJson()),
     )
         .then((res) {
       if (res.statusCode == 200) {

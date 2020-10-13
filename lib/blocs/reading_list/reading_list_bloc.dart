@@ -91,6 +91,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
         );
       }
       yield ReadingListLoadSuccess(updatedReadingList);
+      readingListService.addOrUpdateBook(event.updatedBook);
     }
   }
 

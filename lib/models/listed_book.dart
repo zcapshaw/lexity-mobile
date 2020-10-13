@@ -94,6 +94,27 @@ class ListedBook extends Book {
   factory ListedBook.fromJson(Map<String, dynamic> json) =>
       _$ListedBookFromJson(json);
   Map<String, dynamic> toJson() => _$ListedBookToJson(this);
+
+// Custom json serialization, to isolate only variables used on the backend
+// for the LIST vertice. Several other ListedBook inherited values (e.g. Title, Authors)
+// belong to the Books node
+  Map<String, dynamic> listElementsToJson() {
+    final val = <String, dynamic>{};
+
+    void writeNotNull(String key, dynamic value) {
+      if (value != null) {
+        val[key] = value;
+      }
+    }
+
+    writeNotNull('userId', this.userId);
+    writeNotNull('bookId', this.bookId);
+    writeNotNull('type', this.type);
+    // writeNotNull('recos', this.recos); - I don't think we need this, but commenting for now
+    writeNotNull('labels', this.labels);
+    writeNotNull('notes', this.notes);
+    return val;
+  }
 }
 
 class ListedBookHeader extends ListedBook {

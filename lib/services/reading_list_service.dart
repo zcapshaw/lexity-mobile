@@ -39,10 +39,7 @@ class ReadingListService {
 
     // oldIndex returns -1 if no matching bookId is found
     if (oldIndex > 0) {
-      print(
-          'currentType: ${readingList[oldIndex].type}, newType: ${updatedBook.type}');
       int newIndex = _getTypeChangeIndex(updatedBook.type, readingList);
-      print('newIndex: $newIndex, oldIndex: $oldIndex');
 
       // // If the newer position is lower in the list, all tiles will 'slide'
       // // up the list, therefore the new index should be decreased by one
@@ -107,9 +104,17 @@ class ReadingListService {
     return readingList;
   }
 
-  deleteBook(ListedBook book) {
+  void addOrUpdateBook(ListedBook book) async {
     try {
-      listService.deleteBook(accessToken, userId, book.listId);
+      await listService.addOrUpdateListItem(accessToken, book);
+    } catch (err) {
+      print('Could not add or update the book in the backend: $err');
+    }
+  }
+
+  void deleteBook(ListedBook book) async {
+    try {
+      await listService.deleteBook(accessToken, userId, book.listId);
     } catch (err) {
       print('Could not delete the book in the backend: $err');
     }
