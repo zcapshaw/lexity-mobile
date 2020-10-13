@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/blocs/blocs.dart';
 
 import 'book_list_bloc.dart';
 
@@ -51,18 +53,17 @@ class BuildTitle extends StatelessWidget {
   }
 
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: bookListBloc.listCount, // Stream getter
-        initialData: {},
-        builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-          return Container(
-            alignment: Alignment.topLeft,
-            margin: EdgeInsets.only(top: 30, bottom: 10),
-            child: Text(
-              _getHeaderText(headingType, snapshot.data[headingType] ?? 0),
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          );
-        });
+    return BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
+      return Container(
+        alignment: Alignment.topLeft,
+        margin: EdgeInsets.only(top: 30, bottom: 10),
+        child: Text(
+          (state is StatsLoadSuccess)
+              ? _getHeaderText(headingType, state.countByType(headingType))
+              : _getHeaderText(headingType, 0),
+          style: Theme.of(context).textTheme.headline6,
+        ),
+      );
+    });
   }
 }

@@ -66,6 +66,7 @@ class App extends StatelessWidget {
               authenticationRepository: authenticationRepository, userRepository: userRepository),
 =======
         BlocProvider<StatsCubit>(
+          lazy: false, // load cubit immediately, for list header counts
           create: (context) => StatsCubit(
             readingListBloc: BlocProvider.of<ReadingListBloc>(context),
           ),

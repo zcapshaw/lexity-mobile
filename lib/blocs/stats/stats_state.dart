@@ -20,6 +20,22 @@ class StatsLoadSuccess extends StatsState {
   @override
   List<Object> get props => [readingCount, toReadCount, readCount];
 
+  int countByType(String type) {
+    int count;
+    switch (type) {
+      case 'READING':
+        count = this.readingCount;
+        break;
+      case 'TO_READ':
+        count = this.toReadCount;
+        break;
+      case 'READ':
+        count = this.readCount;
+        break;
+    }
+    return count ?? 0;
+  }
+
   @override
   String toString() {
     return 'StatsLoadSuccess { readingCount: $readingCount, toReadCount: $toReadCount, readCount: $readCount }';

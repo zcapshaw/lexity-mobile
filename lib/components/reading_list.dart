@@ -131,8 +131,12 @@ class _ReadingListState extends State<ReadingList> {
               Flexible(
                 child: RefreshIndicator(
 <<<<<<< HEAD
+<<<<<<< HEAD
                   onRefresh: () => bookListBloc.refreshBackendBookList(user.accessToken, user.id),
 =======
+=======
+                  //TODO: The refreshReadingList Future<void> doesn't return once the reading list is confirmed refreshed, as it should
+>>>>>>> Integrate StatsCubit
                   onRefresh: () => refreshReadingList(context),
 >>>>>>> Finalize ReadingListReordered event and associated BLoC services
                   child: CustomReorderableListView(
@@ -235,6 +239,7 @@ class _ReadingListState extends State<ReadingList> {
               //             ),
               //           ),
               //         ),
+<<<<<<< HEAD
               StreamBuilder(
                   stream: bookListBloc.listCount, // Stream getter
                   initialData: {},
@@ -250,6 +255,22 @@ class _ReadingListState extends State<ReadingList> {
                       return SizedBox.shrink();
                     }
                   }),
+=======
+              BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
+                // conditionally show empty list illustration if reading list is empty
+                if (state is StatsLoadInProgress) {
+                  return Container();
+                } else if (state is StatsLoadSuccess) if (widget.isHomescreen &&
+                    state.readingCount == 0 &&
+                    state.toReadCount == 0) {
+                  return EmptyListIllustration(widget.isHomescreen);
+                } else if (!widget.isHomescreen && state.readCount == 0) {
+                  return EmptyListIllustration(widget.isHomescreen);
+                } else {
+                  return SizedBox.shrink();
+                }
+              }),
+>>>>>>> Integrate StatsCubit
             ],
           );
         }
