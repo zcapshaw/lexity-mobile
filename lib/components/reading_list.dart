@@ -18,8 +18,8 @@ class ReadingList extends StatefulWidget {
   final List<String> includedTypes;
   final bool enableSwipeRight;
   final bool enableHeaders;
-  final bool
-      isHomescreen; // used for conditional indexing on homescreen (when there's no READ list)
+  // used for conditional indexing on homescreen (when there's no READ list)
+  final bool isHomescreen;
 
   ReadingList({
     @required this.includedTypes,
@@ -130,12 +130,22 @@ class _ReadingListState extends State<ReadingList> {
             children: <Widget>[
               Flexible(
                 child: RefreshIndicator(
+<<<<<<< HEAD
                   onRefresh: () => bookListBloc.refreshBackendBookList(user.accessToken, user.id),
+=======
+                  onRefresh: () => refreshReadingList(context),
+>>>>>>> Finalize ReadingListReordered event and associated BLoC services
                   child: CustomReorderableListView(
                     scrollController: reorderScrollController,
                     scrollDirection: Axis.vertical,
                     onReorder: (oldIndex, newIndex) =>
+<<<<<<< HEAD
                         bookListBloc.reorderBook(user, oldIndex, newIndex, widget.isHomescreen),
+=======
+                        BlocProvider.of<ReadingListBloc>(context).add(
+                            ReadingListReordered(oldIndex, newIndex,
+                                isHomescreen: widget.isHomescreen)),
+>>>>>>> Finalize ReadingListReordered event and associated BLoC services
                     children: List.generate(readingList.length, (index) {
                       if (readingList[index] != null) {
 <<<<<<< HEAD
@@ -245,5 +255,9 @@ class _ReadingListState extends State<ReadingList> {
         }
       }),
     );
+  }
+
+  Future<void> refreshReadingList(BuildContext context) async {
+    BlocProvider.of<ReadingListBloc>(context).add(ReadingListRefreshed());
   }
 }

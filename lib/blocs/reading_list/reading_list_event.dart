@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 import 'package:lexity_mobile/models/models.dart';
 
@@ -24,16 +25,20 @@ class ReadingListAdded extends ReadingListEvent {
   String toString() => 'ReadingListAdded { book: $book }';
 }
 
-class ReadingListUpdated extends ReadingListEvent {
-  final ListedBook book;
+class ReadingListReordered extends ReadingListEvent {
+  final int oldIndex;
+  final int newIndex;
+  final bool isHomescreen;
 
-  const ReadingListUpdated(this.book);
+  const ReadingListReordered(this.oldIndex, this.newIndex,
+      {this.isHomescreen = false});
 
   @override
-  List<Object> get props => [book];
+  List<Object> get props => [oldIndex, newIndex];
 
   @override
-  String toString() => 'ReadingListUpdated { book: $book }';
+  String toString() =>
+      'ReadingListReordered { oldIndex: $oldIndex, newIndex: $newIndex, isHomescreen: $isHomescreen }';
 }
 
 class ReadingListDeleted extends ReadingListEvent {

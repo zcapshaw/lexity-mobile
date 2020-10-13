@@ -20,8 +20,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapReadingListRefreshedToState();
     } else if (event is ReadingListAdded) {
       yield* _mapReadingListAddedToState(event);
-    } else if (event is ReadingListUpdated) {
-      yield* _mapReadingListUpdatedToState(event);
+    } else if (event is ReadingListReordered) {
+      yield* _mapReadingListReorderedToState(event);
     } else if (event is ReadingListDeleted) {
       yield* _mapReadingListDeletedToState(event);
     }
@@ -67,15 +67,17 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     }
   }
 
-  Stream<ReadingListState> _mapReadingListUpdatedToState(
-      ReadingListUpdated event) async* {
+  Stream<ReadingListState> _mapReadingListReorderedToState(
+      ReadingListReordered event) async* {
     if (state is ReadingListLoadSuccess) {
-      final List<ListedBook> updatedReadingList =
-          (state as ReadingListLoadSuccess).readingList.map((book) {
-        return book.bookId == event.book.bookId ? event.book : book;
-      }).toList();
+      List<ListedBook> updatedReadingList =
+          await readingListService.reorderBook(
+              List.from((state as ReadingListLoadSuccess).readingList),
+              event.oldIndex,
+              event.newIndex,
+              event.isHomescreen);
       yield ReadingListLoadSuccess(updatedReadingList);
-      _saveReadingList(updatedReadingList);
+      //_saveReadingList(updatedReadingList);
     }
   }
 
