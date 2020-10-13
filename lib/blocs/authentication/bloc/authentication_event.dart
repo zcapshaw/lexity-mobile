@@ -8,6 +8,11 @@ abstract class AuthenticationEvent extends Equatable {
   List<Object> get props => [];
 }
 
+// Fired when the AuthenticationBloc is instantiated
+class AppStarted extends AuthenticationEvent {
+  const AppStarted();
+}
+
 // User taps Sign In/Up with Twitter
 class LogInWithTwitter extends AuthenticationEvent {
   const LogInWithTwitter();

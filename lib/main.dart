@@ -13,13 +13,9 @@ import 'package:lexity_mobile/services/list_service.dart';
 import 'blocs/blocs.dart';
 import 'screens/screens.dart';
 
-void setupLocator() {
-  GetIt.I.registerLazySingleton(() => ListService());
-}
-
-Future main() async {
+void main() {
   Bloc.observer = SimpleBlocObserver();
-  setupLocator();
+  GetIt.I.registerLazySingleton(() => ListService());
   runApp(
     App(
       authenticationRepository: AuthenticationRepository(),
@@ -42,21 +38,18 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RepositoryProvider.value(
-      value: authenticationRepository,
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<BookDetailsCubit>(
-            create: (context) => BookDetailsCubit(),
-          ),
-          BlocProvider<AuthenticationBloc>(
-            create: (context) => AuthenticationBloc(
-                authenticationRepository: authenticationRepository,
-                userRepository: userRepository),
-          ),
-        ],
-        child: AppView(),
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<BookDetailsCubit>(
+          create: (context) => BookDetailsCubit(),
+        ),
+        BlocProvider<AuthenticationBloc>(
+          create: (context) => AuthenticationBloc(
+              authenticationRepository: authenticationRepository,
+              userRepository: userRepository),
+        ),
+      ],
+      child: AppView(),
     );
   }
 }

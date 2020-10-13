@@ -1,16 +1,10 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:lexity_mobile/models/models.dart';
 import 'package:http/http.dart' as http;
 
 class UserRepository {
-  UserRepository() {
-    //_deleteAll(); // used to temporarily clear storage during testing
-    _init();
-  }
-
   final storage = const FlutterSecureStorage(); // Create storage
   User appUser = User();
 
@@ -46,6 +40,40 @@ class UserRepository {
     } else {
       // TODO: Consider showing a SnackBar with login error to user
       print('Could not authenticate user');
+      return false;
+    }
+  }
+
+  Future<bool> checkForCachedUser() async {
+    // await _deleteAll();
+    Map allValues = await storage.readAll();
+
+    if (allValues.containsKey('userId') && allValues['userId'] != '') {
+      appUser
+        ..createComplete = true
+        ..id = allValues['userId']
+        ..accessToken = allValues['accessToken']
+        ..authN = allValues['authN'].toLowerCase() == 'true'
+        ..name = allValues['name'] ?? ''
+        ..username = allValues['username'] ?? ''
+        ..profileImg = allValues['profileImg'] ?? ''
+        ..email = allValues['email'] ?? ''
+        ..verified = allValues['verified'].toLowerCase() == 'true'
+        ..bio = allValues['bio'] ?? ''
+        ..website = allValues['website'] ?? ''
+        ..joined = allValues['joined'] == null
+            ? 0
+            : int.tryParse(allValues['joined']) ?? 0
+        ..followers = allValues['followers'] == null
+            ? 0
+            : int.tryParse(allValues['followers']) ?? 0
+        ..friends = allValues['friends'] == null
+            ? 0
+            : int.tryParse(allValues['friends']) ?? 0;
+      print('user id from storage is: ${allValues['userId']}');
+      return true;
+    } else {
+      print('no cached user found');
       return false;
     }
   }
@@ -92,11 +120,6 @@ class UserRepository {
     _writeStorage('friends', appUser.friends.toString());
   }
 
-  void logout() {
-    appUser.authN = false;
-    _writeStorage('authN', authN.toString());
-  }
-
   // create getters
   bool get createComplete => appUser.createComplete ?? false;
   String get id => appUser.id;
@@ -114,17 +137,11 @@ class UserRepository {
   int get friends => appUser.friends;
   User get currentUser => appUser;
 
-  // initialize the new user from values in local secure storage
-  Future<void> _init() async {
-    appUser = await User.create();
-    print('id: ${appUser.id}, token: ${appUser.accessToken}');
-    print('authN: ${appUser.authN}, createComplete: ${appUser.createComplete}');
-  }
-
   Future<Null> _writeStorage(String key, String value) async {
     await storage.write(key: key, value: value);
   }
 
+  // Allows clearing of local storage for testing purposes
   Future<Null> _deleteAll() async {
     await storage.deleteAll();
   }

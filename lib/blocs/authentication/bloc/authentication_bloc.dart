@@ -29,7 +29,7 @@ class AuthenticationBloc
       },
       onError: print,
     );
-    _checkForLoggedInUser();
+    add(const AppStarted());
   }
 
   final AuthenticationRepository _authenticationRepository;
@@ -40,6 +40,16 @@ class AuthenticationBloc
   Stream<AuthenticationState> mapEventToState(
     AuthenticationEvent event,
   ) async* {
+    if (event is AppStarted) {
+      var userExists = await _userRepository.checkForCachedUser();
+      if (userExists) {
+        await bookListBloc.refreshBackendBookList(
+            _userRepository.appUser.accessToken, _userRepository.appUser.id);
+        yield Authenticated(_userRepository.appUser);
+      } else {
+        yield const Unauthenticated();
+      }
+    }
     if (event is LoggedIn) {
       yield Authenticated(_userRepository.appUser);
     }
@@ -47,8 +57,9 @@ class AuthenticationBloc
       yield const Unauthenticated();
     }
     if (event is LogInWithTwitter) {
-      _authenticationRepository.logInWithTwitter();
       yield const AuthenticationLoading();
+      await _authenticationRepository.logInWithTwitter();
+      yield const Unauthenticated();
     }
     if (event is InboundUriLinkReceived) {
       var success = await _userRepository.getLexityUserFromUri(event.uri);
@@ -65,12 +76,6 @@ class AuthenticationBloc
         await closeWebView();
       }
     }
-  }
-
-  Future<void> _checkForLoggedInUser() async {
-    await Future.delayed(const Duration(seconds: 1));
-    print('invoked');
-    add(const LoggedOut());
   }
 
   @override

@@ -7,9 +7,8 @@ import 'package:url_launcher/url_launcher.dart';
 /// This class hold all authentication logic. It exposes methods to the
 /// AuthenticationBloc for interacting with Auth APIs.
 class AuthenticationRepository {
-  void logInWithTwitter() async {
+  Future<void> logInWithTwitter() async {
     // Twitter login logic
-    print('Auth repository loginWithTwitter invoked');
     final res = await http.get('https://api.lexity.co/auth/twitter/signin');
     if (res.statusCode == 200) {
       final Map decoded = jsonDecode(res.body);

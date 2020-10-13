@@ -96,7 +96,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   Widget build(BuildContext context) {
-    BlocBuilder<AuthenticationBloc, AuthenticationState>(
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
       return Scaffold(
         appBar: AppBar(

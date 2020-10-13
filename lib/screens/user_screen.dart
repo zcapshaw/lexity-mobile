@@ -308,7 +308,6 @@ class _UserMenu extends StatelessWidget {
                     color: Color(0xFF1A6978),
                   ),
                   onPressed: () {
-                    // user.logout();
                     context.bloc<AuthenticationBloc>().add(const LoggedOut());
                   },
                   child: Text(
