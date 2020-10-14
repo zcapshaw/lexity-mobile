@@ -19,6 +19,12 @@ class Note {
     return this.sourceName == null;
   }
 
+  // Note.id is assigned by the backend, therefore
+  // newly instantiated notes have no id
+  bool get newNote {
+    return this.id == null;
+  }
+
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 
   Map<String, dynamic> toJson() => _$NoteToJson(this);

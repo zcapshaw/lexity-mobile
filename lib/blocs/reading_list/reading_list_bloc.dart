@@ -9,8 +9,7 @@ import 'package:lexity_mobile/services/reading_list_service.dart';
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   final ReadingListService readingListService;
 
-  ReadingListBloc({@required this.readingListService})
-      : super(ReadingListLoadInProgress());
+  ReadingListBloc({@required this.readingListService}) : super(ReadingListLoadInProgress());
 
   @override
   Stream<ReadingListState> mapEventToState(ReadingListEvent event) async* {
@@ -29,20 +28,15 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   Stream<ReadingListState> _mapReadingListLoadedToState() async* {
     try {
-      final list = await this.readingListService.loadReadingList();
-      var decodedList = jsonDecode(list.data) as List;
-      List<ListedBook> readingList =
-          decodedList.map((book) => ListedBook.fromJson(book)).toList();
-      yield ReadingListLoadSuccess(
-          readingListService.sortByTypeAndInjectHeaders(readingList));
+      List<ListedBook> readingList = await readingListService.loadReadingList();
+      yield ReadingListLoadSuccess(readingListService.sortByTypeAndInjectHeaders(readingList));
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();
     }
   }
 
-  Stream<ReadingListState> _mapReadingListAddedToState(
-      ReadingListAdded event) async* {
+  Stream<ReadingListState> _mapReadingListAddedToState(ReadingListAdded event) async* {
     if (state is ReadingListLoadSuccess) {
       final List<ListedBook> updatedReadingList = readingListService.addBook(
           event.book, List.from((state as ReadingListLoadSuccess).readingList));
@@ -51,8 +45,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     }
   }
 
-  Stream<ReadingListState> _mapReadingListUpdatedToState(
-      ReadingListUpdated event) async* {
+  Stream<ReadingListState> _mapReadingListUpdatedToState(ReadingListUpdated event) async* {
     if (state is ReadingListLoadSuccess) {
       bool typeChange = false;
       List<ListedBook> updatedReadingList =
@@ -75,22 +68,19 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     }
   }
 
-  Stream<ReadingListState> _mapReadingListReorderedToState(
-      ReadingListReordered event) async* {
+  Stream<ReadingListState> _mapReadingListReorderedToState(ReadingListReordered event) async* {
     if (state is ReadingListLoadSuccess) {
-      List<ListedBook> updatedReadingList =
-          await readingListService.reorderBook(
-              List.from((state as ReadingListLoadSuccess).readingList),
-              event.oldIndex,
-              event.newIndex,
-              event.isHomescreen);
+      List<ListedBook> updatedReadingList = await readingListService.reorderBook(
+          List.from((state as ReadingListLoadSuccess).readingList),
+          event.oldIndex,
+          event.newIndex,
+          event.isHomescreen);
       yield ReadingListLoadSuccess(updatedReadingList);
       //TODO: Soon the reorder needs to be saved to local and/or DB
     }
   }
 
-  Stream<ReadingListState> _mapReadingListDeletedToState(
-      ReadingListDeleted event) async* {
+  Stream<ReadingListState> _mapReadingListDeletedToState(ReadingListDeleted event) async* {
     if (state is ReadingListLoadSuccess) {
       final updatedReadingList = (state as ReadingListLoadSuccess)
           .readingList

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:get_it/get_it.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'list_service.dart';
@@ -11,8 +12,15 @@ class ReadingListService {
   final String accessToken = DotEnv().env['ACCESS_TOKEN'];
   final String userId = DotEnv().env['USER_ID'];
 
-  Future<APIResponse<Object>> loadReadingList() async {
-    return await listService.getListItemSummary(accessToken, userId);
+  Future<List<ListedBook>> loadReadingList() async {
+    try {
+      final APIResponse<Object> list = await listService.getListItemSummary(accessToken, userId);
+      final List<dynamic> decodedList = jsonDecode(list.data) as List;
+      return decodedList.map((book) => ListedBook.fromJson(book)).toList();
+    } catch (err) {
+      print('Issue loading ReadingList data from backend: ${err.stack}');
+      return [];
+    }
   }
 
   saveReadingList() async {}
@@ -22,8 +30,7 @@ class ReadingListService {
     final List<String> typeSortOrder = ['READING', 'TO_READ', 'READ'];
 
     typeSortOrder.forEach((type) {
-      List<ListedBook> readingListByType =
-          readingList.where((book) => book.type == type).toList();
+      List<ListedBook> readingListByType = readingList.where((book) => book.type == type).toList();
       sortedReadingListWithHeaders.add(ListedBookHeader(type));
       sortedReadingListWithHeaders.addAll(readingListByType);
     });
@@ -35,8 +42,7 @@ class ReadingListService {
 
   List<ListedBook> addBook(ListedBook book, List<ListedBook> readingList) {
     // Get index if exists - will return -1 with no match
-    final int matchingIndex =
-        readingList.indexWhere((b) => b.bookId == book.bookId);
+    final int matchingIndex = readingList.indexWhere((b) => b.bookId == book.bookId);
     int insertIndex = _getTypeChangeIndex(book.type, readingList);
 
     // >= 0 implies that bookId is already present in the readingList
@@ -61,10 +67,8 @@ class ReadingListService {
     return readingList;
   }
 
-  List<ListedBook> updateBookTypeIndex(
-      ListedBook updatedBook, List<ListedBook> readingList) {
-    final int oldIndex =
-        readingList.indexWhere((b) => b.bookId == updatedBook.bookId);
+  List<ListedBook> updateBookTypeIndex(ListedBook updatedBook, List<ListedBook> readingList) {
+    final int oldIndex = readingList.indexWhere((b) => b.bookId == updatedBook.bookId);
 
     // oldIndex returns -1 if no matching bookId is found
     if (oldIndex > 0) {
@@ -80,14 +84,13 @@ class ReadingListService {
       readingList.insert(newIndex ?? oldIndex, updatedBook);
       return readingList;
     } else {
-      print(
-          'Could not find matching bookID to update - returning original ReadingList');
+      print('Could not find matching bookID to update - returning original ReadingList');
       return readingList;
     }
   }
 
-  Future<List<ListedBook>> reorderBook(List<ListedBook> readingList,
-      int oldIndex, int newIndex, bool isHomescreen) async {
+  Future<List<ListedBook>> reorderBook(
+      List<ListedBook> readingList, int oldIndex, int newIndex, bool isHomescreen) async {
     //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
 
     // // This is an inflexible, somewhat 'hacky', solution.
@@ -102,10 +105,10 @@ class ReadingListService {
     if (isHomescreen && newIndex > readingList.lengthWithoutRead)
       newIndex = readingList.lengthWithoutRead;
 
-    String newIndexType = _getTypeByIndex(
-        newIndex, readingList.readingCount, readingList.toReadCount);
-    String oldIndexType = _getTypeByIndex(
-        oldIndex, readingList.readingCount, readingList.toReadCount);
+    String newIndexType =
+        _getTypeByIndex(newIndex, readingList.readingCount, readingList.toReadCount);
+    String oldIndexType =
+        _getTypeByIndex(oldIndex, readingList.readingCount, readingList.toReadCount);
 
     // // If the newer position is lower in the list, all tiles will 'slide'
     // // up the list, therefore the new index should be decreased by one
@@ -124,8 +127,7 @@ class ReadingListService {
 
     try {
       // TODO: Remove DotEnv fixed variables once User Provider is loaded
-      listService.updateListItemType(
-          accessToken, userId, book.bookId, book.type);
+      listService.updateListItemType(accessToken, userId, book.bookId, book.type);
     } catch (err) {
       print('Could not update list type on the backend: $err');
     }

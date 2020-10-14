@@ -91,8 +91,7 @@ class ListedBook extends Book {
         notes: this.notes);
   }
 
-  factory ListedBook.fromJson(Map<String, dynamic> json) =>
-      _$ListedBookFromJson(json);
+  factory ListedBook.fromJson(Map<String, dynamic> json) => _$ListedBookFromJson(json);
   Map<String, dynamic> toJson() => _$ListedBookToJson(this);
 
 // Custom json serialization, to isolate only variables used on the backend
@@ -112,8 +111,10 @@ class ListedBook extends Book {
     writeNotNull('type', this.type);
     // writeNotNull('recos', this.recos); - I don't think we need this, but commenting for now
     writeNotNull('labels', this.labels);
-    writeNotNull('notes',
-        this.notes?.map((e) => e == null ? null : e.toJson())?.toList());
+
+    // only include new notes in Json, as the backend will APPEND all notes
+    // passed, which would create duplicates otherwise
+    writeNotNull('notes', this.notes.where((n) => n.newNote).toList());
     return val;
   }
 }
