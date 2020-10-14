@@ -6,6 +6,11 @@ import 'book_search_screen.dart';
 
 class MainScreen extends StatefulWidget {
   MainScreen({Key key}) : super(key: key);
+
+  static Route route() {
+    return MaterialPageRoute<void>(builder: (_) => MainScreen());
+  }
+
   @override
   _MainScreen createState() => _MainScreen();
 }
@@ -13,7 +18,7 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  List<Widget> _widgetScreens = [
+  final List<Widget> _widgetScreens = [
     HomeScreen(),
     BookSearchScreen(
       origin: Origin.navSearch,

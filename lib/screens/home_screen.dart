@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.only(left: 20, top: 30),
+                margin: const EdgeInsets.only(left: 20, top: 30),
                 child: Text(
                   'Reading List',
                   style: Theme.of(context).textTheme.headline3,

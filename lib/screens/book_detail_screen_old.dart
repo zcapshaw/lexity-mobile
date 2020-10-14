@@ -1,7 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:lexity_mobile/repositories/user_repository.dart';
 import 'dart:convert';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
@@ -19,6 +19,7 @@ import '../components/note_view.dart';
 import '../components/text_input_modal.dart';
 import '../components/book_list_bloc.dart';
 import '../services/list_service.dart';
+import 'book_details_screen.dart';
 
 class BookDetailScreenOld extends StatefulWidget {
   final ListedBook book;
@@ -31,7 +32,7 @@ class BookDetailScreenOld extends StatefulWidget {
 }
 
 class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
-  UserModel user;
+  UserRepository user;
   String htmlDescription = '';
   List<Note> notes = [];
   String genre;
@@ -45,7 +46,6 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserModel>(context, listen: false);
   }
 
   Future<Book> _getListItemDetail() async {
@@ -402,63 +402,5 @@ class _BookDetailScreenOldState extends State<BookDetailScreenOld> {
             },
           ),
         ));
-  }
-}
-
-class ExpandableDescription extends StatelessWidget {
-  final String title;
-  final String description;
-
-  ExpandableDescription({this.title, this.description});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        ExpandablePanel(
-          header: ListTileHeaderText(title),
-          collapsed: ExpandableButton(
-            child: ShaderMask(
-              shaderCallback: (rect) {
-                return LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.black, Colors.transparent],
-                ).createShader(
-                    Rect.fromLTRB(0, 0, rect.width, rect.height * 1.5));
-              },
-              blendMode: BlendMode.dstIn,
-              child: Container(
-                height: 100,
-                child: Html(
-                  data: description ?? '',
-                  style: {
-                    "p": Style(
-                      padding: EdgeInsets.only(top: 10),
-                      margin: EdgeInsets.only(top: 10),
-                    ),
-                  },
-                ),
-              ),
-            ),
-          ),
-          expanded: ExpandableButton(
-            child: Html(
-              data: description ?? '',
-              style: {
-                "p": Style(
-                  padding: EdgeInsets.only(top: 10),
-                  margin: EdgeInsets.only(top: 10),
-                )
-              },
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
-          child: Divider(),
-        ),
-      ],
-    );
   }
 }

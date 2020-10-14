@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String labelText;
-  final Function callback;
+  final void Function() callback;
 
   const ActionButton(
       {@required this.icon, this.labelText, @required this.callback});

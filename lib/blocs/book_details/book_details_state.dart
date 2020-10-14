@@ -7,7 +7,7 @@ abstract class BookDetailsState extends Equatable {
   @override
   List<Object> get props => [];
 
-  get book => null;
+  ListedBook get book => null;
 }
 
 //The default state, if no book is selected

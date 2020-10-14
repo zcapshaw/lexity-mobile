@@ -1,18 +1,18 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:lexity_mobile/screens/book_details_screen.dart';
-import '../blocs/blocs.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'reorderable_list_w_physics.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/screens/screens.dart';
+
+import '../blocs/blocs.dart';
+import '../components/empty_list_illustration.dart';
+import '../models/listed_book.dart';
+import '../models/user.dart';
 import 'book_list_bloc.dart';
 import 'list_tile_header.dart';
 import 'list_tile_item.dart';
-import '../models/listed_book.dart';
-import '../models/user.dart';
-import '../components/empty_list_illustration.dart';
+import 'reorderable_list_w_physics.dart';
 
 class ReadingList extends StatefulWidget {
   final List<String> types;
@@ -33,14 +33,14 @@ class ReadingList extends StatefulWidget {
 }
 
 class _ReadingListState extends State<ReadingList> {
-  UserModel user;
+  User user;
   final ScrollController reorderScrollController = ScrollController();
 
   @override
   initState() {
     super.initState();
     // assign user for access to UserModel methods
-    user = Provider.of<UserModel>(context, listen: false);
+    user = context.bloc<AuthenticationBloc>().state.user;
   }
 
   void _updateType(ListedBook book, int oldIndex) async {
@@ -62,7 +62,7 @@ class _ReadingListState extends State<ReadingList> {
         }
         break;
     }
-    bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
+    bookListBloc.changeBookType(book, user, oldIndex, newType);
   }
 
   Future<bool> _promptUser(DismissDirection direction, ListedBook book) async {
@@ -75,7 +75,7 @@ class _ReadingListState extends State<ReadingList> {
                 child: Text("Delete"),
                 onPressed: () {
                   // Dismiss the dialog and also dismiss the swiped item
-                  bookListBloc.deleteBook(book, user.currentUser);
+                  bookListBloc.deleteBook(book, user);
                   Navigator.of(context).pop(true);
                 },
               ),
@@ -136,10 +136,7 @@ class _ReadingListState extends State<ReadingList> {
                     scrollController: reorderScrollController,
                     scrollDirection: Axis.vertical,
                     onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
-                        user.currentUser,
-                        oldIndex,
-                        newIndex,
-                        widget.isHomescreen),
+                        user, oldIndex, newIndex, widget.isHomescreen),
                     children: List.generate(snapshot.data.length, (index) {
                       if (snapshot.hasData && snapshot.data[index] != null) {
                         if (snapshot.data[index] is ListItemHeader &&
