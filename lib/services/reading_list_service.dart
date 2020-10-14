@@ -11,13 +11,13 @@ class ReadingListService {
   final String accessToken = DotEnv().env['ACCESS_TOKEN'];
   final String userId = DotEnv().env['USER_ID'];
 
-  loadReadingList() async {
+  Future<APIResponse<Object>> loadReadingList() async {
     return await listService.getListItemSummary(accessToken, userId);
   }
 
   saveReadingList() async {}
 
-  sortByTypeAndInjectHeaders(List<ListedBook> readingList) {
+  List<ListedBook> sortByTypeAndInjectHeaders(List<ListedBook> readingList) {
     List<ListedBook> sortedReadingListWithHeaders = [];
     final List<String> typeSortOrder = ['READING', 'TO_READ', 'READ'];
 
@@ -33,7 +33,36 @@ class ReadingListService {
 
   removeHeaders(List<ListedBook> readingList) {}
 
-  updateBookTypeIndex(ListedBook updatedBook, List<ListedBook> readingList) {
+  List<ListedBook> addBook(ListedBook book, List<ListedBook> readingList) {
+    // Get index if exists - will return -1 with no match
+    final int matchingIndex =
+        readingList.indexWhere((b) => b.bookId == book.bookId);
+    int insertIndex = _getTypeChangeIndex(book.type, readingList);
+
+    // >= 0 implies that bookId is already present in the readingList
+    if (matchingIndex >= 0) {
+      ListedBook oldBook = readingList.removeAt(matchingIndex);
+      if (insertIndex > matchingIndex) {
+        insertIndex -= 1;
+      }
+
+      // Combine existing and new reco in ListItem book
+      book.mergeRecos = oldBook.recos ?? [];
+
+      // If type is NOT changing, then replace the book in the matchingIndex
+      if (book.type == oldBook.type) {
+        readingList.insert(matchingIndex, book);
+      } else {
+        readingList.insert(insertIndex, book);
+      }
+    } else {
+      readingList.insert(insertIndex, book);
+    }
+    return readingList;
+  }
+
+  List<ListedBook> updateBookTypeIndex(
+      ListedBook updatedBook, List<ListedBook> readingList) {
     final int oldIndex =
         readingList.indexWhere((b) => b.bookId == updatedBook.bookId);
 
@@ -57,8 +86,8 @@ class ReadingListService {
     }
   }
 
-  reorderBook(List<ListedBook> readingList, int oldIndex, int newIndex,
-      bool isHomescreen) async {
+  Future<List<ListedBook>> reorderBook(List<ListedBook> readingList,
+      int oldIndex, int newIndex, bool isHomescreen) async {
     //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
 
     // // This is an inflexible, somewhat 'hacky', solution.
@@ -139,14 +168,13 @@ int _getTypeChangeIndex(String newType, List<ListedBook> readingList) {
   switch (newType) {
     case 'READING':
       {
-        newIndex = readingList.readingCountExcludingHeader;
+        newIndex = readingList.readingCount;
         print('My new index is: $newIndex');
         break;
       }
     case 'TO_READ':
       {
-        newIndex = readingList.readingCountExcludingHeader +
-            readingList.toReadCountExcludingHeader;
+        newIndex = readingList.readingCount + readingList.toReadCount;
         break;
       }
     default:

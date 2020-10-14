@@ -1,11 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+<<<<<<< HEAD
 import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
 
 import '../components/components.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
+=======
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/blocs.dart';
+import '../models/user.dart';
+import '../models/note.dart';
+import '../models/book.dart';
+import '../models/listed_book.dart';
+import '../components/list_tile_header_text.dart';
+import '../components/list_tile_text_field.dart';
+import './main_screen.dart';
+import './add_reco_screen.dart';
+>>>>>>> WIP
 import '../services/list_service.dart';
 
 class AddBookScreen extends StatefulWidget {
@@ -34,8 +48,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     user = context.bloc<AuthenticationBloc>().state.user;
   }
 
-  void _saveListItem() async {
-    final String type = listType;
+  void _saveListItem(BuildContext context) async {
     final List labels = [];
     final Note note = Note(comment: noteText);
     final Note reco = Note(sourceName: recoSource, comment: recoText);
@@ -52,16 +65,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
         note.comment != null && note.comment.length > 0 ||
         note.sourceName != null && note.sourceName.length > 0);
 
-    print('notes are $notes');
-
-    ListedBook item = ListedBook(
-        userId: user.id,
-        bookId: widget.bookId,
-        type: type,
-        labels: labels,
-        notes: notes);
-
     ListedBook book = ListedBook(
+      userId: user.id, // Need to capture ID from new UserBLoC
       bookId: widget.bookId,
       title: widget.book.title,
       subtitle: widget.book.subtitle,
@@ -70,10 +75,13 @@ class _AddBookScreenState extends State<AddBookScreen> {
       description: widget.book.description,
       categories: widget.book.categories,
       type: listType,
+      labels: labels,
+      notes: notes,
       recos: recoSource != null ? newReco : [],
     );
 
-    bookListBloc.addBook(item, book, user.accessToken);
+    context.bloc<ReadingListBloc>().add(ReadingListAdded(book));
+    //bookListBloc.addBook(item, book, user.accessToken);
     print('successfully added ${widget.bookId}');
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => MainScreen()));
@@ -96,6 +104,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
         builder: (context, state) {
       return Scaffold(
@@ -103,6 +112,26 @@ class _AddBookScreenState extends State<AddBookScreen> {
           title: Text(
             'Add Book',
             style: Theme.of(context).textTheme.subtitle1,
+=======
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          'Add Book',
+          style: Theme.of(context).textTheme.subtitle1,
+        ),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              _saveListItem(context);
+            },
+            child: Text(
+              'Done',
+              style: TextStyle(
+                color: Colors.teal[700],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+>>>>>>> WIP
           ),
           actions: <Widget>[
             FlatButton(

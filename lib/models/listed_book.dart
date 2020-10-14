@@ -112,7 +112,8 @@ class ListedBook extends Book {
     writeNotNull('type', this.type);
     // writeNotNull('recos', this.recos); - I don't think we need this, but commenting for now
     writeNotNull('labels', this.labels);
-    writeNotNull('notes', this.notes);
+    writeNotNull('notes',
+        this.notes?.map((e) => e == null ? null : e.toJson())?.toList());
     return val;
   }
 }
