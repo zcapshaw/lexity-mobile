@@ -1,22 +1,17 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:lexity_mobile/screens/screens.dart';
-
-<<<<<<< HEAD
+import 'package:flutter/cupertino.dart';
+import 'package:lexity_mobile/screens/book_details_screen.dart';
 import '../blocs/blocs.dart';
-import '../components/empty_list_illustration.dart';
-import '../models/listed_book.dart';
-import '../models/user.dart';
-import 'book_list_bloc.dart';
-=======
+import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'reorderable_list_w_physics.dart';
->>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
 import 'list_tile_header.dart';
 import 'list_tile_item.dart';
-import 'reorderable_list_w_physics.dart';
+import '../models/listed_book.dart';
+import '../models/user.dart';
+import '../components/empty_list_illustration.dart';
 
 class ReadingList extends StatefulWidget {
   final List<String> includedTypes;
@@ -66,19 +61,7 @@ class _ReadingListState extends State<ReadingList> {
         }
         break;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-    bookListBloc.changeBookType(book, user, oldIndex, newType);
-=======
-    context.bloc<ReadingListBloc>().add(ReadingListUpdated(book));
-=======
     context.bloc<ReadingListBloc>().add(ReadingListUpdated(updatedBook));
-<<<<<<< HEAD
->>>>>>> Complete the ReadingListUpdated event and associated BLoC and Services functionality
-    //bookListBloc.changeBookType(book, user.currentUser, oldIndex, newType);
->>>>>>> Setup ReadingList extension to provide custom getters for List<ListedBook>
-=======
->>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
   }
 
   Future<bool> _promptUser(DismissDirection direction, ListedBook book) async {
@@ -91,11 +74,7 @@ class _ReadingListState extends State<ReadingList> {
                 child: Text("Delete"),
                 onPressed: () {
                   // Dismiss the dialog and also dismiss the swiped item
-<<<<<<< HEAD
-                  bookListBloc.deleteBook(book, user);
-=======
                   context.bloc<ReadingListBloc>().add(ReadingListDeleted(book));
->>>>>>> Setup ReadingList extension to provide custom getters for List<ListedBook>
                   Navigator.of(context).pop(true);
                 },
               ),
@@ -150,56 +129,19 @@ class _ReadingListState extends State<ReadingList> {
             children: <Widget>[
               Flexible(
                 child: RefreshIndicator(
-<<<<<<< HEAD
-<<<<<<< HEAD
-                  onRefresh: () => bookListBloc.refreshBackendBookList(user.accessToken, user.id),
-=======
-=======
                   //TODO: The refreshReadingList Future<void> doesn't return once the reading list is confirmed refreshed, as it should
->>>>>>> Integrate StatsCubit
                   onRefresh: () => refreshReadingList(context),
->>>>>>> Finalize ReadingListReordered event and associated BLoC services
                   child: CustomReorderableListView(
                     scrollController: reorderScrollController,
                     scrollDirection: Axis.vertical,
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    onReorder: (oldIndex, newIndex) =>
-<<<<<<< HEAD
-                        bookListBloc.reorderBook(user, oldIndex, newIndex, widget.isHomescreen),
-=======
-                        BlocProvider.of<ReadingListBloc>(context).add(
-                            ReadingListReordered(oldIndex, newIndex,
-                                isHomescreen: widget.isHomescreen)),
->>>>>>> Finalize ReadingListReordered event and associated BLoC services
-=======
-                    onReorder: (oldIndex, newIndex) => context
-                        .bloc<ReadingListBloc>()
-                        .add(ReadingListReordered(oldIndex, newIndex,
-=======
                     onReorder: (oldIndex, newIndex) => context.bloc<ReadingListBloc>().add(
                         ReadingListReordered(oldIndex, newIndex,
->>>>>>> Finalize update type by swipe and addition of new list items
                             isHomescreen: widget.isHomescreen)),
->>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
                     children: List.generate(readingList.length, (index) {
                       if (readingList[index] != null) {
-<<<<<<< HEAD
-                        if (readingList[index] is ListItemHeader && widget.enableHeaders) {
-=======
                         if (readingList[index] is ListedBookHeader &&
-<<<<<<< HEAD
-                            widget.enableHeaders) {
->>>>>>> Rename to more descriptive class of ListedBookHeader
-=======
                             widget.enableHeaders &&
-<<<<<<< HEAD
-                            widget.includedTypes
-                                .contains(readingList[index].type)) {
->>>>>>> Change injectHeaders method to sortByTypeAndInjectHeaders
-=======
                             widget.includedTypes.contains(readingList[index].type)) {
->>>>>>> Finalize update type by swipe and addition of new list items
                           return ListTileHeader(
                             type: readingList[index].type,
                             key: UniqueKey(),
@@ -224,76 +166,6 @@ class _ReadingListState extends State<ReadingList> {
                   ),
                 ),
               ),
-<<<<<<< HEAD
-
-              // child: StreamBuilder(
-              //   stream: bookListBloc.listBooks, // Stream getter
-              //   initialData: [],
-              //   builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              //     return Column(
-              //       children: <Widget>[
-              //         Flexible(
-              //           child: RefreshIndicator(
-              //             onRefresh: () => bookListBloc.refreshBackendBookList(
-              //                 user.accessToken, user.id),
-              //             child: CustomReorderableListView(
-              //               scrollController: reorderScrollController,
-              //               scrollDirection: Axis.vertical,
-              //               onReorder: (oldIndex, newIndex) => bookListBloc.reorderBook(
-              //                   user.currentUser,
-              //                   oldIndex,
-              //                   newIndex,
-              //                   widget.isHomescreen),
-              //               children: List.generate(snapshot.data.length, (index) {
-              //                 if (snapshot.hasData && snapshot.data[index] != null) {
-              //                   if (snapshot.data[index] is ListedBookHeader &&
-              //                       widget.enableHeaders &&
-              //                       widget.types
-              //                           .contains(snapshot.data[index].headerType)) {
-              //                     return ListTileHeader(
-              //                       type: snapshot.data[index].type,
-              //                       key: UniqueKey(),
-              //                     );
-              //                   } else if (snapshot.data[index] is ListedBook &&
-              //                       snapshot.data[index] is! ListedBookHeader &&
-              //                       widget.types.contains(snapshot.data[index].type)) {
-              //                     return ListTileItem(
-              //                       item: snapshot.data[index],
-              //                       tileIndex: index,
-              //                       enableSwipeRight: widget.enableSwipeRight,
-              //                       onPressTile: _navigateToBookDetails,
-              //                       deletePrompt: _promptUser,
-              //                       typeChangeAction: _updateType,
-              //                       key: ValueKey(snapshot.data[index].bookId),
-              //                     );
-              //                   } else {
-              //                     return Container(
-              //                         key: UniqueKey(), height: 0, width: 0);
-              //                   }
-              //                 }
-              //               }),
-              //             ),
-              //           ),
-              //         ),
-<<<<<<< HEAD
-              StreamBuilder(
-                  stream: bookListBloc.listCount, // Stream getter
-                  initialData: {},
-                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                    // conditionally show empty list illustration if reading list is empty
-                    if (widget.isHomescreen &&
-                        snapshot.data['READING'] == 0 &&
-                        snapshot.data['TO_READ'] == 0) {
-                      return EmptyListIllustration(widget.isHomescreen);
-                    } else if (!widget.isHomescreen && snapshot.data['READ'] == 0) {
-                      return EmptyListIllustration(widget.isHomescreen);
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  }),
-=======
-=======
->>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
               BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
                 // conditionally show empty list illustration if reading list is empty
                 if (state is StatsLoadInProgress) {
@@ -308,9 +180,10 @@ class _ReadingListState extends State<ReadingList> {
                   return SizedBox.shrink();
                 }
               }),
->>>>>>> Integrate StatsCubit
             ],
           );
+        } else {
+          return Container();
         }
       }),
     );

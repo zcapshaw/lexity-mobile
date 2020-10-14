@@ -1,17 +1,10 @@
-<<<<<<< HEAD
-=======
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
->>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 
-import '../components/book_list_bloc.dart';
-import '../components/reading_list.dart';
 import '../blocs/blocs.dart';
+import '../components/reading_list.dart';
 import '../models/user.dart';
 import '../utils/follower_numbers.dart';
 
@@ -24,8 +17,8 @@ class UserScreen extends StatefulWidget {
 User user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
-  final readList = ReadingList(
-      includedTypes: ['READ'], enableHeaders: false, enableSwipeRight: false);
+  final readList =
+      ReadingList(includedTypes: ['READ'], enableHeaders: false, enableSwipeRight: false);
   int selectedIndex = 0;
   List<bool> listStatus = [true, false];
 
@@ -91,12 +84,7 @@ class _UserInfo extends StatelessWidget {
   final String booksRead;
 
   _UserInfo(
-      {this.profileImg,
-      this.name,
-      this.username,
-      this.following,
-      this.followers,
-      this.booksRead});
+      {this.profileImg, this.name, this.username, this.following, this.followers, this.booksRead});
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -133,8 +121,8 @@ class _UserInfo extends StatelessWidget {
                         ),
                       ),
                     ),
-                    placeholder: (context, url) => Icon(Icons.account_circle,
-                        size: 50, color: Colors.grey[600]),
+                    placeholder: (context, url) =>
+                        Icon(Icons.account_circle, size: 50, color: Colors.grey[600]),
                     placeholderFadeInDuration: Duration.zero,
                   ),
                 ),
@@ -216,9 +204,7 @@ class _UserInfo extends StatelessWidget {
                         children: <TextSpan>[
                           TextSpan(
                             text: ' Following',
-                            style: TextStyle(
-                                color: Colors.grey[800],
-                                fontWeight: FontWeight.w400),
+                            style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w400),
                           ),
                         ],
                       ),
@@ -242,9 +228,7 @@ class _UserInfo extends StatelessWidget {
                         children: <TextSpan>[
                           TextSpan(
                             text: ' Followers',
-                            style: TextStyle(
-                                color: Colors.grey[800],
-                                fontWeight: FontWeight.w400),
+                            style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w400),
                           ),
                         ],
                       ),
@@ -252,8 +236,7 @@ class _UserInfo extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  child: BlocBuilder<StatsCubit, StatsState>(
-                      builder: (context, state) {
+                  child: BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
                     if (state is StatsLoadSuccess) {
                       return RichText(
                         textAlign: TextAlign.center,
@@ -268,9 +251,8 @@ class _UserInfo extends StatelessWidget {
                           children: <TextSpan>[
                             TextSpan(
                               text: state.readCount == 1 ? ' Book' : ' Books',
-                              style: TextStyle(
-                                  color: Colors.grey[800],
-                                  fontWeight: FontWeight.w400),
+                              style:
+                                  TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),

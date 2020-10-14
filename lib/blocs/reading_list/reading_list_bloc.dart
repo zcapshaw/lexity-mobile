@@ -6,9 +6,9 @@ import 'package:lexity_mobile/models/models.dart';
 import 'package:lexity_mobile/services/reading_list_service.dart';
 
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
-  final ReadingListService readingListService;
-
   ReadingListBloc({@required this.readingListService}) : super(ReadingListLoadInProgress());
+
+  final ReadingListService readingListService;
 
   @override
   Stream<ReadingListState> mapEventToState(ReadingListEvent event) async* {

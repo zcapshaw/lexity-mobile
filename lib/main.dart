@@ -1,18 +1,7 @@
-<<<<<<< HEAD
-=======
-import 'package:flutter/material.dart';
-import 'package:lexity_mobile/blocs/simple_bloc_observer.dart';
-import 'package:lexity_mobile/blocs/stats/stats_cubit.dart';
-import 'package:lexity_mobile/services/list_service.dart';
-import 'package:lexity_mobile/services/reading_list_service.dart';
-import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:get_it/get_it.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
->>>>>>> Integrate StatsCubit into MultiBlocProvider
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
 import './blocs/blocs.dart';
@@ -24,7 +13,10 @@ import './services/list_service.dart';
 import './services/reading_list_service.dart';
 import './theme.dart';
 
-void main() {
+//void main() {
+// Temporarily using Future and loading DotEnv
+Future main() async {
+  await DotEnv().load('.env');
   Bloc.observer = SimpleBlocObserver();
   GetIt.I.registerLazySingleton(() => ListService());
   runApp(BlocProvider(
@@ -63,7 +55,8 @@ class App extends StatelessWidget {
         BlocProvider<AuthenticationBloc>(
           create: (context) => AuthenticationBloc(
               authenticationRepository: authenticationRepository, userRepository: userRepository),
-        ),BlocProvider<StatsCubit>(
+        ),
+        BlocProvider<StatsCubit>(
           lazy: false, // load cubit immediately, for list header counts
           create: (context) => StatsCubit(
             readingListBloc: BlocProvider.of<ReadingListBloc>(context),

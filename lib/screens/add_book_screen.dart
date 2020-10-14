@@ -1,25 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-<<<<<<< HEAD
-import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
 
+import '../blocs/blocs.dart';
 import '../components/components.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
-=======
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../blocs/blocs.dart';
-import '../models/user.dart';
-import '../models/note.dart';
-import '../models/book.dart';
-import '../models/listed_book.dart';
-import '../components/list_tile_header_text.dart';
-import '../components/list_tile_text_field.dart';
-import './main_screen.dart';
-import './add_reco_screen.dart';
->>>>>>> WIP
 import '../services/list_service.dart';
 
 class AddBookScreen extends StatefulWidget {
@@ -81,6 +67,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
     );
 
     context.bloc<ReadingListBloc>().add(ReadingListAdded(book));
+    //bookListBloc.addBook(item, book, user.accessToken);
     print('successfully added ${widget.bookId}');
     Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
@@ -102,40 +89,17 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        builder: (context, state) {
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(builder: (context, state) {
       return Scaffold(
         appBar: AppBar(
           title: Text(
             'Add Book',
             style: Theme.of(context).textTheme.subtitle1,
-=======
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Add Book',
-          style: Theme.of(context).textTheme.subtitle1,
-        ),
-        actions: <Widget>[
-          FlatButton(
-            onPressed: () {
-              _saveListItem(context);
-            },
-            child: Text(
-              'Done',
-              style: TextStyle(
-                color: Colors.teal[700],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
->>>>>>> WIP
           ),
-<<<<<<< HEAD
           actions: <Widget>[
             FlatButton(
               onPressed: () {
-                _saveListItem();
+                _saveListItem(context);
               },
               child: Text(
                 'Done',
@@ -144,18 +108,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-=======
-        ],
-      ),
-      body: SafeArea(
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              title: Text(widget.book.titleWithSubtitle),
-              subtitle: Text(widget.book.authorsAsString),
-              leading: Image.network(widget.book.thumbnail),
->>>>>>> Finalize update type by swipe and addition of new list items
             ),
           ],
         ),
@@ -163,8 +115,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
           child: ListView(
             children: <Widget>[
               ListTile(
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 title: Text(widget.book.titleWithSubtitle),
                 subtitle: Text(widget.book.authorsAsString),
                 leading: Image.network(widget.book.thumbnail),
@@ -209,7 +160,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                 ),
                               ),
                             ),
-<<<<<<< HEAD
                           ],
                           isSelected: _listStatus,
                           onPressed: (int index) {
@@ -231,45 +181,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           borderColor: Colors.grey,
                           selectedBorderColor: Colors.teal,
                           selectedColor: Colors.grey[900],
-                          constraints:
-                              BoxConstraints(minHeight: 30, minWidth: 110),
+                          constraints: BoxConstraints(minHeight: 30, minWidth: 110),
                         ),
-=======
-                          ),
-                        ],
-                        isSelected: _listStatus,
-                        onPressed: (int index) {
-                          setState(() {
-                            //only allows one choice to be selected at a time
-                            for (int i = 0; i < _listStatus.length; i++) {
-                              _listStatus[i] = i == index;
-                            }
-                            if (index == 0) {
-                              listType = 'TO_READ';
-                            } else if (index == 1) {
-                              listType = 'READING';
-                            } else if (index == 2) {
-                              listType = 'READ';
-                            }
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(4),
-                        borderColor: Colors.grey,
-                        selectedBorderColor: Colors.teal,
-                        selectedColor: Colors.grey[900],
-                        constraints: BoxConstraints(minHeight: 30, minWidth: 110),
->>>>>>> Finalize update type by swipe and addition of new list items
                       ),
                     ),
                   ],
                 ),
               ),
-<<<<<<< HEAD
               Divider(),
               AddRecoTile(
-                  recoSource: recoSource ?? '',
-                  recoText: recoText ?? '',
-                  onPress: _addReco),
+                  recoSource: recoSource ?? '', recoText: recoText ?? '', onPress: _addReco),
               Divider(),
               TextFieldTile(
                 headerText: 'Add a note',
@@ -283,23 +204,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
             ],
           ),
-=======
-            ),
-            Divider(),
-            AddRecoTile(recoSource: recoSource ?? '', recoText: recoText ?? '', onPress: _addReco),
-            Divider(),
-            TextFieldTile(
-              headerText: 'Add a note',
-              hintText: 'Jot down any thoughts here',
-              maxLines: null,
-              onTextChange: (text) {
-                setState(() {
-                  noteText = text;
-                });
-              },
-            ),
-          ],
->>>>>>> Finalize update type by swipe and addition of new list items
         ),
       );
     });
