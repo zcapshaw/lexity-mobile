@@ -6,11 +6,9 @@ import 'package:get_it/get_it.dart';
 
 import './blocs/blocs.dart';
 import './blocs/simple_bloc_observer.dart';
-import './repositories/authentication_repository.dart';
-import './repositories/user_repository.dart';
+import './repositories/repositories.dart';
 import './screens/screens.dart';
 import './services/list_service.dart';
-import './services/reading_list_service.dart';
 import './theme.dart';
 
 //void main() {
@@ -23,7 +21,7 @@ Future main() async {
     lazy: false, // load BLoC immediately
     create: (context) {
       return ReadingListBloc(
-        readingListService: ReadingListService(),
+        listRepository: ListRepository(),
       )..add(ReadingListLoaded());
     },
     child: App(
@@ -54,7 +52,8 @@ class App extends StatelessWidget {
         ),
         BlocProvider<AuthenticationBloc>(
           create: (context) => AuthenticationBloc(
-              authenticationRepository: authenticationRepository, userRepository: userRepository),
+              authenticationRepository: authenticationRepository,
+              userRepository: userRepository),
         ),
         BlocProvider<StatsCubit>(
           lazy: false, // load cubit immediately, for list header counts

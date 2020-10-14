@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:lexity_mobile/blocs/reading_list/reading_list.dart';
-import 'package:lexity_mobile/models/models.dart';
-import 'package:lexity_mobile/services/reading_list_service.dart';
+
+import '../../repositories/list_repository.dart';
+import '../blocs.dart';
 
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
-  ReadingListBloc({@required this.readingListService}) : super(ReadingListLoadInProgress());
+  ReadingListBloc({@required this.listRepository})
+      : super(ReadingListLoadInProgress());
 
-  final ReadingListService readingListService;
+  final ListRepository listRepository;
 
   @override
   Stream<ReadingListState> mapEventToState(ReadingListEvent event) async* {
@@ -27,27 +28,30 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   Stream<ReadingListState> _mapReadingListLoadedToState() async* {
     try {
-      List<ListedBook> readingList = await readingListService.loadReadingList();
-      yield ReadingListLoadSuccess(readingListService.sortByTypeAndInjectHeaders(readingList));
+      var readingList = await listRepository.loadReadingList();
+      yield ReadingListLoadSuccess(
+          listRepository.sortByTypeAndInjectHeaders(readingList));
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();
     }
   }
 
-  Stream<ReadingListState> _mapReadingListAddedToState(ReadingListAdded event) async* {
+  Stream<ReadingListState> _mapReadingListAddedToState(
+      ReadingListAdded event) async* {
     if (state is ReadingListLoadSuccess) {
-      final List<ListedBook> updatedReadingList = readingListService.addBook(
+      final updatedReadingList = listRepository.addBook(
           event.book, List.from((state as ReadingListLoadSuccess).readingList));
       yield ReadingListLoadSuccess(updatedReadingList);
-      readingListService.addOrUpdateBook(event.book);
+      listRepository.addOrUpdateBook(event.book);
     }
   }
 
-  Stream<ReadingListState> _mapReadingListUpdatedToState(ReadingListUpdated event) async* {
+  Stream<ReadingListState> _mapReadingListUpdatedToState(
+      ReadingListUpdated event) async* {
     if (state is ReadingListLoadSuccess) {
-      bool typeChange = false;
-      List<ListedBook> updatedReadingList =
+      var typeChange = false;
+      var updatedReadingList =
           (state as ReadingListLoadSuccess).readingList.map((book) {
         if (book.bookId == event.updatedBook.bookId) {
           typeChange = book.type != event.updatedBook.type ? true : false;
@@ -57,17 +61,20 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
         }
       }).toList();
       if (typeChange) {
-        updatedReadingList = readingListService.updateBookTypeIndex(
-            event.updatedBook, updatedReadingList, (state as ReadingListLoadSuccess).readingList);
+        updatedReadingList = listRepository.updateBookTypeIndex(
+            event.updatedBook,
+            updatedReadingList,
+            (state as ReadingListLoadSuccess).readingList);
       }
       yield ReadingListLoadSuccess(updatedReadingList);
-      readingListService.addOrUpdateBook(event.updatedBook);
+      listRepository.addOrUpdateBook(event.updatedBook);
     }
   }
 
-  Stream<ReadingListState> _mapReadingListReorderedToState(ReadingListReordered event) async* {
+  Stream<ReadingListState> _mapReadingListReorderedToState(
+      ReadingListReordered event) async* {
     if (state is ReadingListLoadSuccess) {
-      List<ListedBook> updatedReadingList = await readingListService.reorderBook(
+      final updatedReadingList = await listRepository.reorderBook(
           List.from((state as ReadingListLoadSuccess).readingList),
           event.oldIndex,
           event.newIndex,
@@ -77,14 +84,15 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     }
   }
 
-  Stream<ReadingListState> _mapReadingListDeletedToState(ReadingListDeleted event) async* {
+  Stream<ReadingListState> _mapReadingListDeletedToState(
+      ReadingListDeleted event) async* {
     if (state is ReadingListLoadSuccess) {
       final updatedReadingList = (state as ReadingListLoadSuccess)
           .readingList
           .where((book) => book.bookId != event.book.bookId)
           .toList();
       yield ReadingListLoadSuccess(updatedReadingList);
-      readingListService.deleteBook(event.book);
+      listRepository.deleteBook(event.book);
     }
   }
 }
