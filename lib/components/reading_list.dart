@@ -163,6 +163,7 @@ class _ReadingListState extends State<ReadingList> {
                     scrollController: reorderScrollController,
                     scrollDirection: Axis.vertical,
 <<<<<<< HEAD
+<<<<<<< HEAD
                     onReorder: (oldIndex, newIndex) =>
 <<<<<<< HEAD
                         bookListBloc.reorderBook(user, oldIndex, newIndex, widget.isHomescreen),
@@ -175,6 +176,10 @@ class _ReadingListState extends State<ReadingList> {
                     onReorder: (oldIndex, newIndex) => context
                         .bloc<ReadingListBloc>()
                         .add(ReadingListReordered(oldIndex, newIndex,
+=======
+                    onReorder: (oldIndex, newIndex) => context.bloc<ReadingListBloc>().add(
+                        ReadingListReordered(oldIndex, newIndex,
+>>>>>>> Finalize update type by swipe and addition of new list items
                             isHomescreen: widget.isHomescreen)),
 >>>>>>> Integrate BlocBuilder for StatsCubit in the user_screen header
                     children: List.generate(readingList.length, (index) {
@@ -188,17 +193,20 @@ class _ReadingListState extends State<ReadingList> {
 >>>>>>> Rename to more descriptive class of ListedBookHeader
 =======
                             widget.enableHeaders &&
+<<<<<<< HEAD
                             widget.includedTypes
                                 .contains(readingList[index].type)) {
 >>>>>>> Change injectHeaders method to sortByTypeAndInjectHeaders
+=======
+                            widget.includedTypes.contains(readingList[index].type)) {
+>>>>>>> Finalize update type by swipe and addition of new list items
                           return ListTileHeader(
                             type: readingList[index].type,
                             key: UniqueKey(),
                           );
                         } else if (readingList[index] is ListedBook &&
                             readingList[index] is! ListedBookHeader &&
-                            widget.includedTypes
-                                .contains(readingList[index].type)) {
+                            widget.includedTypes.contains(readingList[index].type)) {
                           return ListTileItem(
                             item: readingList[index],
                             tileIndex: index,

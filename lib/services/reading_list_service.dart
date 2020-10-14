@@ -67,12 +67,12 @@ class ReadingListService {
     return readingList;
   }
 
-  List<ListedBook> updateBookTypeIndex(ListedBook updatedBook, List<ListedBook> readingList) {
-    final int oldIndex = readingList.indexWhere((b) => b.bookId == updatedBook.bookId);
+  List<ListedBook> updateBookTypeIndex(
+      ListedBook updatedBook, List<ListedBook> newReadingList, List<ListedBook> prevReadingList) {
+    final int oldIndex = newReadingList.indexWhere((b) => b.bookId == updatedBook.bookId);
 
-    // oldIndex returns -1 if no matching bookId is found
     if (oldIndex > 0) {
-      int newIndex = _getTypeChangeIndex(updatedBook.type, readingList);
+      int newIndex = _getTypeChangeIndex(updatedBook.type, prevReadingList);
 
       // // If the newer position is lower in the list, all tiles will 'slide'
       // // up the list, therefore the new index should be decreased by one
@@ -80,12 +80,12 @@ class ReadingListService {
         newIndex -= 1;
       }
 
-      readingList.removeAt(oldIndex);
-      readingList.insert(newIndex ?? oldIndex, updatedBook);
-      return readingList;
+      newReadingList.removeAt(oldIndex);
+      newReadingList.insert(newIndex ?? oldIndex, updatedBook);
+      return newReadingList;
     } else {
       print('Could not find matching bookID to update - returning original ReadingList');
-      return readingList;
+      return newReadingList;
     }
   }
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:lexity_mobile/blocs/reading_list/reading_list.dart';
@@ -59,9 +58,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       }).toList();
       if (typeChange) {
         updatedReadingList = readingListService.updateBookTypeIndex(
-          event.updatedBook,
-          updatedReadingList,
-        );
+            event.updatedBook, updatedReadingList, (state as ReadingListLoadSuccess).readingList);
       }
       yield ReadingListLoadSuccess(updatedReadingList);
       readingListService.addOrUpdateBook(event.updatedBook);

@@ -81,18 +81,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
     );
 
     context.bloc<ReadingListBloc>().add(ReadingListAdded(book));
-    //bookListBloc.addBook(item, book, user.accessToken);
     print('successfully added ${widget.bookId}');
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => MainScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
 
   _addReco(BuildContext context, String recoSource, String recoText) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => AddRecoScreen(
-            userId: user.id, recoSource: recoSource, recoText: recoText),
+        builder: (context) =>
+            AddRecoScreen(userId: user.id, recoSource: recoSource, recoText: recoText),
       ),
     );
 
@@ -133,6 +131,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
             ),
 >>>>>>> WIP
           ),
+<<<<<<< HEAD
           actions: <Widget>[
             FlatButton(
               onPressed: () {
@@ -145,6 +144,18 @@ class _AddBookScreenState extends State<AddBookScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+=======
+        ],
+      ),
+      body: SafeArea(
+        child: ListView(
+          children: <Widget>[
+            ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              title: Text(widget.book.titleWithSubtitle),
+              subtitle: Text(widget.book.authorsAsString),
+              leading: Image.network(widget.book.thumbnail),
+>>>>>>> Finalize update type by swipe and addition of new list items
             ),
           ],
         ),
@@ -198,6 +209,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                                 ),
                               ),
                             ),
+<<<<<<< HEAD
                           ],
                           isSelected: _listStatus,
                           onPressed: (int index) {
@@ -222,11 +234,37 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           constraints:
                               BoxConstraints(minHeight: 30, minWidth: 110),
                         ),
+=======
+                          ),
+                        ],
+                        isSelected: _listStatus,
+                        onPressed: (int index) {
+                          setState(() {
+                            //only allows one choice to be selected at a time
+                            for (int i = 0; i < _listStatus.length; i++) {
+                              _listStatus[i] = i == index;
+                            }
+                            if (index == 0) {
+                              listType = 'TO_READ';
+                            } else if (index == 1) {
+                              listType = 'READING';
+                            } else if (index == 2) {
+                              listType = 'READ';
+                            }
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(4),
+                        borderColor: Colors.grey,
+                        selectedBorderColor: Colors.teal,
+                        selectedColor: Colors.grey[900],
+                        constraints: BoxConstraints(minHeight: 30, minWidth: 110),
+>>>>>>> Finalize update type by swipe and addition of new list items
                       ),
                     ),
                   ],
                 ),
               ),
+<<<<<<< HEAD
               Divider(),
               AddRecoTile(
                   recoSource: recoSource ?? '',
@@ -245,6 +283,23 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
             ],
           ),
+=======
+            ),
+            Divider(),
+            AddRecoTile(recoSource: recoSource ?? '', recoText: recoText ?? '', onPress: _addReco),
+            Divider(),
+            TextFieldTile(
+              headerText: 'Add a note',
+              hintText: 'Jot down any thoughts here',
+              maxLines: null,
+              onTextChange: (text) {
+                setState(() {
+                  noteText = text;
+                });
+              },
+            ),
+          ],
+>>>>>>> Finalize update type by swipe and addition of new list items
         ),
       );
     });
@@ -281,8 +336,7 @@ class AddRecoTile extends StatelessWidget {
               ],
             ),
             Container(
-              child:
-                  Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+              child: Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
             ),
           ],
         ),
