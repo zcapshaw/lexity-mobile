@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class RecoTileTrailing extends StatelessWidget {
+  RecoTileTrailing(this.recos);
+
   final List<dynamic> recos;
   final int maxRecoRender = 3;
-
-  RecoTileTrailing(this.recos);
 
   @override
   Widget build(BuildContext context) {
@@ -37,8 +37,8 @@ class RecoTileTrailing extends StatelessWidget {
                 for (var r in renderRecos)
                   RecoImg(r['sourceImg'], r['sourceName']),
                 if (recosBeyondMax > 0 && recosBeyondMax <= 9)
-                  RecoImg(null, '+${recosBeyondMax.toString()}'),
-                if (recosBeyondMax > 9) RecoImg(null, '9+'),
+                  RecoImg(null, '+ ${recosBeyondMax.toString()}'),
+                if (recosBeyondMax > 9) RecoImg(null, '9 +'),
               ],
             ),
           ],

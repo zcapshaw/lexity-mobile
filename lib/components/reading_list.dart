@@ -202,6 +202,6 @@ class _ReadingListState extends State<ReadingList> {
   // As mentioned in todo, the event trigger is not an async process,
   // So the refresh indicator doesn't work exactly right - to be fixed
   Future<void> refreshReadingList(BuildContext context) async {
-    BlocProvider.of<ReadingListBloc>(context).add(ReadingListRefreshed());
+    BlocProvider.of<ReadingListBloc>(context).add(ReadingListRefreshed(user));
   }
 }

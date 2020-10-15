@@ -8,14 +8,34 @@ abstract class ReadingListEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ReadingListLoaded extends ReadingListEvent {}
+class ReadingListLoaded extends ReadingListEvent {
+  const ReadingListLoaded(this.user);
 
-class ReadingListRefreshed extends ReadingListEvent {}
+  final User user;
+
+  @override
+  List<Object> get props => [user];
+
+  @override
+  String toString() => 'ReadingListLoaded { user: $user }';
+}
+
+class ReadingListRefreshed extends ReadingListEvent {
+  const ReadingListRefreshed(this.user);
+
+  final User user;
+
+  @override
+  List<Object> get props => [user];
+
+  @override
+  String toString() => 'ReadingListRefreshed { user: $user }';
+}
 
 class ReadingListAdded extends ReadingListEvent {
-  final ListedBook book;
-
   const ReadingListAdded(this.book);
+
+  final ListedBook book;
 
   @override
   List<Object> get props => [book];
@@ -25,9 +45,9 @@ class ReadingListAdded extends ReadingListEvent {
 }
 
 class ReadingListUpdated extends ReadingListEvent {
-  final ListedBook updatedBook;
-
   const ReadingListUpdated(this.updatedBook);
+
+  final ListedBook updatedBook;
 
   @override
   List<Object> get props => [updatedBook];
@@ -37,12 +57,12 @@ class ReadingListUpdated extends ReadingListEvent {
 }
 
 class ReadingListReordered extends ReadingListEvent {
+  const ReadingListReordered(this.oldIndex, this.newIndex,
+      {this.isHomescreen = false});
+
   final int oldIndex;
   final int newIndex;
   final bool isHomescreen;
-
-  const ReadingListReordered(this.oldIndex, this.newIndex,
-      {this.isHomescreen = false});
 
   @override
   List<Object> get props => [oldIndex, newIndex];
@@ -53,9 +73,9 @@ class ReadingListReordered extends ReadingListEvent {
 }
 
 class ReadingListDeleted extends ReadingListEvent {
-  final ListedBook book;
-
   const ReadingListDeleted(this.book);
+
+  final ListedBook book;
 
   @override
   List<Object> get props => [book];
@@ -63,3 +83,5 @@ class ReadingListDeleted extends ReadingListEvent {
   @override
   String toString() => 'ReadingListDeleted { book: $book }';
 }
+
+class ReadingListDismount extends ReadingListEvent {}

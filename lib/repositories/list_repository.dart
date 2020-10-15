@@ -13,21 +13,24 @@ class ListRepository {
   final String accessToken = DotEnv().env['ACCESS_TOKEN'];
   final String userId = DotEnv().env['USER_ID'];
 
-  Future<List<ListedBook>> loadReadingList() async {
+  Future<List<ListedBook>> loadReadingList(User user) async {
+    List<ListedBook> readingList;
     try {
-      final list = await listService.getListItemSummary(accessToken, userId);
-      final decodedList = jsonDecode(list.data) as List;
-      return decodedList.map((book) => ListedBook.fromJson(book)).toList();
+      final list =
+          await listService.getListItemSummary(user.accessToken, user.id);
+      var decoded = jsonDecode(list.data) as List;
+      readingList = decoded.map((book) => ListedBook.fromJson(book)).toList();
     } catch (err) {
-      print('Issue loading ReadingList data from backend: ${err.stack}');
-      return [];
+      print('Issue loading ReadingList data from backend: $err');
     }
+    return readingList;
   }
 
   saveReadingList() async {}
 
   List<ListedBook> sortByTypeAndInjectHeaders(List<ListedBook> readingList) {
-    var sortedReadingListWithHeaders = [];
+    // ignore: omit_local_variable_types
+    List<ListedBook> sortedReadingListWithHeaders = [];
     final typeSortOrder = ['READING', 'TO_READ', 'READ'];
 
     for (var type in typeSortOrder) {

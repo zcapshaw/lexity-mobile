@@ -13,8 +13,10 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   @override
   Stream<ReadingListState> mapEventToState(ReadingListEvent event) async* {
-    if (event is ReadingListLoaded || event is ReadingListRefreshed) {
-      yield* _mapReadingListLoadedToState();
+    if (event is ReadingListLoaded) {
+      yield* _mapReadingListLoadedToState(event);
+    } else if (event is ReadingListRefreshed) {
+      yield* _mapReadingListRefreshedToState(event);
     } else if (event is ReadingListAdded) {
       yield* _mapReadingListAddedToState(event);
     } else if (event is ReadingListUpdated) {
@@ -23,12 +25,27 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapReadingListReorderedToState(event);
     } else if (event is ReadingListDeleted) {
       yield* _mapReadingListDeletedToState(event);
+    } else if (event is ReadingListDismount) {
+      yield* _mapReadingListDismountToState();
     }
   }
 
-  Stream<ReadingListState> _mapReadingListLoadedToState() async* {
+  Stream<ReadingListState> _mapReadingListLoadedToState(
+      ReadingListLoaded event) async* {
     try {
-      var readingList = await listRepository.loadReadingList();
+      var readingList = await listRepository.loadReadingList(event.user);
+      yield ReadingListLoadSuccess(
+          listRepository.sortByTypeAndInjectHeaders(readingList));
+    } catch (err) {
+      print(err);
+      yield ReadingListLoadFailure();
+    }
+  }
+
+  Stream<ReadingListState> _mapReadingListRefreshedToState(
+      ReadingListRefreshed event) async* {
+    try {
+      var readingList = await listRepository.loadReadingList(event.user);
       yield ReadingListLoadSuccess(
           listRepository.sortByTypeAndInjectHeaders(readingList));
     } catch (err) {
@@ -94,5 +111,9 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield ReadingListLoadSuccess(updatedReadingList);
       listRepository.deleteBook(event.book);
     }
+  }
+
+  Stream<ReadingListState> _mapReadingListDismountToState() async* {
+    yield ReadingListLoadInProgress();
   }
 }
