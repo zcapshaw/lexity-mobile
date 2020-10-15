@@ -69,15 +69,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
     context.bloc<ReadingListBloc>().add(ReadingListAdded(book));
     //bookListBloc.addBook(item, book, user.accessToken);
     print('successfully added ${widget.bookId}');
-    Navigator.push(context, MaterialPageRoute(builder: (context) => MainScreen()));
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
 
   _addReco(BuildContext context, String recoSource, String recoText) async {
     final result = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            AddRecoScreen(userId: user.id, recoSource: recoSource, recoText: recoText),
+        builder: (context) => AddRecoScreen(
+            userId: user.id, recoSource: recoSource, recoText: recoText),
       ),
     );
 
@@ -89,7 +90,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthenticationBloc, AuthenticationState>(builder: (context, state) {
+    return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        builder: (context, state) {
       return Scaffold(
         appBar: AppBar(
           title: Text(
@@ -115,7 +117,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
           child: ListView(
             children: <Widget>[
               ListTile(
-                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 title: Text(widget.book.titleWithSubtitle),
                 subtitle: Text(widget.book.authorsAsString),
                 leading: Image.network(widget.book.thumbnail),
@@ -181,7 +184,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           borderColor: Colors.grey,
                           selectedBorderColor: Colors.teal,
                           selectedColor: Colors.grey[900],
-                          constraints: BoxConstraints(minHeight: 30, minWidth: 110),
+                          constraints:
+                              BoxConstraints(minHeight: 30, minWidth: 110),
                         ),
                       ),
                     ),
@@ -190,7 +194,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
               ),
               Divider(),
               AddRecoTile(
-                  recoSource: recoSource ?? '', recoText: recoText ?? '', onPress: _addReco),
+                  recoSource: recoSource ?? '',
+                  recoText: recoText ?? '',
+                  onPress: _addReco),
               Divider(),
               TextFieldTile(
                 headerText: 'Add a note',
@@ -240,7 +246,8 @@ class AddRecoTile extends StatelessWidget {
               ],
             ),
             Container(
-              child: Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+              child:
+                  Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
             ),
           ],
         ),
