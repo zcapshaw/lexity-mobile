@@ -62,6 +62,7 @@ class ListedBook extends Book {
       recos.map((reco) => reco?.sourceName).toList();
 
   set changeType(String newType) => type = newType;
+  set addAllNotes(List<Note> oldNotes) => notes.addAll(oldNotes);
   set addAndDeduplicateRecos(List<Note> oldRecos) =>
       recos.addAll(List<Note>.from(oldRecos
         ..removeWhere((reco) => recoSourceNames.contains(reco.sourceName))));

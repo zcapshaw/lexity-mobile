@@ -55,8 +55,10 @@ class ListRepository {
         insertIndex -= 1;
       }
 
-      // Combine existing and new reco in ListItem book
-      book.addAndDeduplicateRecos = oldBook.recos ?? [];
+      // Combine existing and new recos and notes in ListedBook
+      book
+        ..addAndDeduplicateRecos = oldBook.recos ?? []
+        ..addAllNotes = oldBook.notes ?? [];
 
       // If type is NOT changing, then replace the book in the matchingIndex
       if (book.type == oldBook.type) {
