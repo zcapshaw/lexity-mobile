@@ -1,3 +1,5 @@
+import './models.dart';
+
 class Book {
   final String title;
   final String subtitle;
@@ -8,7 +10,7 @@ class Book {
   final List categories;
   final String listId;
   final String type;
-  final List recos;
+  final List<Note> recos;
   final bool inUserList;
   final bool userRead;
 

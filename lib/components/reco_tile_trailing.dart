@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../models/models.dart';
+
 class RecoTileTrailing extends StatelessWidget {
   RecoTileTrailing(this.recos);
 
-  final List<dynamic> recos;
+  final List<Note> recos;
   final int maxRecoRender = 3;
 
   @override
@@ -34,8 +36,7 @@ class RecoTileTrailing extends StatelessWidget {
                   MainAxisSize.min, // Use the minimum amount of space needed
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                for (var r in renderRecos)
-                  RecoImg(r['sourceImg'], r['sourceName']),
+                for (Note r in renderRecos) RecoImg(r.sourceImg, r.sourceName),
                 if (recosBeyondMax > 0 && recosBeyondMax <= 9)
                   RecoImg(null, '+ ${recosBeyondMax.toString()}'),
                 if (recosBeyondMax > 9) RecoImg(null, '9 +'),

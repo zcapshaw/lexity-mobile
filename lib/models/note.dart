@@ -7,23 +7,26 @@ part 'note.g.dart';
   includeIfNull: false,
 )
 class Note {
-  Note({this.comment, this.created, this.sourceName, this.sourceId, this.id});
+  Note(
+      {this.comment,
+      this.created,
+      this.sourceName,
+      this.sourceImg,
+      this.sourceId,
+      this.id});
 
   String comment;
   int created;
   String sourceName;
+  String sourceImg;
   String sourceId;
   String id;
 
-  bool get isReco {
-    return this.sourceName == null;
-  }
+  bool get isReco => sourceName != null;
 
   // Note.id is assigned by the backend, therefore
   // newly instantiated notes have no id
-  bool get newNote {
-    return this.id == null;
-  }
+  bool get newNote => id == null;
 
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 

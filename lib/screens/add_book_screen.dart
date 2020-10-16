@@ -37,14 +37,16 @@ class _AddBookScreenState extends State<AddBookScreen> {
   void _saveListItem(BuildContext context) async {
     final List labels = [];
     final Note note = Note(comment: noteText);
-    final Note reco = Note(sourceName: recoSource, comment: recoText);
+    final Note reco = Note(
+        sourceId: null,
+        sourceName: recoSource,
+        sourceImg: null,
+        comment: recoText);
     final List<Note> notes = [note, reco];
 
     // Temporary instantiation without image - eventually, user search will
     // provide img if available
-    final List newReco = [
-      {'sourceName': recoSource, 'sourceImg': null}
-    ];
+    final List<Note> newReco = [Note(sourceName: recoSource, sourceImg: null)];
 
     // Only retain non-null notes objects with text.length > 0
     // E.g. if there are NO notes OR recos, this will return an empty list []

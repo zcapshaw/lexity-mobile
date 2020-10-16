@@ -1,7 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'book.dart';
-import 'note.dart';
+import './models.dart';
 
 part 'listed_book.g.dart';
 
@@ -52,24 +51,20 @@ class ListedBook extends Book {
   final bool inUserList;
   final bool userRead;
   String type;
-  List recos;
+  List<Note> recos;
   List labels;
   List<Note> notes;
 
-  bool get toRead {
-    return type == 'TO_READ';
-  }
+  bool get toRead => type == 'TO_READ';
+  bool get reading => type == 'READING';
+  bool get read => type == 'READ';
+  List<String> get recoSourceNames =>
+      recos.map((reco) => reco?.sourceName).toList();
 
-  bool get reading {
-    return type == 'READING';
-  }
-
-  bool get read {
-    return type == 'READ';
-  }
-
-  set changeType(String newType) => this.type = newType;
-  set mergeRecos(List newRecos) => this.recos.addAll(newRecos);
+  set changeType(String newType) => type = newType;
+  set addAndDeduplicateRecos(List<Note> oldRecos) =>
+      recos.addAll(List<Note>.from(oldRecos
+        ..removeWhere((reco) => recoSourceNames.contains(reco.sourceName))));
 
   ListedBook clone() {
     return ListedBook(
@@ -91,7 +86,8 @@ class ListedBook extends Book {
         notes: this.notes);
   }
 
-  factory ListedBook.fromJson(Map<String, dynamic> json) => _$ListedBookFromJson(json);
+  factory ListedBook.fromJson(Map<String, dynamic> json) =>
+      _$ListedBookFromJson(json);
   Map<String, dynamic> toJson() => _$ListedBookToJson(this);
 
 // Custom json serialization, to isolate only variables used on the backend

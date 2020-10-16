@@ -11,7 +11,8 @@ class BookListBloc {
   ListService get listService => GetIt.I<ListService>();
   final BehaviorSubject<Map<String, int>> _listCountController =
       BehaviorSubject<Map<String, int>>();
-  final BehaviorSubject<List<ListedBook>> _listBookController = BehaviorSubject<List<ListedBook>>();
+  final BehaviorSubject<List<ListedBook>> _listBookController =
+      BehaviorSubject<List<ListedBook>>();
 
   final Map<String, int> _listCountItems = {};
 
@@ -26,8 +27,10 @@ class BookListBloc {
         List<ListedBook> readingList = [];
 
         // Create lists by type
-        List userReadingList = bookJson.where((b) => b['type'] == 'READING').toList();
-        List userToReadList = bookJson.where((b) => b['type'] == 'TO_READ').toList();
+        List userReadingList =
+            bookJson.where((b) => b['type'] == 'READING').toList();
+        List userToReadList =
+            bookJson.where((b) => b['type'] == 'TO_READ').toList();
         List userReadList = bookJson.where((b) => b['type'] == 'READ').toList();
 
         addListCountItem('READING', userReadingList.length);
@@ -64,7 +67,8 @@ class BookListBloc {
     final int headerPlaceholder = 1;
     final readingList = _listBookController.value;
     final int readingListLength = readingList.length;
-    final int lengthWithoutRead = readingListLength - _listCountItems['READ'] - headerPlaceholder;
+    final int lengthWithoutRead =
+        readingListLength - _listCountItems['READ'] - headerPlaceholder;
 
     // This is an inflexible, somewhat 'hacky', solution.
     // Given that the List BLoC is shared between the UserScreen and HomeScreen
@@ -75,7 +79,8 @@ class BookListBloc {
     // To solve this, isHomescreen bool was created, so that a drag to an index that is
     // beyond the scope of HomeScreen - that is, an index that would be 'READ' - will be
     // automatically reassigned to the last acceptable HomeScreen view index of readingList
-    if (isHomescreen && newIndex > lengthWithoutRead) newIndex = lengthWithoutRead;
+    if (isHomescreen && newIndex > lengthWithoutRead)
+      newIndex = lengthWithoutRead;
 
     String newIndexType = _getTypeByIndex(newIndex);
     String oldIndexType = _getTypeByIndex(oldIndex);
@@ -96,7 +101,8 @@ class BookListBloc {
         readingList.insert(newIndex, book);
         _listBookController.sink.add(readingList);
         try {
-          listService.updateListItemType(user.accessToken, user.id, book.bookId, newIndexType);
+          listService.updateListItemType(
+              user.accessToken, user.id, book.bookId, newIndexType);
         } catch (err) {
           print('Could not update list type on the backend: $err');
         }
@@ -129,7 +135,8 @@ class BookListBloc {
     addListCountItem(prevType, --_listCountItems[prevType]);
   }
 
-  void changeBookType(ListedBook book, User user, int oldIndex, String newType) {
+  void changeBookType(
+      ListedBook book, User user, int oldIndex, String newType) {
     final readingList = _listBookController.value;
     final String prevType = book.type;
     final ListedBook item = readingList.removeAt(oldIndex);
@@ -138,7 +145,8 @@ class BookListBloc {
     _listBookController.sink.add(readingList);
     _typeChangeCounter(newType, prevType);
     try {
-      listService.updateListItemType(user.accessToken, user.id, book.bookId, newType);
+      listService.updateListItemType(
+          user.accessToken, user.id, book.bookId, newType);
     } catch (err) {
       print('Could not update list type on the backend: $err');
     }
@@ -156,8 +164,9 @@ class BookListBloc {
         }
       case 'TO_READ':
         {
-          newIndex =
-              _listCountItems['READING'] + _listCountItems['TO_READ'] + (headerPlaceholder * 2);
+          newIndex = _listCountItems['READING'] +
+              _listCountItems['TO_READ'] +
+              (headerPlaceholder * 2);
           break;
         }
       default:
@@ -182,7 +191,7 @@ class BookListBloc {
       }
 
       // Combine existing and new reco in ListItem book
-      book.mergeRecos = oldBook.recos ?? [];
+      book.addAndDeduplicateRecos = oldBook.recos ?? [];
 
       // If type is NOT changing, then replace the book in the matchingIndex
       if (book.type == oldBook.type) {
