@@ -1,17 +1,13 @@
 import 'dart:convert';
 import 'package:get_it/get_it.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:pedantic/pedantic.dart';
 
 import '../extensions/extensions.dart';
 import '../models/models.dart';
-import '../services/list_service.dart';
+import '../services/services.dart';
 
 class ListRepository {
   ListService get listService => GetIt.I<ListService>();
-
-  // TODO: IMPORTANT - Using DotEnv until we can connect reading_list_bloc to the new user_bloc - this needs to be updated to be dynamic once the user_bloc is built
-  final String accessToken = DotEnv().env['ACCESS_TOKEN'];
-  final String userId = DotEnv().env['USER_ID'];
 
   Future<List<ListedBook>> loadReadingList(User user) async {
     List<ListedBook> readingList;
@@ -100,7 +96,7 @@ class ListRepository {
   }
 
   Future<List<ListedBook>> reorderBook(List<ListedBook> readingList,
-      int oldIndex, int newIndex, bool isHomescreen) async {
+      int oldIndex, int newIndex, User user, bool isHomescreen) async {
     //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
 
     // // This is an inflexible, somewhat 'hacky', solution.
@@ -136,30 +132,13 @@ class ListRepository {
     }
 
     try {
-      // TODO: Remove DotEnv fixed variables once User Provider is loaded
-      await listService.updateListItemType(
-          accessToken, userId, book.bookId, book.type);
+      unawaited(listService.updateListItemType(
+          user.accessToken, user.id, book.bookId, book.type));
     } catch (err) {
       print('Could not update list type on the backend: $err');
     }
 
     return readingList;
-  }
-
-  void addOrUpdateBook(ListedBook book) async {
-    try {
-      await listService.addOrUpdateListItem(accessToken, book);
-    } catch (err) {
-      print('Could not add or update the book in the backend: $err');
-    }
-  }
-
-  void deleteBook(ListedBook book) async {
-    try {
-      await listService.deleteBook(accessToken, userId, book.listId);
-    } catch (err) {
-      print('Could not delete the book in the backend: $err');
-    }
   }
 
   String _getTypeByIndex(int index, int readingCount, int toReadCount) {

@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 
-import '../../repositories/list_repository.dart';
+import '../../repositories/repositories.dart';
+import '../../services/services.dart';
 import '../blocs.dart';
 
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
@@ -10,6 +12,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       : super(ReadingListLoadInProgress());
 
   final ListRepository listRepository;
+
+  ListService get listService => GetIt.I<ListService>();
 
   @override
   Stream<ReadingListState> mapEventToState(ReadingListEvent event) async* {
@@ -60,7 +64,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       final updatedReadingList = listRepository.addBook(
           event.book, List.from((state as ReadingListLoadSuccess).readingList));
       yield ReadingListLoadSuccess(updatedReadingList);
-      listRepository.addOrUpdateBook(event.book);
+      await listService.addOrUpdateListItem(event.user.accessToken, event.book);
     }
   }
 
@@ -84,7 +88,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
             (state as ReadingListLoadSuccess).readingList);
       }
       yield ReadingListLoadSuccess(updatedReadingList);
-      listRepository.addOrUpdateBook(event.updatedBook);
+      await listService.addOrUpdateListItem(
+          event.user.accessToken, event.updatedBook);
     }
   }
 
@@ -95,6 +100,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
           List.from((state as ReadingListLoadSuccess).readingList),
           event.oldIndex,
           event.newIndex,
+          event.user,
           event.isHomescreen);
       yield ReadingListLoadSuccess(updatedReadingList);
       //TODO: Soon the reorder needs to be saved to local and/or DB
@@ -109,7 +115,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
           .where((book) => book.bookId != event.book.bookId)
           .toList();
       yield ReadingListLoadSuccess(updatedReadingList);
-      listRepository.deleteBook(event.book);
+      await listService.deleteBook(
+          event.user.accessToken, event.user.id, event.book.listId);
     }
   }
 

@@ -60,7 +60,7 @@ class _ReadingListState extends State<ReadingList> {
         }
         break;
     }
-    context.bloc<ReadingListBloc>().add(ReadingListUpdated(updatedBook));
+    context.bloc<ReadingListBloc>().add(ReadingListUpdated(updatedBook, user));
   }
 
   Future<bool> _promptUser(DismissDirection direction, ListedBook book) async {
@@ -73,7 +73,9 @@ class _ReadingListState extends State<ReadingList> {
                 child: const Text('Delete'),
                 onPressed: () {
                   // Dismiss the dialog and also dismiss the swiped item
-                  context.bloc<ReadingListBloc>().add(ReadingListDeleted(book));
+                  context
+                      .bloc<ReadingListBloc>()
+                      .add(ReadingListDeleted(book, user));
                   Navigator.of(context).pop(true);
                 },
               ),
@@ -137,7 +139,7 @@ class _ReadingListState extends State<ReadingList> {
                     scrollDirection: Axis.vertical,
                     onReorder: (oldIndex, newIndex) => context
                         .bloc<ReadingListBloc>()
-                        .add(ReadingListReordered(oldIndex, newIndex,
+                        .add(ReadingListReordered(oldIndex, newIndex, user,
                             isHomescreen: widget.isHomescreen)),
                     children: List.generate(readingList.length, (index) {
                       if (readingList[index] != null) {

@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
 import './blocs/blocs.dart';
@@ -11,10 +10,7 @@ import './screens/screens.dart';
 import './services/list_service.dart';
 import './theme.dart';
 
-//void main() {
-// Temporarily using Future and loading DotEnv
-Future main() async {
-  await DotEnv().load('.env');
+void main() {
   Bloc.observer = SimpleBlocObserver();
   GetIt.I.registerLazySingleton(() => ListService());
   runApp(BlocProvider(
@@ -24,9 +20,6 @@ Future main() async {
             authenticationRepository: AuthenticationRepository(),
             userRepository: UserRepository())
           ..add(const AppStarted());
-        // return ReadingListBloc(
-        //   listRepository: ListRepository(),
-        // )..add(ReadingListLoaded());
       },
       child: const App()));
 }
