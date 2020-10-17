@@ -22,7 +22,9 @@ class ListedBook extends Book {
       this.userRead,
       this.recos,
       this.labels,
-      this.notes})
+      this.notes,
+      this.created,
+      this.updated})
       : super(
           title: title,
           subtitle: subtitle,
@@ -50,6 +52,8 @@ class ListedBook extends Book {
   final String bookId;
   final bool inUserList;
   final bool userRead;
+  final int created;
+  int updated;
   String type;
   List<Note> recos;
   List labels;
@@ -62,6 +66,7 @@ class ListedBook extends Book {
       recos.map((reco) => reco?.sourceName).toList();
 
   set changeType(String newType) => type = newType;
+  set updatedAt(int updatedDateTime) => updated = updatedDateTime;
   set addAllNotes(List<Note> oldNotes) => notes.addAll(oldNotes);
   set addAndDeduplicateRecos(List<Note> oldRecos) =>
       recos.addAll(List<Note>.from(oldRecos
@@ -106,12 +111,9 @@ class ListedBook extends Book {
     writeNotNull('userId', this.userId);
     writeNotNull('bookId', this.bookId);
     writeNotNull('type', this.type);
-    // writeNotNull('recos', this.recos); - I don't think we need this, but commenting for now
     writeNotNull('labels', this.labels);
-
-    // only include new notes in Json, as the backend will APPEND all notes
-    // passed, which would create duplicates otherwise
-    writeNotNull('notes', this.notes.where((n) => n.newNote).toList());
+    writeNotNull('notes', this.notes);
+    writeNotNull('updated', this.updated);
     return val;
   }
 }

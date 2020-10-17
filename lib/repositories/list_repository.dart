@@ -58,7 +58,8 @@ class ListRepository {
       // Combine existing and new recos and notes in ListedBook
       book
         ..addAndDeduplicateRecos = oldBook.recos ?? []
-        ..addAllNotes = oldBook.notes ?? [];
+        ..addAllNotes = oldBook.notes ?? []
+        ..updatedAt = DateTime.now().millisecondsSinceEpoch;
 
       // If type is NOT changing, then replace the book in the matchingIndex
       if (book.type == oldBook.type) {

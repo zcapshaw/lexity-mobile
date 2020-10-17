@@ -75,6 +75,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       var updatedReadingList =
           (state as ReadingListLoadSuccess).readingList.map((book) {
         if (book.bookId == event.updatedBook.bookId) {
+          event.updatedBook.updatedAt = DateTime.now().millisecondsSinceEpoch;
           typeChange = book.type != event.updatedBook.type ? true : false;
           return event.updatedBook;
         } else {

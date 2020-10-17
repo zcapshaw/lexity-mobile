@@ -6,7 +6,8 @@ import '../blocs/blocs.dart';
 import '../components/components.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
-import '../services/list_service.dart';
+import '../services/services.dart';
+import '../utils/utils.dart' as utils;
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
@@ -37,8 +38,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
   void _saveListItem(BuildContext context) async {
     final creationDateTime = DateTime.now().millisecondsSinceEpoch;
     final List labels = [];
-    final Note note = Note(comment: noteText, created: creationDateTime);
+    final Note note = Note(
+        id: utils.generateRandomString(8),
+        comment: noteText,
+        created: creationDateTime);
     final Note reco = Note(
+        id: utils.generateRandomString(8),
         sourceId: null,
         sourceName: recoSource,
         sourceImg: null,
@@ -57,7 +62,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
         note.sourceName != null && note.sourceName.isNotEmpty);
 
     ListedBook book = ListedBook(
-      userId: user.id, // Need to capture ID from new UserBLoC
+      userId: user.id,
       bookId: widget.bookId,
       title: widget.book.title,
       subtitle: widget.book.subtitle,
