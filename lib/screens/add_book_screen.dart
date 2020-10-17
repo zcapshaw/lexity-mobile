@@ -35,13 +35,15 @@ class _AddBookScreenState extends State<AddBookScreen> {
   }
 
   void _saveListItem(BuildContext context) async {
+    final creationDateTime = DateTime.now().millisecondsSinceEpoch;
     final List labels = [];
-    final Note note = Note(comment: noteText);
+    final Note note = Note(comment: noteText, created: creationDateTime);
     final Note reco = Note(
         sourceId: null,
         sourceName: recoSource,
         sourceImg: null,
-        comment: recoText);
+        comment: recoText,
+        created: creationDateTime);
     final List<Note> notes = [note, reco];
 
     // Temporary instantiation without image - eventually, user search will
