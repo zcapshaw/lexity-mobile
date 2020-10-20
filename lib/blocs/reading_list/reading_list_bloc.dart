@@ -7,7 +7,6 @@ import 'package:meta/meta.dart';
 import '../../models/models.dart';
 import '../../repositories/repositories.dart';
 import '../../services/services.dart';
-import '../blocs.dart';
 
 part './reading_list_event.dart';
 part 'reading_list_state.dart';
