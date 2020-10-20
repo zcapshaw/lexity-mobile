@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:lexity_mobile/models/models.dart';
+part of './reading_list_bloc.dart';
 
 abstract class ReadingListEvent extends Equatable {
   const ReadingListEvent();

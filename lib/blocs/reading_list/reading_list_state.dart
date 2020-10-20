@@ -1,5 +1,4 @@
-import 'package:equatable/equatable.dart';
-import 'package:lexity_mobile/models/models.dart';
+part of './reading_list_bloc.dart';
 
 abstract class ReadingListState extends Equatable {
   const ReadingListState();
@@ -11,9 +10,9 @@ abstract class ReadingListState extends Equatable {
 class ReadingListLoadInProgress extends ReadingListState {}
 
 class ReadingListLoadSuccess extends ReadingListState {
-  final List<ListedBook> readingList;
-
   const ReadingListLoadSuccess([this.readingList = const []]);
+
+  final List<ListedBook> readingList;
 
   @override
   List<Object> get props => [readingList];

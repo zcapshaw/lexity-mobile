@@ -1,11 +1,16 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 
+import '../../models/models.dart';
 import '../../repositories/repositories.dart';
 import '../../services/services.dart';
 import '../blocs.dart';
+
+part './reading_list_event.dart';
+part 'reading_list_state.dart';
 
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   ReadingListBloc({@required this.listRepository})
