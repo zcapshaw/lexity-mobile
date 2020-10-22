@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:get_it/get_it.dart';
 import 'package:pedantic/pedantic.dart';
 
 import '../extensions/extensions.dart';
@@ -14,7 +13,6 @@ class ListRepository {
     try {
       final list =
           await listService.getListItemSummary(user.accessToken, user.id);
-      print('List: ${list.data}');
       var decoded = jsonDecode(list.data) as List;
       readingList = decoded.map((book) => ListedBook.fromJson(book)).toList();
     } catch (err) {

@@ -8,7 +8,6 @@ class ListService {
   static const API = 'https://api.lexity.co';
 
   Future<APIResponse> addOrUpdateListItem(accessToken, ListedBook book) {
-    print('Book json: ${jsonEncode(book.listElementsToJson())}');
     return http
         .post(
       API + '/list/add',

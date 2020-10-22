@@ -80,7 +80,6 @@ void main() {
       ),
       act: (bloc) => bloc.add(const LogInWithTwitter()),
       expect: const <AuthenticationState>[
-        Unauthenticated(),
         AuthenticationLoading(),
         Unauthenticated(),
       ],
@@ -97,10 +96,7 @@ void main() {
         );
       },
       act: (bloc) => bloc.add(InboundUriLinkReceived(uri)),
-      expect: <AuthenticationState>[
-        const Unauthenticated(),
-        Authenticated(user)
-      ],
+      expect: <AuthenticationState>[Authenticated(user)],
     );
   });
 }
