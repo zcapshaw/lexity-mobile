@@ -10,7 +10,7 @@ abstract class ReadingListState extends Equatable {
 class ReadingListLoadInProgress extends ReadingListState {}
 
 class ReadingListLoadSuccess extends ReadingListState {
-  const ReadingListLoadSuccess([this.readingList = const []]);
+  const ReadingListLoadSuccess(this.readingList);
 
   final List<ListedBook> readingList;
 

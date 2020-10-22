@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:get_it/get_it.dart';
 import 'package:meta/meta.dart';
 
 import '../../models/models.dart';
@@ -9,15 +8,14 @@ import '../../repositories/repositories.dart';
 import '../../services/services.dart';
 
 part './reading_list_event.dart';
-part 'reading_list_state.dart';
+part './reading_list_state.dart';
 
 class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
-  ReadingListBloc({@required this.listRepository})
+  ReadingListBloc({@required this.listRepository, @required this.listService})
       : super(ReadingListLoadInProgress());
 
   final ListRepository listRepository;
-
-  ListService get listService => GetIt.I<ListService>();
+  final ListService listService;
 
   @override
   Stream<ReadingListState> mapEventToState(ReadingListEvent event) async* {
@@ -101,7 +99,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   Stream<ReadingListState> _mapReadingListReorderedToState(
       ReadingListReordered event) async* {
     if (state is ReadingListLoadSuccess) {
-      final updatedReadingList = await listRepository.reorderBook(
+      final updatedReadingList = listRepository.reorderBook(
           List.from((state as ReadingListLoadSuccess).readingList),
           event.oldIndex,
           event.newIndex,

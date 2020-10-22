@@ -34,6 +34,7 @@ class App extends StatelessWidget {
         BlocProvider<ReadingListBloc>(
           create: (context) => ReadingListBloc(
             listRepository: ListRepository(),
+            listService: ListService(),
           ),
         ),
         BlocProvider<BookDetailsCubit>(
