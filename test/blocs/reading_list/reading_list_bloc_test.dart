@@ -1,29 +1,67 @@
+import 'package:bloc_test/bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
+import 'package:lexity_mobile/blocs/blocs.dart';
+import 'package:lexity_mobile/models/models.dart';
+import 'package:lexity_mobile/services/services.dart';
+import 'package:lexity_mobile/repositories/repositories.dart';
+import '../../test_variables.dart';
+
+class MockListRepository extends Mock implements ListRepository {}
+
+class MockListService extends Mock implements ListService {}
+
 // Test for every event and yielding the expected state
-
-// Adding a book
-// Book goes to right list position based on type
-// If book exists, the old book is updated
-// If book exists, notes are appended, recos are added (if not duplicate), updated at timestamp is set
-
-// Updating a book (ref update components of add book)
-
+// Need to work out equality issues with readingList variable in state
 // Deleting a book - removes it from the list, based on id
+void main() {
+  User user;
+  ListRepository listRepository;
+  ReadingListBloc readingListBloc;
+  ListService listService;
+  List<ListedBook> readingList;
 
-// Reordering a book will change the index location in ReadingList
-// Reordering a book will change the type if moved to a different type sublist
+  setUp(() {
+    user = User(id: 'Users/12345', accessToken: 'abc123');
+    listRepository = MockListRepository();
+    listService = MockListService();
+    readingListBloc = ReadingListBloc(
+        listRepository: listRepository, listService: listService);
+    readingList = TestVariables.readingList;
+  });
 
-// Test _getTypeByIndex and _getTypeChangeIndex in ListRepo
+  test('initial state is ReadingListLoadInProgress', () {
+    expect(readingListBloc.state, ReadingListLoadInProgress());
+    readingListBloc.close();
+  });
 
-// Test the Stats Cubit computation of list counts
+  blocTest<ReadingListBloc, ReadingListState>(
+      'yeilds [ReadingListLoadSuccess] with ReadingListLoaded event',
+      build: () => readingListBloc,
+      act: (bloc) => bloc.add(ReadingListLoaded(user)),
+      expect: <ReadingListState>[ReadingListLoadSuccess(readingList)]);
 
-// Reading List Tests
-// If the reading list is 1 book of "TO_READ" renders 2 tiles (Read & To Read) followed by ListTile for test book
-// If BOTH "READING" and "TO_READ" == 0, then render helper image
-// Run test on _updateType w/ output based on input type
+  blocTest<ReadingListBloc, ReadingListState>(
+    'yeilds [ReadingListLoadInProgress] with ReadingListDismount event',
+    build: () => readingListBloc,
+    act: (bloc) => bloc.add(ReadingListDismount()),
+    expect: <ReadingListState>[ReadingListLoadInProgress()],
+  );
 
-// User Screen
-// If "READ" == 0, then render helper image
-// If enableHeaders == false, don't render ListedBookHeader
-// The list only generates tiles for includedTypes array values
-
-void main() {}
+  // blocTest<ReadingListBloc, ReadingListState>(
+  //   'yeilds [ReadingListLoadSuccess] with ReadingListAdded event',
+  //   build: () {
+  //     when(listRepository.addBook(newBook, readingListWithHeaders))
+  //         .thenAnswer((_) => readingListAfterNewBook);
+  //     when(listService.addOrUpdateListItem(user.accessToken, newBook))
+  //         .thenAnswer((_) => Future.value(APIResponse(data: 'data')));
+  //     return readingListBloc
+  //       ..emit(ReadingListLoadSuccess(readingListWithHeaders));
+  //   },
+  //   act: (bloc) {
+  //     bloc.add(ReadingListAdded(newBook, user));
+  //   },
+  //   skip: 0,
+  //   expect: <ReadingListState>[ReadingListLoadSuccess(readingListAfterNewBook)],
+  // );
+}
