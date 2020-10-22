@@ -27,7 +27,7 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (Error err) => const APIResponse<bool>(
+      (dynamic err) => const APIResponse<bool>(
           error: true, errorMessage: 'An error occured'),
     );
   }
@@ -58,7 +58,7 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (Error err) => const APIResponse<bool>(
+      (dynamic err) => const APIResponse<bool>(
           error: true, errorMessage: 'An error occured'),
     );
   }
@@ -77,7 +77,7 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (Error err) => const APIResponse<bool>(
+      (dynamic err) => const APIResponse<bool>(
           error: true, errorMessage: 'An error occured'),
     );
   }
@@ -96,7 +96,7 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (Error err) => const APIResponse<bool>(
+      (dynamic err) => const APIResponse<bool>(
           error: true, errorMessage: 'An error occured'),
     );
   }
@@ -120,7 +120,7 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (Error err) => const APIResponse<bool>(
+      (dynamic err) => const APIResponse<bool>(
           error: true, errorMessage: 'An error occured'),
     );
   }
@@ -139,7 +139,7 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (Error err) => const APIResponse<Object>(
+      (dynamic err) => const APIResponse<Object>(
           error: true, errorMessage: 'An error occured'),
     );
   }
@@ -159,7 +159,7 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (Error err) => const APIResponse<Object>(
+      (dynamic err) => const APIResponse<Object>(
           error: true, errorMessage: 'An error occured'),
     );
   }
