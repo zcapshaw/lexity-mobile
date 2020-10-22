@@ -11,6 +11,9 @@ extension ReadingList<T> on List<ListedBook> {
 
   int get lengthWithoutRead => this.length - this.readCount;
 
+  int get lengthWithoutReadPlusHeader =>
+      this.length - this.readCount + headerPlaceholder;
+
   int get readingCountExcludingHeader => this.readingCount - headerPlaceholder;
 
   int get toReadCountExcludingHeader => this.toReadCount - headerPlaceholder;
