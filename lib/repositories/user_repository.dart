@@ -61,13 +61,15 @@ class UserRepository {
         ..verified = allValues['verified'].toLowerCase() == 'true'
         ..bio = allValues['bio'] as String ?? ''
         ..website = allValues['website'] as String ?? ''
-        ..joined =
-            allValues['joined'] == null ? 0 : allValues['joined'] as int ?? 0
+        ..joined = allValues['joined'] == null
+            ? 0
+            : int.tryParse(allValues['joined'] as String) ?? 0
         ..followers = allValues['followers'] == null
             ? 0
-            : allValues['followers'] as int ?? 0
-        ..friends =
-            allValues['friends'] == null ? 0 : allValues['friends'] as int ?? 0;
+            : int.tryParse(allValues['followers'] as String) ?? 0
+        ..friends = allValues['friends'] == null
+            ? 0
+            : int.tryParse(allValues['friends'] as String) ?? 0;
       print('user id from storage is: ${allValues['userId']}');
       return true;
     } else {
