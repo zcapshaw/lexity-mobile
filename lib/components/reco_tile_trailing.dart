@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -13,9 +11,9 @@ class RecoTileTrailing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int recoCount = recos.length;
-    int recosBeyondMax = recoCount - maxRecoRender;
-    List<dynamic> renderRecos =
+    var recoCount = recos.length;
+    var recosBeyondMax = recoCount - maxRecoRender;
+    var renderRecos =
         recos.sublist(0, recosBeyondMax >= 0 ? maxRecoRender : recoCount);
 
     if (recos.isNotEmpty) {
@@ -27,7 +25,7 @@ class RecoTileTrailing extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(bottom: 5),
+              padding: const EdgeInsets.only(bottom: 5),
               child: Text(
                 'Recommended by',
                 style: TextStyle(fontSize: 12, color: Colors.grey[700]),
@@ -54,18 +52,18 @@ class RecoTileTrailing extends StatelessWidget {
 }
 
 class RecoImg extends StatelessWidget {
+  RecoImg(this.sourceImg, this.sourceName);
+
   final String sourceName;
-  final sourceImg; // not typed, as can be String OR null
+  final String sourceImg;
   final double diameter = 30;
   final double leftMargin = 3;
 
-  RecoImg(this.sourceImg, this.sourceName);
-
   Widget _buildInitialsReco(String sourceName) {
     //create an array of words, split by spaces in sourceName
-    List<String> splitWords = sourceName.toUpperCase().split(' ');
-    String initials = '';
-    final List<int> recoInitialBackgroundColors = [
+    var splitWords = sourceName.toUpperCase().split(' ');
+    var initials = '';
+    final recoInitialBackgroundColors = [
       0xFFb6d1fa, // blue
       0xFFe9c0f0, // purple
       0xFFfae43c, // yellow
@@ -73,11 +71,11 @@ class RecoImg extends StatelessWidget {
       0xFF98e3e2, // turquoise
       0xFFf0c48b, // orange
     ];
-    int randomColor = (recoInitialBackgroundColors..shuffle()).first;
+    var randomColor = (recoInitialBackgroundColors..shuffle()).first;
 
     //populate `initials` with first character of each word, up to 2
     for (var word in splitWords) {
-      initials = initials + '${word[0]}';
+      initials = '$initials${word[0]}';
       if (initials.length >= 2) {
         break;
       }

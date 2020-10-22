@@ -18,20 +18,20 @@ class UserRepository {
         'access-token': '$accessToken',
       });
       if (res.statusCode == 200) {
-        final Map decoded = jsonDecode(res.body);
+        final decoded = jsonDecode(res.body) as Map;
         _addOrUpdateUser(true,
             id: userId,
             accessToken: accessToken,
-            name: decoded['name'],
-            username: decoded['username'],
-            profileImg: decoded['profileImg'],
-            email: decoded['email'],
-            verified: decoded['verified'],
-            bio: decoded['bio'],
-            website: decoded['website'],
-            joined: decoded['joined'],
-            followers: decoded['followers'],
-            friends: decoded['friends']);
+            name: decoded['name'] as String,
+            username: decoded['username'] as String,
+            profileImg: decoded['profileImg'] as String,
+            email: decoded['email'] as String,
+            verified: decoded['verified'] as bool,
+            bio: decoded['bio'] as String,
+            website: decoded['website'] as String,
+            joined: decoded['joined'] as int,
+            followers: decoded['followers'] as int,
+            friends: decoded['friends'] as int);
         return true;
       } else {
         print('Error loaded user from database - status: ${res.statusCode}');
@@ -51,25 +51,23 @@ class UserRepository {
     if (allValues.containsKey('userId') && allValues['userId'] != '') {
       appUser
         ..createComplete = true
-        ..id = allValues['userId']
-        ..accessToken = allValues['accessToken']
+        ..id = allValues['userId'] as String
+        ..accessToken = allValues['accessToken'] as String
         ..authN = allValues['authN'].toLowerCase() == 'true'
-        ..name = allValues['name'] ?? ''
-        ..username = allValues['username'] ?? ''
-        ..profileImg = allValues['profileImg'] ?? ''
-        ..email = allValues['email'] ?? ''
+        ..name = allValues['name'] as String ?? ''
+        ..username = allValues['username'] as String ?? ''
+        ..profileImg = allValues['profileImg'] as String ?? ''
+        ..email = allValues['email'] as String ?? ''
         ..verified = allValues['verified'].toLowerCase() == 'true'
-        ..bio = allValues['bio'] ?? ''
-        ..website = allValues['website'] ?? ''
-        ..joined = allValues['joined'] == null
-            ? 0
-            : int.tryParse(allValues['joined']) ?? 0
+        ..bio = allValues['bio'] as String ?? ''
+        ..website = allValues['website'] as String ?? ''
+        ..joined =
+            allValues['joined'] == null ? 0 : allValues['joined'] as int ?? 0
         ..followers = allValues['followers'] == null
             ? 0
-            : int.tryParse(allValues['followers']) ?? 0
-        ..friends = allValues['friends'] == null
-            ? 0
-            : int.tryParse(allValues['friends']) ?? 0;
+            : allValues['followers'] as int ?? 0
+        ..friends =
+            allValues['friends'] == null ? 0 : allValues['friends'] as int ?? 0;
       print('user id from storage is: ${allValues['userId']}');
       return true;
     } else {
@@ -142,6 +140,7 @@ class UserRepository {
   }
 
   // Allows clearing of local storage for testing purposes
+  // ignore: unused_element
   Future<Null> _deleteAll() async {
     await storage.deleteAll();
   }

@@ -1,16 +1,17 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import '../models/models.dart';
 
 // TODO: add all my API call functions to this service
 class ListService {
+  // ignore: constant_identifier_names
   static const API = 'https://api.lexity.co';
 
-  Future<APIResponse> addOrUpdateListItem(accessToken, ListedBook book) {
+  Future<APIResponse> addOrUpdateListItem(String accessToken, ListedBook book) {
     return http
         .post(
-      API + '/list/add',
+      '$API/list/add',
       headers: {
         'access-token': accessToken,
         'Content-Type': 'application/json',
@@ -19,18 +20,20 @@ class ListService {
     )
         .then((res) {
       if (res.statusCode == 200) {
-        return APIResponse<bool>(data: true);
+        return const APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(
           error: true,
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+      (Error err) => const APIResponse<bool>(
+          error: true, errorMessage: 'An error occured'),
     );
   }
 
-  Future<APIResponse> updateListItemType(accessToken, userId, bookId, newType) {
+  Future<APIResponse> updateListItemType(
+      String accessToken, String userId, String bookId, String newType) {
     final jsonItem = jsonEncode({
       'userId': userId,
       'bookId': bookId,
@@ -39,7 +42,7 @@ class ListService {
 
     return http
         .post(
-      API + '/list/add',
+      '$API/list/add',
       headers: {
         'access-token': accessToken,
         'Content-Type': 'application/json',
@@ -48,55 +51,60 @@ class ListService {
     )
         .then((res) {
       if (res.statusCode == 200) {
-        return APIResponse<bool>(data: true);
+        return const APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(
           error: true,
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+      (Error err) => const APIResponse<bool>(
+          error: true, errorMessage: 'An error occured'),
     );
   }
 
-  Future<APIResponse> deleteBook(accessToken, userId, listId) {
+  Future<APIResponse> deleteBook(
+      String accessToken, String userId, String listId) {
     return http.delete(
-      API + '/list/delete/?userId=$userId&listId=$listId',
+      '$API/list/delete/?userId=$userId&listId=$listId',
       headers: {'access-token': accessToken},
     ).then((res) {
       if (res.statusCode == 200) {
-        return APIResponse<bool>(data: true);
+        return const APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(
           error: true,
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+      (Error err) => const APIResponse<bool>(
+          error: true, errorMessage: 'An error occured'),
     );
   }
 
-  Future<APIResponse> deleteNote(accessToken, userId, listId, noteId) {
+  Future<APIResponse> deleteNote(
+      String accessToken, String userId, String listId, String noteId) {
     return http.delete(
-      API + '/list/notes/delete/?userId=$userId&listId=$listId&noteId=$noteId',
+      '$API/list/notes/delete/?userId=$userId&listId=$listId&noteId=$noteId',
       headers: {'access-token': accessToken},
     ).then((res) {
       if (res.statusCode == 200) {
-        return APIResponse<bool>(data: true);
+        return const APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(
           error: true,
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+      (Error err) => const APIResponse<bool>(
+          error: true, errorMessage: 'An error occured'),
     );
   }
 
-  Future<APIResponse> updateNote(accessToken, updatedNote) async {
+  Future<APIResponse> updateNote(String accessToken, Note updatedNote) async {
     return http
         .post(
-      API + '/list/notes/update',
+      '$API/list/notes/update',
       headers: {
         'access-token': accessToken,
         'Content-Type': 'application/json',
@@ -105,21 +113,22 @@ class ListService {
     )
         .then((res) {
       if (res.statusCode == 200) {
-        return APIResponse<bool>(data: true);
+        return const APIResponse<bool>(data: true);
       }
       return APIResponse<bool>(
           error: true,
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (_) => APIResponse<bool>(error: true, errorMessage: 'An error occured'),
+      (Error err) => const APIResponse<bool>(
+          error: true, errorMessage: 'An error occured'),
     );
   }
 
   Future<APIResponse<Object>> getListItemDetail(
-      accessToken, userId, bookId) async {
+      String accessToken, String userId, String bookId) async {
     return http.get(
-      API + '/list/detail/?userId=$userId&bookId=$bookId',
+      '$API/list/detail/?userId=$userId&bookId=$bookId',
       headers: {'access-token': accessToken},
     ).then((res) {
       if (res.statusCode == 200) {
@@ -130,14 +139,16 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (_) => APIResponse<Object>(error: true, errorMessage: 'An error occured'),
+      (Error err) => const APIResponse<Object>(
+          error: true, errorMessage: 'An error occured'),
     );
   }
 
   //TODO: With new API, should eventually name getListedBooksByUser (or something like this) - it should also be passed a User type
-  Future<APIResponse<Object>> getListItemSummary(accessToken, userId) async {
+  Future<APIResponse<Object>> getListItemSummary(
+      String accessToken, String userId) async {
     return http.get(
-      API + '/list/book/?userId=$userId',
+      '$API/list/book/?userId=$userId',
       headers: {'access-token': accessToken},
     ).then((res) {
       if (res.statusCode == 200) {
@@ -148,7 +159,8 @@ class ListService {
           errorCode: res.statusCode,
           errorMessage: res.reasonPhrase);
     }).catchError(
-      (_) => APIResponse<Object>(error: true, errorMessage: 'An error occured'),
+      (Error err) => const APIResponse<Object>(
+          error: true, errorMessage: 'An error occured'),
     );
   }
 }

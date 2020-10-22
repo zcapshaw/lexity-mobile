@@ -16,28 +16,28 @@ void main() {
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits [] when nothing is called',
       build: () => BookDetailsCubit(),
-      expect: [],
+      expect: <BookDetailsState>[],
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits Reading state when viewing details on book I\'m reading',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.viewBookDetails(readingBook),
-      expect: [BookDetailsReading(readingBook)],
+      expect: <BookDetailsState>[BookDetailsReading(readingBook)],
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits WantToRead state when viewing details on book I want to read',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.viewBookDetails(wantToReadBook),
-      expect: [BookDetailsWantToRead(wantToReadBook)],
+      expect: <BookDetailsState>[BookDetailsWantToRead(wantToReadBook)],
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits Read state when viewing details on book I\'ve read',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.viewBookDetails(readBook),
-      expect: [BookDetailsFinished(readBook)],
+      expect: <BookDetailsState>[BookDetailsFinished(readBook)],
     );
   });
 }

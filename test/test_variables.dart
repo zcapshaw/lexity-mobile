@@ -12,7 +12,7 @@ class TestVariables {
       notes: [
         Note(comment: 'Check out this epic note')
       ],
-      labels: []);
+      labels: <String>[]);
 
   static ListedBook listBookTwo = ListedBook(
       bookId: 'def456', title: 'Bad book that is popular', type: 'TO_READ');
@@ -28,7 +28,7 @@ class TestVariables {
       notes: [
         Note(comment: 'Sweet ass note!')
       ],
-      labels: []);
+      labels: <String>[]);
 
   static ListedBook newBook =
       ListedBook(bookId: 'hij678', title: 'Parry Hotter', type: 'READING');
@@ -46,5 +46,5 @@ class TestVariables {
         Note(comment: 'Sweet ass note!'),
         Note(comment: 'Check out this epic note')
       ],
-      labels: []);
+      labels: <String>[]);
 }

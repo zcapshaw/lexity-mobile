@@ -7,6 +7,9 @@ analyzer:
     implicit-dynamic: false
   errors:
     close_sinks: ignore
+  exclude:
+    - lib/components/book_list_bloc.dart
+    - lib/screens/book_detail_screen_old.dart
 
 linter:
   rules:

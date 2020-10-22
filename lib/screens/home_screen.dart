@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
+          Navigator.push<Map>(
               context,
               MaterialPageRoute(
                   builder: (context) => BookSearchScreen(origin: Origin.fab)));

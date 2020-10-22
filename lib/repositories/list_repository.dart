@@ -13,15 +13,14 @@ class ListRepository {
     try {
       final list =
           await listService.getListItemSummary(user.accessToken, user.id);
-      var decoded = jsonDecode(list.data) as List;
+      final decoded =
+          jsonDecode(list.data as String) as List<Map<String, dynamic>>;
       readingList = decoded.map((book) => ListedBook.fromJson(book)).toList();
     } catch (err) {
       print('Issue loading ReadingList data from backend: $err');
     }
     return readingList;
   }
-
-  saveReadingList() async {}
 
   List<ListedBook> sortByTypeAndInjectHeaders(List<ListedBook> readingList) {
     // ignore: omit_local_variable_types
@@ -39,7 +38,7 @@ class ListRepository {
     return sortedReadingListWithHeaders;
   }
 
-  removeHeaders(List<ListedBook> readingList) {}
+  void removeHeaders(List<ListedBook> readingList) {}
 
   List<ListedBook> addBook(ListedBook book, List<ListedBook> readingList) {
     // Get index if exists - will return -1 with no match
@@ -110,8 +109,9 @@ class ListRepository {
     // // To solve this, isHomescreen bool was created, so that a drag to an index that is
     // // beyond the scope of HomeScreen - that is, an index that would be 'READ' - will be
     // // automatically reassigned to the last acceptable HomeScreen view index of readingList
-    if (isHomescreen && newIndex > readingList.lengthWithoutRead)
+    if (isHomescreen && newIndex > readingList.lengthWithoutRead) {
       newIndex = readingList.lengthWithoutRead;
+    }
 
     final newIndexType = _getTypeByIndex(
         newIndex, readingList.readingCount, readingList.toReadCount);

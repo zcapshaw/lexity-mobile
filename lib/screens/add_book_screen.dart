@@ -29,7 +29,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
   ListService get listService => GetIt.I<ListService>();
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     // assign user for access to UserModel methods
     user = context.bloc<AuthenticationBloc>().state.user;
@@ -37,23 +37,23 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   void _saveListItem(BuildContext context) async {
     final creationDateTime = DateTime.now().millisecondsSinceEpoch;
-    final List labels = [];
-    final Note note = Note(
+    final List<String> labels = [];
+    final note = Note(
         id: utils.generateRandomString(8),
         comment: noteText,
         created: creationDateTime);
-    final Note reco = Note(
+    final reco = Note(
         id: utils.generateRandomString(8),
         sourceId: null,
         sourceName: recoSource,
         sourceImg: null,
         comment: recoText,
         created: creationDateTime);
-    final List<Note> notes = [note, reco];
+    final notes = [note, reco];
 
     // Temporary instantiation without image - eventually, user search will
     // provide img if available
-    final List<Note> newReco = [Note(sourceName: recoSource, sourceImg: null)];
+    final newReco = [Note(sourceName: recoSource, sourceImg: null)];
 
     // Only retain non-null notes objects with text.length > 0
     // E.g. if there are NO notes OR recos, this will return an empty list []
@@ -61,7 +61,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
         note.comment != null && note.comment.isNotEmpty ||
         note.sourceName != null && note.sourceName.isNotEmpty);
 
-    ListedBook book = ListedBook(
+    final book = ListedBook(
       userId: user.id,
       bookId: widget.bookId,
       title: widget.book.title,
@@ -78,12 +78,13 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
     context.bloc<ReadingListBloc>().add(ReadingListAdded(book, user));
     print('successfully added ${widget.bookId}');
-    await Navigator.push(
+    await Navigator.push<Map>(
         context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
 
-  _addReco(BuildContext context, String recoSource, String recoText) async {
-    final result = await Navigator.push(
+  void _addReco(
+      BuildContext context, String recoSource, String recoText) async {
+    final result = await Navigator.push<Map<String, dynamic>>(
       context,
       MaterialPageRoute(
         builder: (context) => AddRecoScreen(
@@ -92,8 +93,9 @@ class _AddBookScreenState extends State<AddBookScreen> {
     );
 
     setState(() {
-      this.recoSource = result != null ? result['recoSource'] : recoSource;
-      this.recoText = result != null ? result['recoText'] : recoText;
+      this.recoSource =
+          result != null ? result['recoSource'] as String : recoSource;
+      this.recoText = result != null ? result['recoText'] as String : recoText;
     });
   }
 
@@ -127,7 +129,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
             children: <Widget>[
               ListTile(
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 title: Text(widget.book.titleWithSubtitle),
                 subtitle: Text(widget.book.authorsAsString),
                 leading: Image.network(widget.book.thumbnail),
@@ -177,7 +179,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           onPressed: (int index) {
                             setState(() {
                               //only allows one choice to be selected at a time
-                              for (int i = 0; i < _listStatus.length; i++) {
+                              for (var i = 0; i < _listStatus.length; i++) {
                                 _listStatus[i] = i == index;
                               }
                               if (index == 0) {

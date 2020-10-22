@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'swipe_background.dart';
-import 'reco_tile_trailing.dart';
 import '../models/listed_book.dart';
+import './reco_tile_trailing.dart';
+import './swipe_background.dart';
 
 class ListTileItem extends StatelessWidget {
-  final ListedBook item;
-  final int tileIndex;
-  final bool enableSwipeRight;
-  final Function onPressTile;
-  final Function deletePrompt;
-  final Function typeChangeAction;
-
   ListTileItem(
       {@required this.item,
       @required this.tileIndex,
@@ -22,17 +15,24 @@ class ListTileItem extends StatelessWidget {
       @required Key key})
       : super(key: key);
 
+  final ListedBook item;
+  final int tileIndex;
+  final bool enableSwipeRight;
+  final Function onPressTile;
+  final Future<bool> Function(DismissDirection, ListedBook) deletePrompt;
+  final Function typeChangeAction;
+
   @override
   Widget build(BuildContext context) {
     return Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
       Dismissible(
         key: UniqueKey(),
         confirmDismiss: (direction) {
-          if (direction == DismissDirection.startToEnd) {
-            return Future<bool>.value(true);
-          } else if (direction == DismissDirection.endToStart) {
+          if (direction == DismissDirection.endToStart) {
             return deletePrompt(direction, item);
           }
+          // instant (no) confirmation for startToEnd
+          return Future<bool>.value(true);
         },
         direction: enableSwipeRight
             ? DismissDirection.horizontal
@@ -45,7 +45,7 @@ class ListTileItem extends StatelessWidget {
           } else {
             Scaffold.of(context).showSnackBar(SnackBar(
                 backgroundColor: Colors.grey[600],
-                content: Text("Book deleted from list.")));
+                content: const Text('Book deleted from list.')));
           }
         },
         child: ListTile(
@@ -59,7 +59,7 @@ class ListTileItem extends StatelessWidget {
           onTap: () => onPressTile(context, item, tileIndex),
         ),
       ),
-      Divider(
+      const Divider(
         height: 0,
       )
     ]);

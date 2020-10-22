@@ -17,14 +17,14 @@ class UserScreen extends StatefulWidget {
 User user; //declare global variable
 
 class _UserScreenState extends State<UserScreen> {
-  final readList =
-      ReadingList(includedTypes: ['READ'], enableHeaders: false, enableSwipeRight: false);
+  final readList = ReadingList(
+      includedTypes: ['READ'], enableHeaders: false, enableSwipeRight: false);
   int selectedIndex = 0;
   List<bool> listStatus = [true, false];
 
   // Allowed stateless _ToggleButtons to pass selected index
-  buttonCallback(int selected) {
-    List<bool> tempStatus = [false, false];
+  void buttonCallback(int selected) {
+    var tempStatus = [false, false];
     tempStatus[selected] = true;
     setState(() {
       listStatus = tempStatus;
@@ -33,18 +33,11 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   @override
-  void dispose() {
-    super.dispose();
-    // opting not to close the stream which is shared by user_screen and read_list
-    // bookListBloc.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     user = context.bloc<AuthenticationBloc>().state.user;
     return Scaffold(
       body: Container(
-        color: Color(0xFFC3E0E0),
+        color: const Color(0xFFC3E0E0),
         child: SafeArea(
           child: Container(
             color: Colors.white,
@@ -76,6 +69,14 @@ class _UserScreenState extends State<UserScreen> {
 }
 
 class _UserInfo extends StatelessWidget {
+  _UserInfo(
+      {this.profileImg,
+      this.name,
+      this.username,
+      this.following,
+      this.followers,
+      this.booksRead});
+
   final String profileImg;
   final String name;
   final String username;
@@ -83,22 +84,21 @@ class _UserInfo extends StatelessWidget {
   final String followers;
   final String booksRead;
 
-  _UserInfo(
-      {this.profileImg, this.name, this.username, this.following, this.followers, this.booksRead});
+  @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFFC3E0E0),
+        color: const Color(0xFFC3E0E0),
         boxShadow: [
           BoxShadow(
             color: Colors.grey[200],
             spreadRadius: 1,
             blurRadius: 8,
-            offset: Offset(0, 10),
+            offset: const Offset(0, 10),
           ),
         ],
       ),
-      padding: EdgeInsets.fromLTRB(40, 5, 40, 10),
+      padding: const EdgeInsets.fromLTRB(40, 5, 40, 10),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
@@ -121,8 +121,8 @@ class _UserInfo extends StatelessWidget {
                         ),
                       ),
                     ),
-                    placeholder: (context, url) =>
-                        Icon(Icons.account_circle, size: 50, color: Colors.grey[600]),
+                    placeholder: (context, url) => Icon(Icons.account_circle,
+                        size: 50, color: Colors.grey[600]),
                     placeholderFadeInDuration: Duration.zero,
                   ),
                 ),
@@ -131,12 +131,12 @@ class _UserInfo extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Container(
-                        margin: EdgeInsets.only(left: 15),
+                        margin: const EdgeInsets.only(left: 15),
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           name,
                           style: TextStyle(
-                            color: Color(0xFF1A6978),
+                            color: const Color(0xFF1A6978),
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                             letterSpacing: 0.2,
@@ -145,7 +145,7 @@ class _UserInfo extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        margin: EdgeInsets.only(left: 15),
+                        margin: const EdgeInsets.only(left: 15),
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           username,
@@ -168,7 +168,7 @@ class _UserInfo extends StatelessWidget {
                       showModalBottomSheet<void>(
                         context: context,
                         backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
+                        shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(10.0),
                             topRight: Radius.circular(10.0),
@@ -184,11 +184,11 @@ class _UserInfo extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.only(top: 10),
             child: Row(
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.only(right: 15),
+                  padding: const EdgeInsets.only(right: 15),
                   child: GestureDetector(
                     onTap: () => print('Following pressed'),
                     child: RichText(
@@ -196,7 +196,7 @@ class _UserInfo extends StatelessWidget {
                       text: TextSpan(
                         text: following,
                         style: TextStyle(
-                          color: Color(0xFF1A6978),
+                          color: const Color(0xFF1A6978),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                           height: 1.5,
@@ -204,7 +204,9 @@ class _UserInfo extends StatelessWidget {
                         children: <TextSpan>[
                           TextSpan(
                             text: ' Following',
-                            style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w400),
+                            style: TextStyle(
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.w400),
                           ),
                         ],
                       ),
@@ -212,7 +214,7 @@ class _UserInfo extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.only(right: 15),
+                  padding: const EdgeInsets.only(right: 15),
                   child: GestureDetector(
                     onTap: () => print('Followers pressed'),
                     child: RichText(
@@ -220,7 +222,7 @@ class _UserInfo extends StatelessWidget {
                       text: TextSpan(
                         text: followers,
                         style: TextStyle(
-                          color: Color(0xFF1A6978),
+                          color: const Color(0xFF1A6978),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                           height: 1.5,
@@ -228,7 +230,9 @@ class _UserInfo extends StatelessWidget {
                         children: <TextSpan>[
                           TextSpan(
                             text: ' Followers',
-                            style: TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w400),
+                            style: TextStyle(
+                                color: Colors.grey[800],
+                                fontWeight: FontWeight.w400),
                           ),
                         ],
                       ),
@@ -236,14 +240,15 @@ class _UserInfo extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  child: BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
+                  child: BlocBuilder<StatsCubit, StatsState>(
+                      builder: (context, state) {
                     if (state is StatsLoadSuccess) {
                       return RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           text: FollowerNumbers.converter(state.readCount ?? 0),
                           style: TextStyle(
-                            color: Color(0xFF1A6978),
+                            color: const Color(0xFF1A6978),
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
                             height: 1.5,
@@ -251,8 +256,9 @@ class _UserInfo extends StatelessWidget {
                           children: <TextSpan>[
                             TextSpan(
                               text: state.readCount == 1 ? ' Book' : ' Books',
-                              style:
-                                  TextStyle(color: Colors.grey[800], fontWeight: FontWeight.w400),
+                              style: TextStyle(
+                                  color: Colors.grey[800],
+                                  fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),
@@ -272,12 +278,13 @@ class _UserInfo extends StatelessWidget {
 }
 
 class _UserMenu extends StatelessWidget {
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
       builder: (context, state) {
         return Container(
           alignment: Alignment.topCenter,
-          padding: EdgeInsets.symmetric(vertical: 5),
+          padding: const EdgeInsets.symmetric(vertical: 5),
           child: Column(
             children: <Widget>[
               Container(
@@ -290,8 +297,8 @@ class _UserMenu extends StatelessWidget {
               Container(
                 width: MediaQuery.of(context).size.width * 0.75,
                 child: OutlineButton(
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  borderSide: BorderSide(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  borderSide: const BorderSide(
                     color: Color(0xFF1A6978),
                   ),
                   onPressed: () {
@@ -300,7 +307,7 @@ class _UserMenu extends StatelessWidget {
                   child: Text(
                     'Logout',
                     style: TextStyle(
-                      color: Color(0xFF1A6978),
+                      color: const Color(0xFF1A6978),
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.3,
@@ -317,23 +324,24 @@ class _UserMenu extends StatelessWidget {
 }
 
 class _ToggleButtons extends StatelessWidget {
-  final int selectedIndex;
-  final List<bool> listStatus;
-  final Function(int) callback;
-
   _ToggleButtons({this.selectedIndex, this.listStatus, this.callback});
 
+  final int selectedIndex;
+  final List<bool> listStatus;
+  final void Function(int) callback;
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.center,
       height: 40,
       width: MediaQuery.of(context).size.width,
-      margin: EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10),
       child: ToggleButtons(
         children: <Widget>[
           Container(
             width: MediaQuery.of(context).size.width * 0.50,
-            padding: EdgeInsets.all(7),
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -346,7 +354,7 @@ class _ToggleButtons extends StatelessWidget {
           ),
           Container(
             width: MediaQuery.of(context).size.width * 0.50,
-            padding: EdgeInsets.all(7),
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
@@ -359,16 +367,14 @@ class _ToggleButtons extends StatelessWidget {
           ),
         ],
         isSelected: listStatus,
-        onPressed: (int index) {
-          callback(index);
-        },
+        onPressed: callback,
         renderBorder: false,
         //borderRadius: BorderRadius.circular(4),
         fillColor: Colors.transparent,
         //selectedBorderColor: Colors.teal,
         selectedColor: Colors.grey[700],
         color: Colors.grey[500],
-        constraints: BoxConstraints(minHeight: 30, minWidth: 110),
+        constraints: const BoxConstraints(minHeight: 30, minWidth: 110),
       ),
     );
   }

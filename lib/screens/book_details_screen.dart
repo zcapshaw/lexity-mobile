@@ -10,12 +10,13 @@ import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/utils/test_keys.dart';
 import 'package:time_formatter/time_formatter.dart';
 import '../components/components.dart';
+import '../models/models.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-    final double coverArtHeight = screenHeight * 0.4;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final coverArtHeight = screenHeight * 0.4;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -36,14 +37,14 @@ class BookDetailsScreen extends StatelessWidget {
           if (state is BookDetailsLoading) {
             return Center(
               key: TestKeys.bookDetailsLoadingSpinner,
-              child: CircularProgressIndicator(),
+              child: const CircularProgressIndicator(),
             );
           } else if (state.book != null) {
             return MediaQuery.removePadding(
               context: context,
               removeTop: true,
               child: ListView(
-                physics: ScrollPhysics(
+                physics: const ScrollPhysics(
                   // Scroll physics for environments that prevent the scroll
                   // offset from reaching beyond the bounds of the content
                   parent: ClampingScrollPhysics(),
@@ -51,8 +52,8 @@ class BookDetailsScreen extends StatelessWidget {
                 children: <Widget>[
                   buildCoverArt(state.book.cover ?? '', coverArtHeight),
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(vertical: 20.0, horizontal: 30.0),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 30.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
@@ -81,8 +82,8 @@ class BookDetailsScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 10.0),
                           child: Divider(),
                         ),
                         if (state.book.description != null)
@@ -98,17 +99,17 @@ class BookDetailsScreen extends StatelessWidget {
               ),
             );
           } else {
-            return Center(child: Text('Oops. Something went wrong.'));
+            return const Center(child: Text('Oops. Something went wrong.'));
           }
         },
       ),
     );
   }
 
-  Widget buildCoverArt(imageUrl, height) {
+  Widget buildCoverArt(String imageUrl, double height) {
     return imageUrl == ''
         //handle empty image url from Google API
-        ? SizedBox(
+        ? const SizedBox(
             height: 80.0,
           )
         : ClipRect(
@@ -141,7 +142,7 @@ class BookDetailsScreen extends StatelessWidget {
           );
   }
 
-  Widget buildTitle(title, context) {
+  Widget buildTitle(String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Text(
@@ -151,16 +152,16 @@ class BookDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget buildAuthors(authors, context) {
+  Widget buildAuthors(String authors, BuildContext context) {
     return Text(
       authors,
       style: Theme.of(context).textTheme.subtitle1,
     );
   }
 
-  Widget buildGenre(genre) {
+  Widget buildGenre(String genre) {
     return genre == null || genre == ''
-        ? SizedBox.shrink()
+        ? const SizedBox.shrink()
         : Padding(
             key: TestKeys.bookDetailsGenreChip,
             padding: const EdgeInsets.only(top: 10.0),
@@ -173,7 +174,7 @@ class BookDetailsScreen extends StatelessWidget {
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
               ),
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(
                   Radius.circular(10),
                 ),
@@ -214,16 +215,16 @@ class BookDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget buildNotes(notes) {
+  Widget buildNotes(List<Note> notes) {
     return notes == null
-        ? SizedBox.shrink()
+        ? const SizedBox.shrink()
         : Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
                   child: ListTileHeaderText('Notes'),
                 ),
                 Column(
@@ -251,10 +252,10 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 class ExpandableDescription extends StatelessWidget {
+  ExpandableDescription({this.title, this.description});
+
   final String title;
   final String description;
-
-  ExpandableDescription({this.title, this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -278,9 +279,9 @@ class ExpandableDescription extends StatelessWidget {
                 child: Html(
                   data: description ?? '',
                   style: {
-                    "p": Style(
-                      padding: EdgeInsets.only(top: 10),
-                      margin: EdgeInsets.only(top: 10),
+                    'p': Style(
+                      padding: const EdgeInsets.only(top: 10),
+                      margin: const EdgeInsets.only(top: 10),
                     ),
                   },
                 ),
@@ -291,16 +292,16 @@ class ExpandableDescription extends StatelessWidget {
             child: Html(
               data: description ?? '',
               style: {
-                "p": Style(
-                  padding: EdgeInsets.only(top: 10),
-                  margin: EdgeInsets.only(top: 10),
+                'p': Style(
+                  padding: const EdgeInsets.only(top: 10),
+                  margin: const EdgeInsets.only(top: 10),
                 )
               },
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10.0),
+        const Padding(
+          padding: EdgeInsets.only(top: 10.0),
           child: Divider(),
         ),
       ],
