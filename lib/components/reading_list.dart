@@ -125,7 +125,9 @@ class _ReadingListState extends State<ReadingList> {
       child: BlocBuilder<ReadingListBloc, ReadingListState>(
           builder: (context, state) {
         if (state is ReadingListLoadInProgress) {
-          return const CircularProgressIndicator();
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
         } else if (state is ReadingListLoadSuccess) {
           final readingList = state.readingList;
           return Column(
