@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import './models.dart';
@@ -5,7 +6,7 @@ import './models.dart';
 part 'listed_book.g.dart';
 
 @JsonSerializable(includeIfNull: false)
-class ListedBook extends Book {
+class ListedBook extends Book with EquatableMixin {
   ListedBook(
       {this.title,
       this.subtitle,
@@ -58,6 +59,12 @@ class ListedBook extends Book {
   List<Note> recos;
   List labels;
   List<Note> notes;
+
+  @override
+  List<Object> get props => [bookId, type, notes, recos, labels];
+
+  @override
+  String toString() => 'ListedBook: ${toJson()}';
 
   bool get toRead => type == 'TO_READ';
   bool get reading => type == 'READING';

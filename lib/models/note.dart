@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'note.g.dart';
@@ -6,23 +7,29 @@ part 'note.g.dart';
   nullable: true,
   includeIfNull: false,
 )
-class Note {
+class Note extends Equatable {
   Note(
-      {this.comment,
+      {this.id,
+      this.comment,
       this.created,
       this.sourceName,
       this.sourceImg,
-      this.sourceId,
-      this.id});
+      this.sourceId});
 
+  String id;
   String comment;
   int created;
   String sourceName;
   String sourceImg;
   String sourceId;
-  String id;
 
   bool get isReco => sourceName != null;
+
+  @override
+  List<Object> get props => [id, sourceName, sourceId];
+
+  @override
+  String toString() => 'Note: ${toJson()}';
 
   // Note.id is assigned by the backend, therefore
   // newly instantiated notes have no id
