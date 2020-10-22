@@ -7,13 +7,14 @@ import '../models/models.dart';
 import '../services/services.dart';
 
 class ListRepository {
-  ListService get listService => GetIt.I<ListService>();
+  ListService listService = ListService();
 
   Future<List<ListedBook>> loadReadingList(User user) async {
     List<ListedBook> readingList;
     try {
       final list =
           await listService.getListItemSummary(user.accessToken, user.id);
+      print('List: ${list.data}');
       var decoded = jsonDecode(list.data) as List;
       readingList = decoded.map((book) => ListedBook.fromJson(book)).toList();
     } catch (err) {
@@ -98,8 +99,8 @@ class ListRepository {
     }
   }
 
-  Future<List<ListedBook>> reorderBook(List<ListedBook> readingList,
-      int oldIndex, int newIndex, User user, bool isHomescreen) async {
+  List<ListedBook> reorderBook(List<ListedBook> readingList, int oldIndex,
+      int newIndex, User user, bool isHomescreen) {
     //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
 
     // // This is an inflexible, somewhat 'hacky', solution.
@@ -135,8 +136,7 @@ class ListRepository {
     }
 
     try {
-      unawaited(listService.updateListItemType(
-          user.accessToken, user.id, book.bookId, book.type));
+      unawaited(listService.addOrUpdateListItem(user.accessToken, book));
     } catch (err) {
       print('Could not update list type on the backend: $err');
     }
@@ -164,20 +164,19 @@ int _getTypeChangeIndex(String newType, List<ListedBook> readingList) {
     case 'READING':
       {
         newIndex = readingList.readingCount;
-        print('My new index is: $newIndex');
-        break;
       }
+      break;
     case 'TO_READ':
       {
         newIndex = readingList.readingCount + readingList.toReadCount;
-        break;
       }
+      break;
     default:
       {
         // Move read books to the top of the READ array
-        newIndex = readingList.length - readingList.readCount;
-        break;
+        newIndex = readingList.lengthWithoutReadPlusHeader;
       }
+      break;
   }
   return newIndex;
 }

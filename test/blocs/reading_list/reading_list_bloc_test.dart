@@ -20,6 +20,8 @@ void main() {
   ReadingListBloc readingListBloc;
   ListService listService;
   List<ListedBook> readingList;
+  ListedBook listedBookOne;
+  ListedBook listedBookTwo;
 
   setUp(() {
     user = User(id: 'Users/12345', accessToken: 'abc123');
@@ -27,7 +29,7 @@ void main() {
     listService = MockListService();
     readingListBloc = ReadingListBloc(
         listRepository: listRepository, listService: listService);
-    readingList = TestVariables.readingList;
+    readingList = [listedBookOne, listedBookTwo];
   });
 
   test('initial state is ReadingListLoadInProgress', () {
