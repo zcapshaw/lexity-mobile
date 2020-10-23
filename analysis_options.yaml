@@ -10,6 +10,7 @@ analyzer:
   exclude:
     - lib/components/book_list_bloc.dart
     - lib/screens/book_detail_screen_old.dart
+    - lib/models/listed_book.g.dart
 
 linter:
   rules:

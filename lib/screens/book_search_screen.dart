@@ -48,7 +48,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
     if (data.statusCode == 200) {
       //decode JSON from API and store in a new variable
-      var jsonData = json.decode(data.body) as List<Map<String, dynamic>>;
+      var jsonData = json.decode(data.body) as List;
 
       // Populate the books array by looping over jsonData
       // and creating a Book for each element

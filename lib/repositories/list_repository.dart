@@ -13,9 +13,12 @@ class ListRepository {
     try {
       final list =
           await listService.getListItemSummary(user.accessToken, user.id);
-      final decoded =
-          jsonDecode(list.data as String) as List<Map<String, dynamic>>;
-      readingList = decoded.map((book) => ListedBook.fromJson(book)).toList();
+      final decoded = jsonDecode(list.data as String) as List;
+      print(decoded);
+      readingList = decoded
+          .map((dynamic book) =>
+              ListedBook.fromJson(book as Map<String, dynamic>))
+          .toList();
     } catch (err) {
       print('Issue loading ReadingList data from backend: $err');
     }

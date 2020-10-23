@@ -1,5 +1,13 @@
+import 'package:json_annotation/json_annotation.dart';
+
 import './models.dart';
 
+part 'book.g.dart';
+
+@JsonSerializable(
+  nullable: true,
+  includeIfNull: false,
+)
 class Book {
   Book(
       {this.title,
@@ -48,4 +56,8 @@ class Book {
     if (subtitle != null && subtitle.isNotEmpty) title = '$title: $subtitle';
     return title;
   }
+
+  // ignore: sort_constructors_first
+  factory Book.fromJson(Map<String, dynamic> json) => _$BookFromJson(json);
+  Map<String, dynamic> toJson() => _$BookToJson(this);
 }
