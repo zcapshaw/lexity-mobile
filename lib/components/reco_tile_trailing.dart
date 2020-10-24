@@ -63,15 +63,15 @@ class RecoImg extends StatelessWidget {
     //create an array of words, split by spaces in sourceName
     var splitWords = sourceName.toUpperCase().split(' ');
     var initials = '';
-    final recoInitialBackgroundColors = [
-      0xFFb6d1fa, // blue
-      0xFFe9c0f0, // purple
-      0xFFfae43c, // yellow
-      0xFF98e3a0, // green
-      0xFF98e3e2, // turquoise
-      0xFFf0c48b, // orange
-    ];
-    var randomColor = (recoInitialBackgroundColors..shuffle()).first;
+    // final recoInitialBackgroundColors = [
+    //   0xFFb6d1fa, // blue
+    //   0xFFe9c0f0, // purple
+    //   0xFFfae43c, // yellow
+    //   0xFF98e3a0, // green
+    //   0xFF98e3e2, // turquoise
+    //   0xFFf0c48b, // orange
+    // ];
+    // var randomColor = (recoInitialBackgroundColors..shuffle()).first;
 
     //populate `initials` with first character of each word, up to 2
     for (var word in splitWords) {
@@ -85,8 +85,8 @@ class RecoImg extends StatelessWidget {
       margin: EdgeInsets.only(left: leftMargin),
       width: diameter,
       height: diameter,
-      decoration: BoxDecoration(
-        color: Color(randomColor),
+      decoration: const BoxDecoration(
+        color: Color(0xFF1A6978),
         shape: BoxShape.circle,
       ),
       child: Center(

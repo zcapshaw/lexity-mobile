@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:uuid/uuid.dart';
 
 import '../blocs/blocs.dart';
 import '../components/components.dart';
@@ -39,11 +40,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final creationDateTime = DateTime.now().millisecondsSinceEpoch;
     final List<String> labels = [];
     final note = Note(
-        id: utils.generateRandomString(8),
-        comment: noteText,
-        created: creationDateTime);
+      id: Uuid().v4(),
+      comment: noteText,
+      created: creationDateTime,
+    );
     final reco = Note(
-        id: utils.generateRandomString(8),
+        id: Uuid().v4(),
         sourceId: null,
         sourceName: recoSource,
         sourceImg: null,
@@ -78,6 +80,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
     context.bloc<ReadingListBloc>().add(ReadingListAdded(book, user));
     print('successfully added ${widget.bookId}');
+    print(book.notes);
     await Navigator.push<Map>(
         context, MaterialPageRoute(builder: (context) => MainScreen()));
   }

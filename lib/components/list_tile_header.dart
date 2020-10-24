@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 
-import 'book_list_bloc.dart';
-
 class ListTileHeader extends StatelessWidget {
   final String type;
 
