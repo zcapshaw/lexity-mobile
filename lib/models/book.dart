@@ -5,15 +5,15 @@ import './models.dart';
 part 'book.g.dart';
 
 @JsonSerializable(
-  nullable: true,
-  includeIfNull: false,
+  nullable: true, // default is true
+  includeIfNull: true, // default is true
 )
 class Book {
   Book(
       {this.title,
       this.subtitle,
       this.authors,
-      this.thumbnail,
+      this.imageLinks,
       this.googleId,
       this.description,
       this.categories,
@@ -26,7 +26,7 @@ class Book {
   final String title;
   final String subtitle;
   final List authors;
-  final String thumbnail;
+  final Map<String, String> imageLinks;
   final String googleId;
   final String description;
   final List<String> categories;
@@ -37,7 +37,8 @@ class Book {
   final bool userRead;
 
   //returns the complete list of authors as a comma-separated string
-  String get authorsAsString => authors.join(', ');
+  String get authorsAsString => authors?.join(', ');
+  String get thumbnail => imageLinks?.values?.first;
 
   //returns the first genre in the array, if present
   String get primaryGenre {

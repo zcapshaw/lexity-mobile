@@ -36,6 +36,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
   //This async function returns a List of Books from the API response
   Future<List<Book>> _fetchResults() async {
+    List<Book> books;
     //fetch google books results based on queryText
     final data = await http.get(
         'https://api.lexity.co/search/private/books?userId=${user.id}&searchText=$queryText',
@@ -43,41 +44,43 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
           'access-token': '${user.accessToken}',
         });
 
-    //declare an empty list of Books
-    var books = <Book>[];
-
     if (data.statusCode == 200) {
-      //decode JSON from API and store in a new variable
-      var jsonData = json.decode(data.body) as List;
-
+      try {
+        final decoded = json.decode(data.body) as List;
+        books = decoded
+            .map((dynamic book) => Book.fromJson(book as Map<String, dynamic>))
+            .toList();
+      } catch (err) {
+        print('Issue generating list of books from search: $err');
+      }
       // Populate the books array by looping over jsonData
       // and creating a Book for each element
-      for (var b in jsonData) {
-        // handle books that come back from Google with missing data
-        final cover =
-            b['cover'] != null ? b['cover']['thumbnail'] as String : '';
-        final subtitle = b['subtitle'] as String ?? '';
-        final inUserList = b['inUserList'] as bool;
-        final userRead = b['userRead'] as bool;
-        final title = b['title'] as String ?? '';
-        final authors = b['authors'] as List<String> ?? <String>[''];
-        final description = b['description'] as String ?? '';
-        final categories = b['categories'] as List<String> ?? <String>[''];
-        final googleId = b['googleId'] as String;
-        //construct a Book object and add it to the books array
-        final book = Book(
-            title: title,
-            subtitle: subtitle,
-            authors: authors,
-            inUserList: inUserList,
-            userRead: userRead,
-            thumbnail: cover,
-            categories: categories,
-            description: description,
-            googleId: googleId);
+      // for (var b in jsonData) {
+      //   // handle books that come back from Google with missing data
+      //   final cover =
+      //       b['cover'] != null ? b['cover']['thumbnail'] as String : '';
+      //   final subtitle = b['subtitle'] as String ?? '';
+      //   final inUserList = b['inUserList'] as bool;
+      //   final userRead = b['userRead'] as bool;
+      //   final title = b['title'] as String ?? '';
+      //   final authors = b['authors'] as List<dynamic> ?? <String>[''];
+      //   final description = b['description'] as String ?? '';
+      //   final categories = b['categories'] as List<String> ?? <String>[''];
+      //   final googleId = b['googleId'] as String;
+      //   //construct a Book object and add it to the books array
+      //   final book = Book(
+      //       title: title,
+      //       subtitle: subtitle,
+      //       authors: authors,
+      //       inUserList: inUserList,
+      //       userRead: userRead,
+      //       thumbnail: cover,
+      //       categories: categories,
+      //       description: description,
+      //       googleId: googleId);
 
-        books.add(book);
-      }
+      //   books.add(book);
+      // }
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
@@ -179,26 +182,27 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                 Expanded(
                   child: FutureBuilder(
                     future: _fetchResults(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Book>> snapshot) {
                       if (snapshot.data == null || queryText == '') {
                         return AddBookBackground();
                       }
                       return ListView.builder(
-                        itemCount: snapshot.data.length as int,
+                        itemCount: snapshot.data.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Column(
                             children: <Widget>[
                               ListTile(
-                                  title: Text(snapshot
-                                      .data[index].titleWithSubtitle as String),
+                                  title: Text(
+                                      snapshot.data[index].titleWithSubtitle),
                                   subtitle: Text(_modifiedAuthorText(
-                                      snapshot.data[index] as Book)),
+                                      snapshot.data[index])),
                                   leading: Image.network(
-                                      snapshot.data[index].thumbnail as String),
+                                      snapshot.data[index].thumbnail ?? ''),
                                   onTap: () {
                                     print(snapshot.data[index].title);
                                     print(snapshot.data[index].subtitle == '');
-                                    _createBook(snapshot.data[index] as Book);
+                                    _createBook(snapshot.data[index]);
                                   }),
                               const Divider(),
                             ],

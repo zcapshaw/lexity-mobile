@@ -132,7 +132,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 title: Text(widget.book.titleWithSubtitle),
                 subtitle: Text(widget.book.authorsAsString),
-                leading: Image.network(widget.book.thumbnail),
+                leading: Image.network(widget.book.thumbnail ?? ''),
               ),
               const Divider(),
               Container(

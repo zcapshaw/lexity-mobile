@@ -31,7 +31,6 @@ class ListedBook extends Book with EquatableMixin {
           title: title,
           subtitle: subtitle,
           authors: authors,
-          thumbnail: cover,
           googleId: googleId,
           description: description,
           categories: categories,

@@ -1,3 +1,4 @@
+//ignore_for_file: implicit_dynamic_parameter
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'listed_book.dart';
@@ -36,7 +37,9 @@ ListedBook _$ListedBookFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$ListedBookToJson(ListedBook instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    'title': instance.title,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -44,7 +47,6 @@ Map<String, dynamic> _$ListedBookToJson(ListedBook instance) {
     }
   }
 
-  writeNotNull('title', instance.title);
   writeNotNull('subtitle', instance.subtitle);
   writeNotNull('authors', instance.authors);
   writeNotNull('cover', instance.cover);

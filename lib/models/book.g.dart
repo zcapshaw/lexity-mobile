@@ -1,3 +1,4 @@
+//ignore_for_file: implicit_dynamic_parameter
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'book.dart';
@@ -11,7 +12,9 @@ Book _$BookFromJson(Map<String, dynamic> json) {
     title: json['title'] as String,
     subtitle: json['subtitle'] as String,
     authors: json['authors'] as List,
-    thumbnail: json['thumbnail'] as String,
+    imageLinks: (json['imageLinks'] as Map<String, dynamic>)?.map(
+      (k, e) => MapEntry(k, e as String),
+    ),
     googleId: json['googleId'] as String,
     description: json['description'] as String,
     categories: (json['categories'] as List)?.map((e) => e as String)?.toList(),
@@ -26,26 +29,17 @@ Book _$BookFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$BookToJson(Book instance) {
-  final val = <String, dynamic>{};
-
-  void writeNotNull(String key, dynamic value) {
-    if (value != null) {
-      val[key] = value;
-    }
-  }
-
-  writeNotNull('title', instance.title);
-  writeNotNull('subtitle', instance.subtitle);
-  writeNotNull('authors', instance.authors);
-  writeNotNull('thumbnail', instance.thumbnail);
-  writeNotNull('googleId', instance.googleId);
-  writeNotNull('description', instance.description);
-  writeNotNull('categories', instance.categories);
-  writeNotNull('listId', instance.listId);
-  writeNotNull('type', instance.type);
-  writeNotNull('recos', instance.recos);
-  writeNotNull('inUserList', instance.inUserList);
-  writeNotNull('userRead', instance.userRead);
-  return val;
-}
+Map<String, dynamic> _$BookToJson(Book instance) => <String, dynamic>{
+      'title': instance.title,
+      'subtitle': instance.subtitle,
+      'authors': instance.authors,
+      'imageLinks': instance.imageLinks,
+      'googleId': instance.googleId,
+      'description': instance.description,
+      'categories': instance.categories,
+      'listId': instance.listId,
+      'type': instance.type,
+      'recos': instance.recos,
+      'inUserList': instance.inUserList,
+      'userRead': instance.userRead,
+    };

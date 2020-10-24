@@ -14,7 +14,6 @@ class ListRepository {
       final list =
           await listService.getListItemSummary(user.accessToken, user.id);
       final decoded = jsonDecode(list.data as String) as List;
-      print(decoded);
       readingList = decoded
           .map((dynamic book) =>
               ListedBook.fromJson(book as Map<String, dynamic>))
