@@ -29,7 +29,6 @@ class AuthenticationBloc
       },
       onError: print,
     );
-    add(const AppStarted());
   }
 
   final AuthenticationRepository _authenticationRepository;

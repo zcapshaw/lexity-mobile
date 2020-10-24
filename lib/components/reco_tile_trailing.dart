@@ -1,11 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-class RecoTileTrailing extends StatelessWidget {
-  final List<dynamic> recos;
-  final int maxRecoRender = 3;
+import '../models/models.dart';
 
+class RecoTileTrailing extends StatelessWidget {
   RecoTileTrailing(this.recos);
+
+  final List<Note> recos;
+  final int maxRecoRender = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +38,10 @@ class RecoTileTrailing extends StatelessWidget {
                   MainAxisSize.min, // Use the minimum amount of space needed
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                for (var r in renderRecos)
-                  RecoImg(r['sourceImg'], r['sourceName']),
+                for (Note r in renderRecos) RecoImg(r.sourceImg, r.sourceName),
                 if (recosBeyondMax > 0 && recosBeyondMax <= 9)
-                  RecoImg(null, '+${recosBeyondMax.toString()}'),
-                if (recosBeyondMax > 9) RecoImg(null, '9+'),
+                  RecoImg(null, '+ ${recosBeyondMax.toString()}'),
+                if (recosBeyondMax > 9) RecoImg(null, '9 +'),
               ],
             ),
           ],
@@ -62,6 +65,15 @@ class RecoImg extends StatelessWidget {
     //create an array of words, split by spaces in sourceName
     List<String> splitWords = sourceName.toUpperCase().split(' ');
     String initials = '';
+    final List<int> recoInitialBackgroundColors = [
+      0xFFb6d1fa, // blue
+      0xFFe9c0f0, // purple
+      0xFFfae43c, // yellow
+      0xFF98e3a0, // green
+      0xFF98e3e2, // turquoise
+      0xFFf0c48b, // orange
+    ];
+    int randomColor = (recoInitialBackgroundColors..shuffle()).first;
 
     //populate `initials` with first character of each word, up to 2
     for (var word in splitWords) {
@@ -76,7 +88,7 @@ class RecoImg extends StatelessWidget {
       width: diameter,
       height: diameter,
       decoration: BoxDecoration(
-        color: Colors.grey[500],
+        color: Color(randomColor),
         shape: BoxShape.circle,
       ),
       child: Center(

@@ -2,51 +2,49 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
-import 'package:lexity_mobile/repositories/authentication_repository.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
-import 'package:lexity_mobile/theme.dart';
 
-import 'package:lexity_mobile/blocs/simple_bloc_observer.dart';
-import 'package:lexity_mobile/services/list_service.dart';
-
-import 'blocs/blocs.dart';
-import 'screens/screens.dart';
+import './blocs/blocs.dart';
+import './blocs/simple_bloc_observer.dart';
+import './repositories/repositories.dart';
+import './screens/screens.dart';
+import './services/list_service.dart';
+import './theme.dart';
 
 void main() {
   Bloc.observer = SimpleBlocObserver();
   GetIt.I.registerLazySingleton(() => ListService());
-  runApp(
-    App(
-      authenticationRepository: AuthenticationRepository(),
-      userRepository: UserRepository(),
-    ),
-  );
+  runApp(BlocProvider(
+      lazy: false, // load BLoC immediately
+      create: (context) {
+        return AuthenticationBloc(
+            authenticationRepository: AuthenticationRepository(),
+            userRepository: UserRepository())
+          ..add(const AppStarted());
+      },
+      child: const App()));
 }
 
 class App extends StatelessWidget {
-  const App({
-    Key key,
-    @required this.authenticationRepository,
-    @required this.userRepository,
-  })  : assert(authenticationRepository != null),
-        assert(userRepository != null),
-        super(key: key);
-
-  final AuthenticationRepository authenticationRepository;
-  final UserRepository userRepository;
+  const App({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ReadingListBloc>(
+          create: (context) => ReadingListBloc(
+            listRepository: ListRepository(),
+            listService: ListService(),
+          ),
+        ),
         BlocProvider<BookDetailsCubit>(
           create: (context) => BookDetailsCubit(),
         ),
-        BlocProvider<AuthenticationBloc>(
-          create: (context) => AuthenticationBloc(
-              authenticationRepository: authenticationRepository,
-              userRepository: userRepository),
+        BlocProvider<StatsCubit>(
+          lazy: false, // load cubit immediately, for list header counts
+          create: (context) => StatsCubit(
+            readingListBloc: BlocProvider.of<ReadingListBloc>(context),
+          ),
         ),
       ],
       child: AppView(),
@@ -72,12 +70,16 @@ class _AppViewState extends State<AppView> {
         return BlocListener<AuthenticationBloc, AuthenticationState>(
           listener: (context, state) {
             if (state is Authenticated) {
+              context
+                  .bloc<ReadingListBloc>()
+                  .add(ReadingListLoaded(state.user));
               _navigator.pushAndRemoveUntil<void>(
                 MainScreen.route(),
                 (route) => false,
               );
             }
             if (state is Unauthenticated) {
+              context.bloc<ReadingListBloc>().add(ReadingListDismount());
               _navigator.pushAndRemoveUntil<void>(
                 LoginScreen.route(),
                 (route) => false,

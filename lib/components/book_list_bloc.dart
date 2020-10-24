@@ -32,25 +32,23 @@ class BookListBloc {
         List userToReadList =
             bookJson.where((b) => b['type'] == 'TO_READ').toList();
         List userReadList = bookJson.where((b) => b['type'] == 'READ').toList();
-        print(
-            'reading: ${userReadingList.length}, to read: ${userToReadList.length}, read: ${userReadList.length}');
 
         addListCountItem('READING', userReadingList.length);
         addListCountItem('TO_READ', userToReadList.length);
         addListCountItem('READ', userReadList.length);
 
         // Create ListedBooks fromJson and add to readingList
-        readingList.add(ListItemHeader('READING'));
+        readingList.add(ListedBookHeader('READING'));
         for (var item in userReadingList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
-        readingList.add(ListItemHeader('TO_READ'));
+        readingList.add(ListedBookHeader('TO_READ'));
         for (var item in userToReadList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
         }
-        readingList.add(ListItemHeader('READ'));
+        readingList.add(ListedBookHeader('READ'));
         for (var item in userReadList) {
           var book = ListedBook.fromJson(item);
           readingList.add(book);
@@ -193,7 +191,7 @@ class BookListBloc {
       }
 
       // Combine existing and new reco in ListItem book
-      book.mergeRecos = oldBook.recos ?? [];
+      book.addAndDeduplicateRecos = oldBook.recos ?? [];
 
       // If type is NOT changing, then replace the book in the matchingIndex
       if (book.type == oldBook.type) {

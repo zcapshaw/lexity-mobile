@@ -13,7 +13,7 @@ Note _$NoteFromJson(Map<String, dynamic> json) {
     sourceName: json['sourceName'] as String,
     sourceId: json['sourceId'] as String,
     id: json['id'] as String,
-  );
+  )..sourceImg = json['sourceImg'] as String;
 }
 
 Map<String, dynamic> _$NoteToJson(Note instance) {
@@ -28,6 +28,7 @@ Map<String, dynamic> _$NoteToJson(Note instance) {
   writeNotNull('comment', instance.comment);
   writeNotNull('created', instance.created);
   writeNotNull('sourceName', instance.sourceName);
+  writeNotNull('sourceImg', instance.sourceImg);
   writeNotNull('sourceId', instance.sourceId);
   writeNotNull('id', instance.id);
   return val;

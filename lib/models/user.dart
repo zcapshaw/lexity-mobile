@@ -1,11 +1,10 @@
 class User {
-  // Default constructor
-  User() {
-    createComplete = false;
-    id = '';
-    accessToken = '';
-    authN = null;
-  }
+  User({
+    this.createComplete = false,
+    this.id = '',
+    this.accessToken = '',
+    this.authN,
+  });
 
   bool createComplete;
   String id;

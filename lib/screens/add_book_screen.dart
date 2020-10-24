@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
 
+import '../blocs/blocs.dart';
 import '../components/components.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
-import '../services/list_service.dart';
+import '../services/services.dart';
+import '../utils/utils.dart' as utils;
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
@@ -19,7 +20,7 @@ class AddBookScreen extends StatefulWidget {
 }
 
 class _AddBookScreenState extends State<AddBookScreen> {
-  List<bool> _listStatus = [true, false, false];
+  final List<bool> _listStatus = [true, false, false];
   String listType = 'TO_READ';
   String noteText;
   String recoSource;
@@ -34,34 +35,34 @@ class _AddBookScreenState extends State<AddBookScreen> {
     user = context.bloc<AuthenticationBloc>().state.user;
   }
 
-  void _saveListItem() async {
-    final String type = listType;
+  void _saveListItem(BuildContext context) async {
+    final creationDateTime = DateTime.now().millisecondsSinceEpoch;
     final List labels = [];
-    final Note note = Note(comment: noteText);
-    final Note reco = Note(sourceName: recoSource, comment: recoText);
+    final Note note = Note(
+        id: utils.generateRandomString(8),
+        comment: noteText,
+        created: creationDateTime);
+    final Note reco = Note(
+        id: utils.generateRandomString(8),
+        sourceId: null,
+        sourceName: recoSource,
+        sourceImg: null,
+        comment: recoText,
+        created: creationDateTime);
     final List<Note> notes = [note, reco];
 
-    // Temporary instantiation without image - eventually, user search will provide img if available
-    final List newReco = [
-      {'sourceName': recoSource, 'sourceImg': null}
-    ];
+    // Temporary instantiation without image - eventually, user search will
+    // provide img if available
+    final List<Note> newReco = [Note(sourceName: recoSource, sourceImg: null)];
 
     // Only retain non-null notes objects with text.length > 0
     // E.g. if there are NO notes OR recos, this will return an empty list []
     notes.retainWhere((note) =>
-        note.comment != null && note.comment.length > 0 ||
-        note.sourceName != null && note.sourceName.length > 0);
-
-    print('notes are $notes');
-
-    ListedBook item = ListedBook(
-        userId: user.id,
-        bookId: widget.bookId,
-        type: type,
-        labels: labels,
-        notes: notes);
+        note.comment != null && note.comment.isNotEmpty ||
+        note.sourceName != null && note.sourceName.isNotEmpty);
 
     ListedBook book = ListedBook(
+      userId: user.id,
       bookId: widget.bookId,
       title: widget.book.title,
       subtitle: widget.book.subtitle,
@@ -70,12 +71,14 @@ class _AddBookScreenState extends State<AddBookScreen> {
       description: widget.book.description,
       categories: widget.book.categories,
       type: listType,
+      labels: labels,
+      notes: notes,
       recos: recoSource != null ? newReco : [],
     );
 
-    bookListBloc.addBook(item, book, user.accessToken);
+    context.bloc<ReadingListBloc>().add(ReadingListAdded(book, user));
     print('successfully added ${widget.bookId}');
-    Navigator.push(
+    await Navigator.push(
         context, MaterialPageRoute(builder: (context) => MainScreen()));
   }
 
@@ -107,7 +110,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
           actions: <Widget>[
             FlatButton(
               onPressed: () {
-                _saveListItem();
+                _saveListItem(context);
               },
               child: Text(
                 'Done',
@@ -129,19 +132,19 @@ class _AddBookScreenState extends State<AddBookScreen> {
                 subtitle: Text(widget.book.authorsAsString),
                 leading: Image.network(widget.book.thumbnail),
               ),
-              Divider(),
+              const Divider(),
               Container(
                 height: 100,
                 width: double.infinity,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 20.0),
                       child: ListTileHeaderText('Add to list'),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 20),
+                      margin: const EdgeInsets.only(top: 20),
                       child: Center(
                         child: ToggleButtons(
                           children: <Widget>[
@@ -190,20 +193,20 @@ class _AddBookScreenState extends State<AddBookScreen> {
                           borderColor: Colors.grey,
                           selectedBorderColor: Colors.teal,
                           selectedColor: Colors.grey[900],
-                          constraints:
-                              BoxConstraints(minHeight: 30, minWidth: 110),
+                          constraints: const BoxConstraints(
+                              minHeight: 30, minWidth: 110),
                         ),
                       ),
                     ),
                   ],
                 ),
               ),
-              Divider(),
+              const Divider(),
               AddRecoTile(
                   recoSource: recoSource ?? '',
                   recoText: recoText ?? '',
                   onPress: _addReco),
-              Divider(),
+              const Divider(),
               TextFieldTile(
                 headerText: 'Add a note',
                 hintText: 'Jot down any thoughts here',
@@ -223,12 +226,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
 }
 
 class AddRecoTile extends StatelessWidget {
+  AddRecoTile({this.recoSource, this.recoText, @required this.onPress});
+
   final String recoSource;
   final String recoText;
   final Function onPress;
   final String initialText = 'Who suggested this book to you?';
-
-  AddRecoTile({this.recoSource, this.recoText, @required this.onPress});
 
   @override
   Widget build(BuildContext context) {
@@ -236,17 +239,17 @@ class AddRecoTile extends StatelessWidget {
       onTap: () => onPress(context, recoSource, recoText),
       behavior: HitTestBehavior.opaque, // makes whole tile clickable
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                ListTileHeaderText('Recommended by'),
+                const ListTileHeaderText('Recommended by'),
                 Container(
-                  padding: EdgeInsets.only(top: 15),
-                  child: Text(recoSource.length == 0 ? initialText : recoSource,
+                  padding: const EdgeInsets.only(top: 15),
+                  child: Text(recoSource.isEmpty ? initialText : recoSource,
                       style: Theme.of(context).textTheme.subtitle2),
                 ),
               ],
