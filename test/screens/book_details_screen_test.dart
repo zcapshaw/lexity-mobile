@@ -47,7 +47,7 @@ void main() {
           sourceName: 'Daniel Rediger');
       var testBook = ListedBook(
         title: 'Sapiens',
-        authors: ['Yuval Noah Harrari'],
+        authors: <String>['Yuval Noah Harrari'],
         categories: ['History', 'World'],
         description: 'Sapiens tackles big questions in vivid language.',
         notes: [testNote],

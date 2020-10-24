@@ -2,15 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class NoteView extends StatelessWidget {
-  final String comment;
-  final String created;
-  final String noteId;
-  final String leadingImg;
-  final Function deleteCallback;
-  final Function editCallback;
-  final bool isReco;
-  final String sourceName;
-
   const NoteView(
       {this.comment,
       this.created,
@@ -21,7 +12,16 @@ class NoteView extends StatelessWidget {
       this.isReco,
       this.sourceName});
 
-  _handleNoteTap(BuildContext context) async {
+  final String comment;
+  final String created;
+  final String noteId;
+  final String leadingImg;
+  final Function deleteCallback;
+  final Function editCallback;
+  final bool isReco;
+  final String sourceName;
+
+  Future<void> _handleNoteTap(BuildContext context) async {
     // final action = await showCupertinoModalPopup(
     //     context: context, builder: (BuildContext context) => NoteActionSheet());
 
@@ -35,15 +35,15 @@ class NoteView extends StatelessWidget {
   }
 
   String _getInitials() {
-    String initials = '';
+    var initials = '';
 
     if (sourceName != null) {
       //create an array of words, split by spaces in sourceName
-      List<String> splitWords = sourceName?.toUpperCase()?.split(' ');
+      final splitWords = sourceName?.toUpperCase()?.split(' ');
 
       //populate `initials` with first character of each word, up to 2
       for (var word in splitWords) {
-        initials = initials + '${word[0]}';
+        initials = '$initials${word[0]}';
         if (initials.length >= 2) {
           break;
         }
@@ -71,7 +71,7 @@ class NoteView extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
-                comment == '' ? SizedBox.shrink() : Text(comment)
+                comment == '' ? const SizedBox.shrink() : Text(comment)
               ],
             ),
           ),
@@ -91,7 +91,7 @@ class NoteView extends StatelessWidget {
                 ),
           onTap: () => _handleNoteTap(context),
         ),
-        Divider(),
+        const Divider(),
       ],
     );
   }
@@ -104,18 +104,18 @@ class NoteActionSheet extends StatelessWidget {
       actions: <Widget>[
         CupertinoActionSheetAction(
           isDefaultAction: true,
-          child: Text('Edit Note'),
+          child: const Text('Edit Note'),
           onPressed: () => Navigator.of(context).pop('edit'),
         ),
         CupertinoActionSheetAction(
           isDestructiveAction: true,
-          child: Text('Delete Note'),
+          child: const Text('Delete Note'),
           onPressed: () => Navigator.of(context).pop('delete'),
         ),
       ],
       cancelButton: CupertinoActionSheetAction(
         isDefaultAction: true,
-        child: Text('Cancel'),
+        child: const Text('Cancel'),
         onPressed: () => Navigator.of(context).pop(),
       ),
     );

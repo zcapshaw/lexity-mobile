@@ -8,7 +8,8 @@ part 'listed_book.g.dart';
 @JsonSerializable(includeIfNull: false)
 class ListedBook extends Book with EquatableMixin {
   ListedBook(
-      {this.title,
+      {String
+          title, // TODO: See if this test to instantiate worked - if so, apply elsewhere
       this.subtitle,
       this.authors,
       this.cover,
@@ -30,7 +31,6 @@ class ListedBook extends Book with EquatableMixin {
           title: title,
           subtitle: subtitle,
           authors: authors,
-          thumbnail: cover,
           googleId: googleId,
           description: description,
           categories: categories,
@@ -41,13 +41,13 @@ class ListedBook extends Book with EquatableMixin {
           userRead: userRead,
         );
 
-  final String title;
+  //final String title;
   final String subtitle;
   final List authors;
   final String cover;
   final String googleId;
   final String description;
-  final List categories;
+  final List<String> categories;
   final String listId;
   final String userId;
   final String bookId;
@@ -81,24 +81,25 @@ class ListedBook extends Book with EquatableMixin {
 
   ListedBook clone() {
     return ListedBook(
-        title: this.title,
-        subtitle: this.subtitle,
-        authors: this.authors,
-        cover: this.cover,
-        googleId: this.googleId,
-        description: this.description,
-        categories: this.categories,
-        listId: this.listId,
-        userId: this.userId,
-        bookId: this.bookId,
-        type: this.type,
-        inUserList: this.inUserList,
-        userRead: this.userRead,
-        recos: this.recos,
-        labels: this.labels,
-        notes: this.notes);
+        title: title,
+        subtitle: subtitle,
+        authors: authors,
+        cover: cover,
+        googleId: googleId,
+        description: description,
+        categories: categories,
+        listId: listId,
+        userId: userId,
+        bookId: bookId,
+        type: type,
+        inUserList: inUserList,
+        userRead: userRead,
+        recos: recos,
+        labels: labels,
+        notes: notes);
   }
 
+  // ignore: sort_constructors_first
   factory ListedBook.fromJson(Map<String, dynamic> json) =>
       _$ListedBookFromJson(json);
   Map<String, dynamic> toJson() => _$ListedBookToJson(this);
@@ -115,12 +116,12 @@ class ListedBook extends Book with EquatableMixin {
       }
     }
 
-    writeNotNull('userId', this.userId);
-    writeNotNull('bookId', this.bookId);
-    writeNotNull('type', this.type);
-    writeNotNull('labels', this.labels);
-    writeNotNull('notes', this.notes);
-    writeNotNull('updated', this.updated);
+    writeNotNull('userId', userId);
+    writeNotNull('bookId', bookId);
+    writeNotNull('type', type);
+    writeNotNull('labels', labels);
+    writeNotNull('notes', notes);
+    writeNotNull('updated', updated);
     return val;
   }
 }

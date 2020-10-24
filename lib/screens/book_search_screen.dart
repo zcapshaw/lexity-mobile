@@ -14,9 +14,9 @@ import 'package:lexity_mobile/screens/add_book_screen.dart';
 enum Origin { fab, navSearch }
 
 class BookSearchScreen extends StatefulWidget {
-  final Origin origin;
-
   BookSearchScreen({this.origin});
+
+  final Origin origin;
 
   @override
   _BookSearchScreenState createState() => _BookSearchScreenState();
@@ -28,7 +28,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   User user;
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     // assign user for access to UserModel methods
     user = context.bloc<AuthenticationBloc>().state.user;
@@ -36,45 +36,51 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
   //This async function returns a List of Books from the API response
   Future<List<Book>> _fetchResults() async {
+    List<Book> books;
     //fetch google books results based on queryText
-    final http.Response data = await http.get(
+    final data = await http.get(
         'https://api.lexity.co/search/private/books?userId=${user.id}&searchText=$queryText',
         headers: {
           'access-token': '${user.accessToken}',
         });
 
-    //declare an empty list of Books
-    List<Book> books = [];
-
     if (data.statusCode == 200) {
-      //decode JSON from API and store in a new variable
-      var jsonData = json.decode(data.body);
-
-      //Populate the books array by looping over jsonData and creating a Book for each element
-      for (var b in jsonData) {
-        //handle books that come back from Google with missing data
-        final String cover = b['cover'] != null ? b['cover']['thumbnail'] : '';
-        final String subtitle = b['subtitle'] ?? '';
-        final bool inUserList = b['inUserList'];
-        final bool userRead = b['userRead'];
-        String title = b['title'] ?? '';
-        List authors = b['authors'] ?? [''];
-        String description = b['description'] ?? '';
-        List categories = b['categories'];
-
-        //construct a Book object and add it to the books array
-        Book book = Book(
-            title: title,
-            subtitle: subtitle,
-            authors: authors,
-            inUserList: inUserList,
-            userRead: userRead,
-            thumbnail: cover,
-            categories: categories,
-            description: description,
-            googleId: b['googleId']);
-        books.add(book);
+      try {
+        final decoded = json.decode(data.body) as List;
+        books = decoded
+            .map((dynamic book) => Book.fromJson(book as Map<String, dynamic>))
+            .toList();
+      } catch (err) {
+        print('Issue generating list of books from search: $err');
       }
+      // Populate the books array by looping over jsonData
+      // and creating a Book for each element
+      // for (var b in jsonData) {
+      //   // handle books that come back from Google with missing data
+      //   final cover =
+      //       b['cover'] != null ? b['cover']['thumbnail'] as String : '';
+      //   final subtitle = b['subtitle'] as String ?? '';
+      //   final inUserList = b['inUserList'] as bool;
+      //   final userRead = b['userRead'] as bool;
+      //   final title = b['title'] as String ?? '';
+      //   final authors = b['authors'] as List<dynamic> ?? <String>[''];
+      //   final description = b['description'] as String ?? '';
+      //   final categories = b['categories'] as List<String> ?? <String>[''];
+      //   final googleId = b['googleId'] as String;
+      //   //construct a Book object and add it to the books array
+      //   final book = Book(
+      //       title: title,
+      //       subtitle: subtitle,
+      //       authors: authors,
+      //       inUserList: inUserList,
+      //       userRead: userRead,
+      //       thumbnail: cover,
+      //       categories: categories,
+      //       description: description,
+      //       googleId: googleId);
+
+      //   books.add(book);
+      // }
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
@@ -82,21 +88,21 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
     return books;
   }
 
-  void _createBook(book) async {
-    final String googleId = book.googleId;
+  void _createBook(Book book) async {
+    final googleId = book.googleId;
 
-    final http.Response response = await http.post(
+    final response = await http.post(
       'https://api.lexity.co/book/create/$googleId',
     );
     if (response.statusCode == 200) {
-      var responseJson = json.decode(response.body);
+      var responseJson = json.decode(response.body) as Map<String, dynamic>;
 
-      Navigator.push(
+      await Navigator.push<Map>(
         context,
         MaterialPageRoute(
           builder: (context) => AddBookScreen(
             book: book,
-            bookId: responseJson['id'],
+            bookId: responseJson['id'] as String,
           ),
         ),
       );
@@ -106,7 +112,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   }
 
   String _modifiedAuthorText(Book book) {
-    String author = book.authorsAsString ?? '';
+    var author = book.authorsAsString ?? '';
     if (book.inUserList && book.userRead) {
       author = '$author • Previously read';
     } else if (book.inUserList) {
@@ -126,7 +132,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
             child: Column(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.all(20),
+                  margin: const EdgeInsets.all(20),
                   child: Center(
                     child: Row(
                       children: <Widget>[
@@ -155,17 +161,17 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 5,
                         ),
-                        //this button should not be shown on main_screen under search
-                        //it should only be shown in the add a book flow
+                        // this button should not be shown on main_screen under
+                        // search it should only be shown in the add a book flow
                         if (widget.origin == Origin.fab)
                           FlatButton(
                             onPressed: () {
                               Navigator.pop(context);
                             },
-                            child: Text('Cancel'),
+                            child: const Text('Cancel'),
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
                           )
@@ -176,7 +182,8 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                 Expanded(
                   child: FutureBuilder(
                     future: _fetchResults(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Book>> snapshot) {
                       if (snapshot.data == null || queryText == '') {
                         return AddBookBackground();
                       }
@@ -191,13 +198,13 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                                   subtitle: Text(_modifiedAuthorText(
                                       snapshot.data[index])),
                                   leading: Image.network(
-                                      snapshot.data[index].thumbnail),
+                                      snapshot.data[index].thumbnail ?? ''),
                                   onTap: () {
                                     print(snapshot.data[index].title);
                                     print(snapshot.data[index].subtitle == '');
                                     _createBook(snapshot.data[index]);
                                   }),
-                              Divider(),
+                              const Divider(),
                             ],
                           );
                         },
@@ -220,7 +227,7 @@ class AddBookBackground extends StatelessWidget {
     return Column(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 80),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 80),
           child: Container(
             child: Text(
               'Pro tip: You can search by title, author, or ISBN',

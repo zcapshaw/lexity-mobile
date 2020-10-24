@@ -1,3 +1,4 @@
+//ignore_for_file: implicit_dynamic_parameter
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'listed_book.dart';
@@ -14,7 +15,7 @@ ListedBook _$ListedBookFromJson(Map<String, dynamic> json) {
     cover: json['cover'] as String,
     googleId: json['googleId'] as String,
     description: json['description'] as String,
-    categories: json['categories'] as List,
+    categories: (json['categories'] as List)?.map((e) => e as String)?.toList(),
     listId: json['listId'] as String,
     userId: json['userId'] as String,
     bookId: json['bookId'] as String,
@@ -30,11 +31,15 @@ ListedBook _$ListedBookFromJson(Map<String, dynamic> json) {
         ?.map(
             (e) => e == null ? null : Note.fromJson(e as Map<String, dynamic>))
         ?.toList(),
+    created: json['created'] as int,
+    updated: json['updated'] as int,
   );
 }
 
 Map<String, dynamic> _$ListedBookToJson(ListedBook instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    'title': instance.title,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -42,7 +47,6 @@ Map<String, dynamic> _$ListedBookToJson(ListedBook instance) {
     }
   }
 
-  writeNotNull('title', instance.title);
   writeNotNull('subtitle', instance.subtitle);
   writeNotNull('authors', instance.authors);
   writeNotNull('cover', instance.cover);
@@ -54,6 +58,8 @@ Map<String, dynamic> _$ListedBookToJson(ListedBook instance) {
   writeNotNull('bookId', instance.bookId);
   writeNotNull('inUserList', instance.inUserList);
   writeNotNull('userRead', instance.userRead);
+  writeNotNull('created', instance.created);
+  writeNotNull('updated', instance.updated);
   writeNotNull('type', instance.type);
   writeNotNull('recos', instance.recos);
   writeNotNull('labels', instance.labels);

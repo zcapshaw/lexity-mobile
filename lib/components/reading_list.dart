@@ -35,7 +35,7 @@ class _ReadingListState extends State<ReadingList> {
   final ScrollController reorderScrollController = ScrollController();
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     // assign user for access to UserModel methods
     user = context.bloc<AuthenticationBloc>().state.user;
@@ -92,22 +92,21 @@ class _ReadingListState extends State<ReadingList> {
         false; // In case the user dismisses the dialog by clicking away from it
   }
 
-  _navigateToBookDetails(
+  Future<void> _navigateToBookDetails(
       BuildContext context, ListedBook book, int listItemIndex) async {
     //dispatch a function to update BookDetailsCubit state
     print(book.notes);
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
     //Navigate to book details screen
-    final result = await Navigator.push(
+    final result = await Navigator.push<Map>(
       context,
       MaterialPageRoute(
-        // builder: (context) => BookDetailScreen(book, listItemIndex),
         builder: (context) => BookDetailsScreen(),
       ),
     );
     //reset state upon return
-
     setState(() {});
+    // TODO: Need to review if this result == true concept still works with new BookDetailCubit
     if (result == true) {
       Scaffold.of(context)
         ..removeCurrentSnackBar()

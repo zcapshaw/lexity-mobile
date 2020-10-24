@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
-import 'package:lexity_mobile/components/book_list_bloc.dart';
 import 'package:lexity_mobile/models/models.dart';
-import 'package:lexity_mobile/repositories/authentication_repository.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
+import 'package:lexity_mobile/repositories/repositories.dart';
 import 'package:mockito/mockito.dart';
 
 class MockAuthenticationRepository extends Mock
@@ -14,20 +12,16 @@ class MockAuthenticationRepository extends Mock
 
 class MockUserRepository extends Mock implements UserRepository {}
 
-class MockBookListBloc extends Mock implements BookListBloc {}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   var user = User();
   AuthenticationRepository authenticationRepository;
   UserRepository userRepository;
-  BookListBloc bookListBloc;
   Uri uri;
 
   setUp(() {
     authenticationRepository = MockAuthenticationRepository();
     userRepository = MockUserRepository();
-    bookListBloc = MockBookListBloc();
     when(userRepository.checkForCachedUser())
         .thenAnswer((_) => Future(() => false));
   });

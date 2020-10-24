@@ -11,11 +11,11 @@ class AuthenticationRepository {
     // Twitter login logic
     final res = await http.get('https://api.lexity.co/auth/twitter/signin');
     if (res.statusCode == 200) {
-      final Map decoded = jsonDecode(res.body);
+      final decoded = jsonDecode(res.body) as Map;
       if (Platform.isIOS) {
-        await _launchInWebViewOrVC(decoded['url'], true, true);
+        await _launchInWebViewOrVC(decoded['url'] as String, true, true);
       } else if (Platform.isAndroid) {
-        await _launchInWebViewOrVC(decoded['url'], false, false);
+        await _launchInWebViewOrVC(decoded['url'] as String, false, false);
       } else {
         throw Exception('Warning: Platform is NOT iOS or Android');
       }

@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
 class SignUpButton extends StatelessWidget {
   const SignUpButton({this.callback, this.buttonText, this.icon});
 
-  final Function callback;
+  final void Function() callback;
   final String buttonText;
   final FaIcon icon;
 
