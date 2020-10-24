@@ -1,12 +1,10 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:lexity_mobile/components/book_list_bloc.dart';
-import 'package:lexity_mobile/models/user.dart';
+import 'package:lexity_mobile/models/models.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
-import 'package:lexity_mobile/repositories/authentication_repository.dart';
-import 'package:lexity_mobile/repositories/user_repository.dart';
+import 'package:lexity_mobile/repositories/repositories.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -42,8 +40,6 @@ class AuthenticationBloc
     if (event is AppStarted) {
       var userExists = await _userRepository.checkForCachedUser();
       if (userExists) {
-        await bookListBloc.refreshBackendBookList(
-            _userRepository.appUser.accessToken, _userRepository.appUser.id);
         yield Authenticated(_userRepository.appUser);
       } else {
         yield const Unauthenticated();
@@ -65,9 +61,6 @@ class AuthenticationBloc
       if (success) {
         // if user successfully retreived, set state to Authenticated
         yield Authenticated(_userRepository.appUser);
-        // automaticaly refresh the reading list
-        await bookListBloc.refreshBackendBookList(
-            _userRepository.appUser.accessToken, _userRepository.appUser.id);
         // close the twitter web view
         await closeWebView();
       } else {
