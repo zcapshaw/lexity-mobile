@@ -232,9 +232,11 @@ class BookDetailsScreen extends StatelessWidget {
                   children: <Widget>[
                     for (var note in notes)
                       NoteView(
-                        comment: note.comment,
-                        created: formatTime(note.created),
-                        noteId: note.id,
+                        comment: note.comment ?? '',
+                        created: note.created != null
+                            ? formatTime(note.created)
+                            : '',
+                        noteId: note.id ?? '',
                         // need to add access to user image
                         // from a new bloc
                         // leadingImg: user.profileImg,
