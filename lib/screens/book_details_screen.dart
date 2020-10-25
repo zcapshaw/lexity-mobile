@@ -70,9 +70,10 @@ class BookDetailsScreen extends StatelessWidget {
                           children: <Widget>[
                             if (state is BookDetailsWantToRead)
                               startReadingButton(context, state.book, user),
-                            if (state is BookDetailsFinished) readAgainButton(),
+                            if (state is BookDetailsFinished)
+                              readAgainButton(context, state.book, user),
                             if (state is BookDetailsReading)
-                              markFinishedButton(),
+                              markFinishedButton(context, state.book, user),
                             if (state is BookDetailsUnlisted) addToListButton(),
                             ActionButton(
                               icon: Icons.comment,
@@ -192,7 +193,9 @@ class BookDetailsScreen extends StatelessWidget {
       icon: Icons.play_arrow,
       labelText: 'Start Reading',
       callback: () {
-        context.bloc<ReadingListBloc>().add(BookStarted(book, user));
+        context
+            .bloc<ReadingListBloc>()
+            .add(UpdateBookType(book, user, 'READING'));
         context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
         context.bloc<BookDetailsCubit>().closeBookDetails();
         Navigator.pop(context);
@@ -200,19 +203,31 @@ class BookDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget markFinishedButton() {
+  Widget markFinishedButton(BuildContext context, ListedBook book, User user) {
     return ActionButton(
       icon: Icons.done,
       labelText: 'Mark Finished',
-      callback: () {},
+      callback: () {
+        context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, 'READ'));
+        context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
+        context.bloc<BookDetailsCubit>().closeBookDetails();
+        Navigator.pop(context);
+      },
     );
   }
 
-  Widget readAgainButton() {
+  Widget readAgainButton(BuildContext context, ListedBook book, User user) {
     return ActionButton(
       icon: Icons.replay,
       labelText: 'Read Again',
-      callback: () {},
+      callback: () {
+        context
+            .bloc<ReadingListBloc>()
+            .add(UpdateBookType(book, user, 'READING'));
+        context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
+        context.bloc<BookDetailsCubit>().closeBookDetails();
+        Navigator.pop(context);
+      },
     );
   }
 

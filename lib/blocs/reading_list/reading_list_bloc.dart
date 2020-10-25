@@ -33,8 +33,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapReadingListDeletedToState(event);
     } else if (event is ReadingListDismount) {
       yield* _mapReadingListDismountToState();
-    } else if (event is BookStarted) {
-      yield* _mapBookStartedToState(event);
+    } else if (event is UpdateBookType) {
+      yield* _mapUpdateBookTypeToState(event);
     }
   }
 
@@ -130,14 +130,15 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     yield ReadingListLoadInProgress();
   }
 
-  Stream<ReadingListState> _mapBookStartedToState(BookStarted event) async* {
+  Stream<ReadingListState> _mapUpdateBookTypeToState(
+      UpdateBookType event) async* {
     if (state is ReadingListLoadSuccess) {
       yield ReadingListUpdating();
       var updatedReadingList =
           (state as ReadingListLoadSuccess).readingList.map((book) {
         if (book.bookId == event.book.bookId) {
           event.book.updatedAt = DateTime.now().millisecondsSinceEpoch;
-          event.book.type = 'READING';
+          event.book.type = event.newType;
           return event.book;
         } else {
           return book;

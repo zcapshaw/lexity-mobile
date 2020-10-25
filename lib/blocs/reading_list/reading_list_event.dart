@@ -92,16 +92,17 @@ class ReadingListDeleted extends ReadingListEvent {
 
 class ReadingListDismount extends ReadingListEvent {}
 
-class BookStarted extends ReadingListEvent {
-  const BookStarted(this.book, this.user);
+class UpdateBookType extends ReadingListEvent {
+  const UpdateBookType(this.book, this.user, this.newType);
 
   final ListedBook book;
   final User user;
+  final String newType;
 
   @override
-  List<Object> get props => [book, user];
+  List<Object> get props => [book, user, newType];
 
   @override
   String toString() =>
-      'ReadingListUpdated { book : ${book.bookId}, user: ${user.id} }';
+      'ReadingListUpdated { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
 }
