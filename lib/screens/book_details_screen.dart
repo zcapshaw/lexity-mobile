@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:lexity_mobile/screens/add_note_screen.dart';
 import 'package:time_formatter/time_formatter.dart';
 
 import '../blocs/blocs.dart';
@@ -105,7 +106,10 @@ class BookDetailsScreen extends StatelessWidget {
                             ActionButton(
                               icon: Icons.comment,
                               labelText: 'Add Note',
-                              callback: () {},
+                              callback: () {
+                                Navigator.push<void>(
+                                    context, AddNoteScreen.route());
+                              },
                             ),
                             ActionButton(
                               icon: CupertinoIcons.share_up,
@@ -160,13 +164,10 @@ class BookDetailsScreen extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   heightFactor: 0.85,
                   widthFactor: 1.0,
-                  child: Hero(
-                    tag: '${imageUrl}__heroTag',
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.contain,
-                      height: double.infinity,
-                    ),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                    height: double.infinity,
                   ),
                 ),
               ),

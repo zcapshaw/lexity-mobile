@@ -34,6 +34,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
           style: Theme.of(context).textTheme.subtitle1,
         ),
         actions: <Widget>[
+<<<<<<< HEAD
           // Have to use builder to generate a `context` under the Scaffold
           Builder(builder: (BuildContext context) {
             return FlatButton(
@@ -51,9 +52,25 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                   color: Colors.teal[700],
                   fontWeight: FontWeight.bold,
                 ),
+=======
+          FlatButton(
+            onPressed: () {
+              recoSource.isEmpty && recoText.isNotEmpty
+                  ? Scaffold.of(context).showSnackBar(SnackBar(
+                      backgroundColor: Colors.red[300],
+                      content: const Text('Reco notes require a source.')))
+                  : Navigator.pop(context,
+                      {'recoSource': recoSource, 'recoText': recoText});
+            },
+            child: Text(
+              'Done',
+              style: TextStyle(
+                color: Colors.teal[700],
+                fontWeight: FontWeight.bold,
+>>>>>>> add a new ui screen for writing notes
               ),
-            );
-          })
+            ),
+          )
         ],
       ),
       body: SafeArea(
