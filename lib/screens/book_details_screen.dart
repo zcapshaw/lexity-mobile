@@ -6,15 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
-import 'package:lexity_mobile/blocs/blocs.dart';
-import 'package:lexity_mobile/utils/test_keys.dart';
 import 'package:time_formatter/time_formatter.dart';
+
+import '../blocs/blocs.dart';
 import '../components/components.dart';
 import '../models/models.dart';
+import '../utils/test_keys.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final user = context.bloc<AuthenticationBloc>().state.user;
     final screenHeight = MediaQuery.of(context).size.height;
     final coverArtHeight = screenHeight * 0.4;
 
@@ -59,13 +61,15 @@ class BookDetailsScreen extends StatelessWidget {
                       children: <Widget>[
                         buildTitle(state.book.titleWithSubtitle, context),
                         buildAuthors(state.book.authorsAsString, context),
-                        //TODO: add Genre to ListItem model and pass genre in next line
+
+                        /// TODO: add Genre to ListItem model
+                        /// and pass genre in next line
                         buildGenre(state.book.primaryGenre),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             if (state is BookDetailsWantToRead)
-                              startReadingButton(),
+                              startReadingButton(context, state.book, user),
                             if (state is BookDetailsFinished) readAgainButton(),
                             if (state is BookDetailsReading)
                               markFinishedButton(),
@@ -91,7 +95,7 @@ class BookDetailsScreen extends StatelessWidget {
                             description: state.book.description,
                             title: 'Description',
                           ),
-                        buildNotes(state.book.notes),
+                        buildNotes(state.book.notes, user),
                       ],
                     ),
                   ),
@@ -168,7 +172,7 @@ class BookDetailsScreen extends StatelessWidget {
             child: Chip(
               label: Text(genre.toUpperCase()),
               backgroundColor: Colors.teal[700],
-              labelPadding: EdgeInsets.symmetric(horizontal: 10),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 10),
               labelStyle: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
@@ -183,11 +187,16 @@ class BookDetailsScreen extends StatelessWidget {
           );
   }
 
-  Widget startReadingButton() {
+  Widget startReadingButton(BuildContext context, ListedBook book, User user) {
     return ActionButton(
       icon: Icons.play_arrow,
       labelText: 'Start Reading',
-      callback: () {},
+      callback: () {
+        context.bloc<ReadingListBloc>().add(BookStarted(book, user));
+        context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
+        context.bloc<BookDetailsCubit>().closeBookDetails();
+        Navigator.pop(context);
+      },
     );
   }
 
@@ -215,7 +224,7 @@ class BookDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget buildNotes(List<Note> notes) {
+  Widget buildNotes(List<Note> notes, User user) {
     return notes == null
         ? const SizedBox.shrink()
         : Padding(
@@ -237,9 +246,7 @@ class BookDetailsScreen extends StatelessWidget {
                             ? formatTime(note.created)
                             : '',
                         noteId: note.id ?? '',
-                        // need to add access to user image
-                        // from a new bloc
-                        // leadingImg: user.profileImg,
+                        leadingImg: user.profileImg,
                         deleteCallback: () {},
                         editCallback: () {},
                         sourceName: note.sourceName,

@@ -33,6 +33,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapReadingListDeletedToState(event);
     } else if (event is ReadingListDismount) {
       yield* _mapReadingListDismountToState();
+    } else if (event is BookStarted) {
+      yield* _mapBookStartedToState(event);
     }
   }
 
@@ -125,5 +127,25 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   Stream<ReadingListState> _mapReadingListDismountToState() async* {
     yield ReadingListLoadInProgress();
+  }
+
+  Stream<ReadingListState> _mapBookStartedToState(BookStarted event) async* {
+    if (state is ReadingListLoadSuccess) {
+      yield ReadingListUpdating();
+      var updatedReadingList =
+          (state as ReadingListLoadSuccess).readingList.map((book) {
+        if (book.bookId == event.book.bookId) {
+          event.book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+          event.book.type = 'READING';
+          return event.book;
+        } else {
+          return book;
+        }
+      }).toList();
+      updatedReadingList = listRepository.updateBookTypeIndex(event.book,
+          updatedReadingList, (state as ReadingListLoadSuccess).readingList);
+      yield ReadingListLoadSuccess(updatedReadingList);
+      await listService.addOrUpdateListItem(event.user.accessToken, event.book);
+    }
   }
 }
