@@ -115,6 +115,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   Stream<ReadingListState> _mapReadingListDeletedToState(
       ReadingListDeleted event) async* {
     if (state is ReadingListLoadSuccess) {
+      yield ReadingListUpdating();
       final updatedReadingList = (state as ReadingListLoadSuccess)
           .readingList
           .where((book) => book.bookId != event.book.bookId)
