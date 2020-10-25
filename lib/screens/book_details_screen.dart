@@ -20,6 +20,13 @@ class BookDetailsScreen extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
     final coverArtHeight = screenHeight * 0.4;
 
+    void _updateBookType(ListedBook book, String newType) {
+      context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, newType));
+      context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
+      context.bloc<BookDetailsCubit>().closeBookDetails();
+      Navigator.pop(context);
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
@@ -69,12 +76,32 @@ class BookDetailsScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             if (state is BookDetailsWantToRead)
-                              startReadingButton(context, state.book, user),
+                              ActionButton(
+                                icon: Icons.play_arrow,
+                                labelText: 'Start Reading',
+                                callback: () =>
+                                    _updateBookType(state.book, 'READING'),
+                              ),
                             if (state is BookDetailsFinished)
-                              readAgainButton(context, state.book, user),
+                              ActionButton(
+                                icon: Icons.replay,
+                                labelText: 'Read Again',
+                                callback: () =>
+                                    _updateBookType(state.book, 'READING'),
+                              ),
                             if (state is BookDetailsReading)
-                              markFinishedButton(context, state.book, user),
-                            if (state is BookDetailsUnlisted) addToListButton(),
+                              ActionButton(
+                                icon: Icons.done,
+                                labelText: 'Mark Finished',
+                                callback: () =>
+                                    _updateBookType(state.book, 'READ'),
+                              ),
+                            if (state is BookDetailsUnlisted)
+                              ActionButton(
+                                icon: Icons.add,
+                                labelText: 'Add To My List',
+                                callback: () {},
+                              ),
                             ActionButton(
                               icon: Icons.comment,
                               labelText: 'Add Note',
@@ -186,57 +213,6 @@ class BookDetailsScreen extends StatelessWidget {
               ),
             ),
           );
-  }
-
-  Widget startReadingButton(BuildContext context, ListedBook book, User user) {
-    return ActionButton(
-      icon: Icons.play_arrow,
-      labelText: 'Start Reading',
-      callback: () {
-        context
-            .bloc<ReadingListBloc>()
-            .add(UpdateBookType(book, user, 'READING'));
-        context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
-        context.bloc<BookDetailsCubit>().closeBookDetails();
-        Navigator.pop(context);
-      },
-    );
-  }
-
-  Widget markFinishedButton(BuildContext context, ListedBook book, User user) {
-    return ActionButton(
-      icon: Icons.done,
-      labelText: 'Mark Finished',
-      callback: () {
-        context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, 'READ'));
-        context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
-        context.bloc<BookDetailsCubit>().closeBookDetails();
-        Navigator.pop(context);
-      },
-    );
-  }
-
-  Widget readAgainButton(BuildContext context, ListedBook book, User user) {
-    return ActionButton(
-      icon: Icons.replay,
-      labelText: 'Read Again',
-      callback: () {
-        context
-            .bloc<ReadingListBloc>()
-            .add(UpdateBookType(book, user, 'READING'));
-        context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
-        context.bloc<BookDetailsCubit>().closeBookDetails();
-        Navigator.pop(context);
-      },
-    );
-  }
-
-  Widget addToListButton() {
-    return ActionButton(
-      icon: Icons.add,
-      labelText: 'Add To My List',
-      callback: () {},
-    );
   }
 
   Widget buildNotes(List<Note> notes, User user) {
