@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/blocs.dart';
 
 class AddNoteScreen extends StatelessWidget {
   static Route route() {
@@ -7,6 +10,8 @@ class AddNoteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = context.bloc<AuthenticationBloc>().state.user;
+    final book = context.bloc<BookDetailsCubit>().state.book;
     String note;
 
     return Scaffold(
@@ -27,7 +32,14 @@ class AddNoteScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
-              print(note);
+              // If note isn't null or empty string emit a NoteAdded event
+              if (note != null && note.isNotEmpty) {
+                context
+                    .bloc<ReadingListBloc>()
+                    .add(NoteAdded(book, user, note));
+              }
+              //return to BookDetails
+              Navigator.pop(context);
             },
           ),
         ],

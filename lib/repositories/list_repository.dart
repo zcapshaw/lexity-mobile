@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:pedantic/pedantic.dart';
+import 'package:uuid/uuid.dart';
 
 import '../extensions/extensions.dart';
 import '../models/models.dart';
@@ -142,6 +143,24 @@ class ListRepository {
     }
 
     return readingList;
+  }
+
+  ListedBook addNoteToListedBook(String noteText, ListedBook book) {
+    // construct a Note object from the text passed from the UI
+    final note = Note(
+      id: Uuid().v4(),
+      comment: noteText,
+      created: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    // insert note as first element in notes list
+    book.notes.insert(0, note);
+
+    // set the updated at timestamp
+    book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+
+    // return updated ListedBook object
+    return book;
   }
 
   String _getTypeByIndex(int index, int readingCount, int toReadCount) {

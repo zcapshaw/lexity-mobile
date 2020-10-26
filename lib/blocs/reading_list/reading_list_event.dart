@@ -104,5 +104,19 @@ class UpdateBookType extends ReadingListEvent {
 
   @override
   String toString() =>
-      'ReadingListUpdated { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
+      'UpdateBookType { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
+}
+
+class NoteAdded extends ReadingListEvent {
+  const NoteAdded(this.book, this.user, this.note);
+
+  final ListedBook book;
+  final User user;
+  final String note;
+
+  @override
+  List<Object> get props => [book, user, note];
+
+  @override
+  String toString() => 'NoteAdded { note: $note }';
 }
