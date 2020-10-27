@@ -127,7 +127,7 @@ class BookDetailsScreen extends StatelessWidget {
                             description: state.book.description,
                             title: 'Description',
                           ),
-                        buildNotes(state.book.notes, user),
+                        buildNotes(state.book.notes, user, context, state.book),
                       ],
                     ),
                   ),
@@ -216,7 +216,8 @@ class BookDetailsScreen extends StatelessWidget {
           );
   }
 
-  Widget buildNotes(List<Note> notes, User user) {
+  Widget buildNotes(
+      List<Note> notes, User user, BuildContext context, ListedBook book) {
     return notes == null
         ? const SizedBox.shrink()
         : Padding(
@@ -239,7 +240,14 @@ class BookDetailsScreen extends StatelessWidget {
                             : '',
                         noteId: note.id ?? '',
                         leadingImg: user.profileImg,
-                        deleteCallback: () {},
+                        deleteCallback: (String noteId) {
+                          // emit event to delete the note
+                          context
+                              .bloc<ReadingListBloc>()
+                              .add(NoteDeleted(noteId, book, user));
+                          // emit event to refresh the book details page
+                          context.bloc<BookDetailsCubit>().notesUpdated(book);
+                        },
                         editCallback: () {},
                         sourceName: note.sourceName,
                         isReco: note.isReco,

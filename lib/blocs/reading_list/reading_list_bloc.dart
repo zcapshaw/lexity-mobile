@@ -37,6 +37,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapUpdateBookTypeToState(event);
     } else if (event is NoteAdded) {
       yield* _mapNoteAddedToState(event);
+    } else if (event is NoteDeleted) {
+      yield* _mapNoteDeletedToState(event);
     }
   }
 
@@ -155,10 +157,10 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   Stream<ReadingListState> _mapNoteAddedToState(NoteAdded event) async* {
     try {
-      // pass list repo the list, book, and note
+      // pass list repo the book and note
       final updatedBook =
           listRepository.addNoteToListedBook(event.note, event.book);
-      // if the list is returned, emit updatedList is new state
+      // add the updated book to the reading list
       var updatedReadingList =
           (state as ReadingListLoadSuccess).readingList.map((book) {
         if (book.bookId == event.book.bookId) {
@@ -167,7 +169,34 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
           return book;
         }
       }).toList();
+      // yield updated list
       yield ReadingListLoadSuccess(updatedReadingList);
+      // update the back end
+      await listService.addOrUpdateListItem(
+          event.user.accessToken, updatedBook);
+    } catch (err) {
+      print(err);
+      yield ReadingListLoadFailure();
+    }
+  }
+
+  Stream<ReadingListState> _mapNoteDeletedToState(NoteDeleted event) async* {
+    try {
+      // delete note
+      final updatedBook =
+          listRepository.removeNoteFromListedBook(event.noteId, event.book);
+      // add the updated book to the reading list
+      var updatedReadingList =
+          (state as ReadingListLoadSuccess).readingList.map((book) {
+        if (book.bookId == event.book.bookId) {
+          return updatedBook;
+        } else {
+          return book;
+        }
+      }).toList();
+      // yield updated list
+      yield ReadingListLoadSuccess(updatedReadingList);
+      // update the back end
       await listService.addOrUpdateListItem(
           event.user.accessToken, updatedBook);
     } catch (err) {

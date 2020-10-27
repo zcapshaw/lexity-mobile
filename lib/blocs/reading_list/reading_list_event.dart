@@ -120,3 +120,17 @@ class NoteAdded extends ReadingListEvent {
   @override
   String toString() => 'NoteAdded { note: $note }';
 }
+
+class NoteDeleted extends ReadingListEvent {
+  const NoteDeleted(this.noteId, this.book, this.user);
+
+  final String noteId;
+  final ListedBook book;
+  final User user;
+
+  @override
+  List<Object> get props => [noteId, book, user];
+
+  @override
+  String toString() => 'NoteDeleted { noteId: $noteId }';
+}

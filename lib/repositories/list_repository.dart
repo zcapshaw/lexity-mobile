@@ -163,6 +163,15 @@ class ListRepository {
     return book;
   }
 
+  ListedBook removeNoteFromListedBook(String noteId, ListedBook book) {
+    // remove note by ID and set updated timestamp
+    book.notes.removeWhere((note) => note.id == noteId);
+    book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+
+    // return updated ListedBook object
+    return book;
+  }
+
   String _getTypeByIndex(int index, int readingCount, int toReadCount) {
     String type;
 

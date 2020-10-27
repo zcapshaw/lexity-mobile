@@ -6,10 +6,15 @@ import 'package:meta/meta.dart';
 part 'book_details_state.dart';
 
 class BookDetailsCubit extends Cubit<BookDetailsState> {
-  BookDetailsCubit() : super(BookDetailsLoading());
+  BookDetailsCubit() : super(const BookDetailsLoading());
 
   void closeBookDetails() {
-    emit(BookDetailsLoading());
+    emit(const BookDetailsLoading());
+  }
+
+  void notesUpdated(ListedBook book) {
+    emit(const BookDetailsLoading());
+    viewBookDetails(book);
   }
 
   void viewBookDetails(ListedBook book) {
