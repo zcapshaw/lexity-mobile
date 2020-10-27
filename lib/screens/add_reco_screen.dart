@@ -38,10 +38,10 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
           Builder(builder: (BuildContext context) {
             return FlatButton(
               onPressed: () {
-                recoSource.length == 0 && recoText.length > 0
+                recoSource.isEmpty && recoText.isNotEmpty
                     ? Scaffold.of(context).showSnackBar(SnackBar(
                         backgroundColor: Colors.red[300],
-                        content: Text("Reco notes require a source.")))
+                        content: const Text('Reco notes require a source.')))
                     : Navigator.pop(context,
                         {'recoSource': recoSource, 'recoText': recoText});
               },
@@ -58,7 +58,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
       ),
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: 10),
+          padding: const EdgeInsets.symmetric(vertical: 10),
           child: ListView(
             children: <Widget>[
               TextFieldTile(
@@ -72,7 +72,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                   });
                 },
               ),
-              Divider(),
+              const Divider(),
               TextFieldTile(
                 intialValue: recoText,
                 headerText: 'Notes',
