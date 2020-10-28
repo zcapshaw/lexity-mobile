@@ -4,8 +4,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/blocs.dart';
 
 class AddNoteScreen extends StatelessWidget {
+  const AddNoteScreen({this.noteId, this.noteText});
+
+  final String noteId;
+  final String noteText;
+
   static Route route() {
-    return MaterialPageRoute<void>(builder: (_) => AddNoteScreen());
+    return MaterialPageRoute<void>(builder: (_) => const AddNoteScreen());
   }
 
   @override
@@ -32,8 +37,14 @@ class AddNoteScreen extends StatelessWidget {
               ),
             ),
             onPressed: () {
+              // if editing an existing note, emit NoteUpdated event
+              if (noteId != null) {
+                context.bloc<ReadingListBloc>().add(NoteUpdated(
+                    book: book, user: user, noteId: noteId, noteText: note));
+              }
+
               // If note isn't null or empty string emit a NoteAdded event
-              if (note != null && note.isNotEmpty) {
+              else if (note != null && note.isNotEmpty) {
                 context
                     .bloc<ReadingListBloc>()
                     .add(NoteAdded(book, user, note));
@@ -52,7 +63,7 @@ class AddNoteScreen extends StatelessWidget {
               TextFormField(
                 autofocus: true,
                 enableSuggestions: true,
-                initialValue: '',
+                initialValue: noteText ?? '',
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 decoration: InputDecoration(

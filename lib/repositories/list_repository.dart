@@ -172,6 +172,23 @@ class ListRepository {
     return book;
   }
 
+  ListedBook updateNoteForListedBook(
+      String noteId, ListedBook book, String newText) {
+    // update note text
+    var updatedNotes = book.notes.map((note) {
+      if (note.id == noteId) {
+        note.comment = newText;
+        return note;
+      } else {
+        return note;
+      }
+    }).toList();
+
+    book.notes = updatedNotes;
+
+    return book;
+  }
+
   String _getTypeByIndex(int index, int readingCount, int toReadCount) {
     String type;
 

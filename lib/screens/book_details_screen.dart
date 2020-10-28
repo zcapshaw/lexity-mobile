@@ -248,7 +248,17 @@ class BookDetailsScreen extends StatelessWidget {
                           // emit event to refresh the book details page
                           context.bloc<BookDetailsCubit>().notesUpdated(book);
                         },
-                        editCallback: () {},
+                        editCallback: (String noteId, String comment) {
+                          Navigator.push<Map>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddNoteScreen(
+                                noteId: noteId,
+                                noteText: comment,
+                              ),
+                            ),
+                          );
+                        },
                         sourceName: note.sourceName,
                         isReco: note.isReco,
                       ),
