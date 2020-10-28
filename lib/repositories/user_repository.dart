@@ -103,8 +103,8 @@ class UserRepository {
       ..bio = bio ?? appUser.bio
       ..website = website ?? appUser.website
       ..joined = joined ?? appUser.joined
-      ..followers = followers ?? appUser.followers
-      ..friends = friends ?? appUser.friends;
+      ..followers = followers ?? appUser.followers ?? 0
+      ..friends = friends ?? appUser.friends ?? 0;
     _writeStorage('userId', appUser.id);
     _writeStorage('accessToken', appUser.accessToken);
     _writeStorage('authN', appUser.authN.toString());
