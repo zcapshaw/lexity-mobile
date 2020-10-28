@@ -2,9 +2,11 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/blocs/book_details/book_details_cubit.dart';
 import 'package:lexity_mobile/models/listed_book.dart';
 import 'package:lexity_mobile/models/note.dart';
+import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/screens/book_details_screen.dart';
 import 'package:lexity_mobile/utils/test_keys.dart';
 import 'package:mockito/mockito.dart';
@@ -12,12 +14,19 @@ import 'package:mockito/mockito.dart';
 class MockBookDetailscubit extends MockBloc<BookDetailsState>
     implements BookDetailsCubit {}
 
+class MockAuthenticationBoc extends MockBloc<AuthenticationState>
+    implements AuthenticationBloc {}
+
 void main() {
   BookDetailsCubit bookDetailsCubit;
+  AuthenticationBloc authenticationBloc;
+  var user = User();
 
   setUp(() {
     bookDetailsCubit = MockBookDetailscubit();
+    authenticationBloc = MockAuthenticationBoc();
     when(bookDetailsCubit.state).thenReturn(const BookDetailsLoading());
+    when(authenticationBloc.state).thenReturn(Authenticated(user));
   });
 
   tearDown(() {
@@ -31,8 +40,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider.value(
-            value: bookDetailsCubit,
-            child: BookDetailsScreen(),
+            value: authenticationBloc,
+            child: BlocProvider.value(
+              value: bookDetailsCubit,
+              child: BookDetailsScreen(),
+            ),
           ),
         ),
       );
@@ -58,8 +70,11 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider.value(
-            value: bookDetailsCubit,
-            child: BookDetailsScreen(),
+            value: authenticationBloc,
+            child: BlocProvider.value(
+              value: bookDetailsCubit,
+              child: BookDetailsScreen(),
+            ),
           ),
         ),
       );
