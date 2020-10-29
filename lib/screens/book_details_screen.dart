@@ -106,6 +106,7 @@ class BookDetailsScreen extends StatelessWidget {
                             ActionButton(
                               icon: Icons.comment,
                               labelText: 'Add Note',
+                              key: TestKeys.addNoteButton,
                               callback: () {
                                 Navigator.push<void>(
                                     context, AddNoteScreen.route());

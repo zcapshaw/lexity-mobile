@@ -5,4 +5,5 @@ class TestKeys {
   static final bookDetailsLoadingSpinner =
       const Key('__bookDetailsLoadingSpinner__');
   static final bookDetailsGenreChip = const Key('__bookDetailsGenreChip__');
+  static final addNoteButton = const Key('__addNoteButton__');
 }

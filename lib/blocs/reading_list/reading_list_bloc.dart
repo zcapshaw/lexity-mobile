@@ -138,23 +138,21 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   Stream<ReadingListState> _mapUpdateBookTypeToState(
       UpdateBookType event) async* {
-    if (state is ReadingListLoadSuccess) {
-      yield ReadingListUpdating();
-      var updatedReadingList =
-          (state as ReadingListLoadSuccess).readingList.map((book) {
-        if (book.bookId == event.book.bookId) {
-          event.book.updatedAt = DateTime.now().millisecondsSinceEpoch;
-          event.book.type = event.newType;
-          return event.book;
-        } else {
-          return book;
-        }
-      }).toList();
-      updatedReadingList = listRepository.updateBookTypeIndex(event.book,
-          updatedReadingList, (state as ReadingListLoadSuccess).readingList);
-      yield ReadingListLoadSuccess(updatedReadingList);
-      await listService.addOrUpdateListItem(event.user.accessToken, event.book);
-    }
+    yield ReadingListUpdating();
+    var updatedReadingList =
+        (state as ReadingListLoadSuccess).readingList.map((book) {
+      if (book.bookId == event.book.bookId) {
+        event.book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+        event.book.type = event.newType;
+        return event.book;
+      } else {
+        return book;
+      }
+    }).toList();
+    updatedReadingList = listRepository.updateBookTypeIndex(event.book,
+        updatedReadingList, (state as ReadingListLoadSuccess).readingList);
+    yield ReadingListLoadSuccess(updatedReadingList);
+    await listService.addOrUpdateListItem(event.user.accessToken, event.book);
   }
 
   Stream<ReadingListState> _mapNoteAddedToState(NoteAdded event) async* {

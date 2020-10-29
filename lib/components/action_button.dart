@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ActionButton extends StatelessWidget {
+  const ActionButton(
+      {@required this.icon, this.labelText, @required this.callback, this.key});
+
   final IconData icon;
   final String labelText;
   final void Function() callback;
-
-  const ActionButton(
-      {@required this.icon, this.labelText, @required this.callback});
+  final Key key;
 
   @override
   Widget build(BuildContext context) {

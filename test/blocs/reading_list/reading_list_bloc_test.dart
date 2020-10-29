@@ -5,7 +5,6 @@ import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/models/models.dart';
 import 'package:lexity_mobile/services/services.dart';
 import 'package:lexity_mobile/repositories/repositories.dart';
-import '../../test_variables.dart';
 
 class MockListRepository extends Mock implements ListRepository {}
 
@@ -20,8 +19,8 @@ void main() {
   ReadingListBloc readingListBloc;
   ListService listService;
   List<ListedBook> readingList;
-  ListedBook listedBookOne;
-  ListedBook listedBookTwo;
+  var listedBookOne = ListedBook(bookId: '1');
+  var listedBookTwo = ListedBook(bookId: '2');
 
   setUp(() {
     user = User(id: 'Users/12345', accessToken: 'abc123');
@@ -38,13 +37,13 @@ void main() {
   });
 
   blocTest<ReadingListBloc, ReadingListState>(
-      'yeilds [ReadingListLoadSuccess] with ReadingListLoaded event',
+      'yields [ReadingListLoadSuccess] with ReadingListLoaded event',
       build: () => readingListBloc,
       act: (bloc) => bloc.add(ReadingListLoaded(user)),
       expect: <ReadingListState>[ReadingListLoadSuccess(readingList)]);
 
   blocTest<ReadingListBloc, ReadingListState>(
-    'yeilds [ReadingListLoadInProgress] with ReadingListDismount event',
+    'yields [ReadingListLoadInProgress] with ReadingListDismount event',
     build: () => readingListBloc,
     act: (bloc) => bloc.add(ReadingListDismount()),
     expect: <ReadingListState>[ReadingListLoadInProgress()],

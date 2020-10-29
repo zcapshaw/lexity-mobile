@@ -39,5 +39,15 @@ void main() {
       act: (cubit) => cubit.viewBookDetails(readBook),
       expect: <BookDetailsState>[BookDetailsFinished(readBook)],
     );
+
+    blocTest<BookDetailsCubit, BookDetailsState>(
+      'refreshes the state of the page after updating a note',
+      build: () => BookDetailsCubit(),
+      act: (cubit) => cubit.notesUpdated(readBook),
+      expect: <BookDetailsState>[
+        const BookDetailsLoading(),
+        BookDetailsFinished(readBook)
+      ],
+    );
   });
 }
