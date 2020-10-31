@@ -8,7 +8,6 @@ import '../components/components.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
 import '../services/services.dart';
-import '../utils/utils.dart' as utils;
 
 class AddBookScreen extends StatefulWidget {
   const AddBookScreen({Key key, this.book, this.bookId}) : super(key: key);
@@ -75,7 +74,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
       type: listType,
       labels: labels,
       notes: notes,
-      recos: recoSource != null ? newReco : [],
+      recos: recoSource != null && recoSource.isNotEmpty ? newReco : [],
     );
 
     context.bloc<ReadingListBloc>().add(ReadingListAdded(book, user));
