@@ -9,8 +9,7 @@ import 'package:flutter/rendering.dart';
 
 //import 'package:debug.dart';
 import 'package:flutter/material.dart';
-import 'package:lexity_mobile/components/list_tile_header.dart';
-import 'package:lexity_mobile/components/list_tile_item.dart';
+import 'package:lexity_mobile/components/components.dart';
 //import 'package:flutter/material_localizations.dart';
 
 // Examples can assume:
