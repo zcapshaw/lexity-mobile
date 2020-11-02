@@ -112,11 +112,7 @@ packages:
       name: cached_network_image
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "2.3.3"
-=======
-    version: "2.2.0+1"
->>>>>>> add tests
   characters:
     dependency: transitive
     description:
@@ -250,7 +246,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.2.0-nullsafety.1"
-<<<<<<< HEAD
   ffi:
     dependency: transitive
     description:
@@ -258,8 +253,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.3"
-=======
->>>>>>> add tests
   file:
     dependency: transitive
     description:
@@ -470,11 +463,7 @@ packages:
       name: mockito
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
     version: "4.1.3"
-=======
-    version: "4.1.1"
->>>>>>> add tests
   nested:
     dependency: transitive
     description:
@@ -978,10 +967,5 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-<<<<<<< HEAD
   dart: ">=2.10.2 <2.11.0"
   flutter: ">=1.22.2 <2.0.0"
-=======
-  dart: ">=2.10.0-110 <2.11.0"
-  flutter: ">=1.17.0 <2.0.0"
->>>>>>> add tests

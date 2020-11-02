@@ -1,4 +1,3 @@
-//ignore_for_file: implicit_dynamic_parameter
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'listed_book.dart';
