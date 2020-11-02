@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -78,21 +80,22 @@ class _LoginScreenState extends State<LoginScreen> {
                               ? 'SIGN UP WITH TWITTER'
                               : 'SIGN IN WITH TWITTER',
                           callback: _logInWithTwitter,
-                          icon: FaIcon(
+                          icon: const FaIcon(
                             FontAwesomeIcons.twitter,
-                            color: const Color(0xFF00ACEE),
+                            color: Color(0xFF00ACEE),
                           ),
                         ),
-                        SignUpButton(
-                          buttonText: signUp
-                              ? 'SIGN UP WITH APPLE'
-                              : 'SIGN IN WITH APPLE',
-                          callback: signUpWithApple,
-                          icon: FaIcon(
-                            FontAwesomeIcons.apple,
-                            color: const Color(0xFF000000),
+                        if (Platform.isIOS)
+                          SignUpButton(
+                            buttonText: signUp
+                                ? 'SIGN UP WITH APPLE'
+                                : 'SIGN IN WITH APPLE',
+                            callback: signUpWithApple,
+                            icon: const FaIcon(
+                              FontAwesomeIcons.apple,
+                              color: Color(0xFF000000),
+                            ),
                           ),
-                        ),
                         Container(
                           padding: const EdgeInsets.only(top: 20),
                           child: GestureDetector(
@@ -107,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 children: <TextSpan>[
                                   TextSpan(
                                     text: signUp ? 'Sign in' : 'Sign up',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         decoration: TextDecoration.underline),
                                   ),
                                 ],
