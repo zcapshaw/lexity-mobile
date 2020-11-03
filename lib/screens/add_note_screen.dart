@@ -24,7 +24,7 @@ class AddNoteScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
         actions: <Widget>[
@@ -41,6 +41,7 @@ class AddNoteScreen extends StatelessWidget {
               if (noteId != null) {
                 context.bloc<ReadingListBloc>().add(NoteUpdated(
                     book: book, user: user, noteId: noteId, noteText: note));
+                context.bloc<BookDetailsCubit>().notesUpdated(book);
               }
 
               // If note isn't null or empty string emit a NoteAdded event
@@ -48,6 +49,7 @@ class AddNoteScreen extends StatelessWidget {
                 context
                     .bloc<ReadingListBloc>()
                     .add(NoteAdded(book, user, note));
+                context.bloc<BookDetailsCubit>().notesUpdated(book);
               }
               //return to BookDetails
               Navigator.pop(context);

@@ -35,7 +35,7 @@ class BookDetailsScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
             context.bloc<BookDetailsCubit>().closeBookDetails();
