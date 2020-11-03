@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:sentry/sentry.dart';
 
 import './blocs/blocs.dart';
 import './blocs/simple_bloc_observer.dart';
@@ -9,19 +12,73 @@ import './repositories/repositories.dart';
 import './screens/screens.dart';
 import './services/list_service.dart';
 import './theme.dart';
+import 'dsn.dart';
 
-void main() {
+// initialize Sentry for error logging
+final SentryClient _sentry = SentryClient(dsn: dsn);
+
+/// this method is used to prevent sending Sentry messages during development
+bool get isInDebugMode {
+  // assume we are in production mode
+  var inDebugMode = false;
+  // this line is only evaluated in development. It's ignored in production
+  assert(inDebugMode = true);
+
+  return inDebugMode;
+}
+
+Future<void> _reportError(dynamic error, dynamic stackTrace) async {
+  // Print the exception to the console.
+  print('Caught error: $error');
+  if (isInDebugMode) {
+    // Print the full stacktrace in debug mode.
+    print(stackTrace);
+  } else {
+    // send the error to Sentry
+    print('Reporting to Sentry.io...');
+
+    final response = await _sentry.captureException(
+      exception: error,
+      stackTrace: stackTrace,
+    );
+
+    if (response.isSuccessful) {
+      print('Success! Event ID: ${response.eventId}');
+    } else {
+      print('Failed to report to Sentry.io: ${response.error}');
+    }
+  }
+}
+
+Future<Null> main() async {
   Bloc.observer = SimpleBlocObserver();
   GetIt.I.registerLazySingleton(() => ListService());
-  runApp(BlocProvider(
-      lazy: false, // load BLoC immediately
-      create: (context) {
-        return AuthenticationBloc(
-            authenticationRepository: AuthenticationRepository(),
-            userRepository: UserRepository())
-          ..add(const AppStarted());
-      },
-      child: const App()));
+
+// This captures errors reported by the Flutter framework.
+  FlutterError.onError = (FlutterErrorDetails details) {
+    if (isInDebugMode) {
+      // In development mode, simply print to console.
+      FlutterError.dumpErrorToConsole(details);
+    } else {
+      // In production mode, report to the application zone to report to
+      // Sentry.
+      Zone.current.handleUncaughtError(details.exception, details.stack);
+    }
+  };
+
+  runZonedGuarded<Future<void>>(() async {
+    runApp((BlocProvider(
+        lazy: false, // load BLoC immediately
+        create: (context) {
+          return AuthenticationBloc(
+              authenticationRepository: AuthenticationRepository(),
+              userRepository: UserRepository())
+            ..add(const AppStarted());
+        },
+        child: const App())));
+    // Whenever an error occurs, call the `_reportError` function. This sends
+    // Dart errors to the dev console or Sentry depending on the environment.
+  }, _reportError);
 }
 
 class App extends StatelessWidget {
