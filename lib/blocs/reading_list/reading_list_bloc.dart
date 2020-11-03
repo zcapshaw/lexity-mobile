@@ -65,6 +65,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();
+      throw Exception('Reading List Refresh Failed: $err');
     }
   }
 
@@ -196,6 +197,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       }).toList();
       // yield updated list
       yield ReadingListLoadSuccess(updatedReadingList);
+      add(ReadingListRefreshed(event.user));
       // update the back end
       await listService.addOrUpdateListItem(
           event.user.accessToken, updatedBook);
