@@ -11,6 +11,7 @@
 .svn/
 .env*
 /lib/dsn.dart
+android/key.properties
 
 # IntelliJ related
 *.iml
