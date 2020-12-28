@@ -33,6 +33,14 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapReadingListDeletedToState(event);
     } else if (event is ReadingListDismount) {
       yield* _mapReadingListDismountToState();
+    } else if (event is UpdateBookType) {
+      yield* _mapUpdateBookTypeToState(event);
+    } else if (event is NoteAdded) {
+      yield* _mapNoteAddedToState(event);
+    } else if (event is NoteDeleted) {
+      yield* _mapNoteDeletedToState(event);
+    } else if (event is NoteUpdated) {
+      yield* _mapNoteUpdatedToState(event);
     }
   }
 
@@ -57,6 +65,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();
+      throw Exception('Reading List Refresh Failed: $err');
     }
   }
 
@@ -113,6 +122,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   Stream<ReadingListState> _mapReadingListDeletedToState(
       ReadingListDeleted event) async* {
     if (state is ReadingListLoadSuccess) {
+      yield ReadingListUpdating();
       final updatedReadingList = (state as ReadingListLoadSuccess)
           .readingList
           .where((book) => book.bookId != event.book.bookId)
@@ -125,5 +135,107 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
 
   Stream<ReadingListState> _mapReadingListDismountToState() async* {
     yield ReadingListLoadInProgress();
+  }
+
+  Stream<ReadingListState> _mapUpdateBookTypeToState(
+      UpdateBookType event) async* {
+    yield ReadingListUpdating();
+    var updatedReadingList =
+        (state as ReadingListLoadSuccess).readingList.map((book) {
+      if (book.bookId == event.book.bookId) {
+        event.book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+        event.book.type = event.newType;
+        return event.book;
+      } else {
+        return book;
+      }
+    }).toList();
+    var indexedUpdatedReadingList =
+        listRepository.reindexListWithHeaders(updatedReadingList);
+    // updatedReadingList = listRepository.updateBookTypeIndex(event.book,
+    //     updatedReadingList, (state as ReadingListLoadSuccess).readingList);
+    yield ReadingListLoadSuccess(indexedUpdatedReadingList);
+    await listService.addOrUpdateListItem(event.user.accessToken, event.book);
+  }
+
+  Stream<ReadingListState> _mapNoteAddedToState(NoteAdded event) async* {
+    try {
+      // pass list repo the book and note
+      final updatedBook =
+          listRepository.addNoteToListedBook(event.note, event.book);
+      // add the updated book to the reading list
+      var updatedReadingList =
+          (state as ReadingListLoadSuccess).readingList.map((book) {
+        if (book.bookId == event.book.bookId) {
+          return updatedBook;
+        } else {
+          return book;
+        }
+      }).toList();
+      // yield updated list
+      yield ReadingListLoadSuccess(updatedReadingList);
+      // update the back end
+      await listService.addOrUpdateListItem(
+          event.user.accessToken, updatedBook);
+    } catch (err) {
+      print(err);
+      yield ReadingListLoadFailure();
+    }
+  }
+
+  Stream<ReadingListState> _mapNoteDeletedToState(NoteDeleted event) async* {
+    try {
+      // delete note
+      // print('event.book: ${event.book.notes}');
+      final updatedBook =
+          listRepository.removeNoteFromListedBook(event.noteId, event.book);
+      // add the updated book to the reading list
+      var updatedReadingList =
+          (state as ReadingListLoadSuccess).readingList.map((book) {
+        if (book.bookId == event.book.bookId) {
+          // print('Equal? ${book == updatedBook}');
+          print('book: ${book.notes} AND updatedBook: ${updatedBook.notes}');
+          print('book: ${book.notes} AND event.book: ${event.book.notes}');
+          // return updatedBook;
+          return event.book;
+        } else {
+          return book;
+        }
+      }).toList();
+      // yield updated list
+      yield ReadingListLoadSuccess(updatedReadingList);
+      // add(ReadingListRefreshed(event.user));
+      // update the back end
+      await listService.addOrUpdateListItem(event.user.accessToken, event.book);
+    } catch (err) {
+      print(err);
+      yield ReadingListLoadFailure();
+    }
+  }
+
+  Stream<ReadingListState> _mapNoteUpdatedToState(NoteUpdated event) async* {
+    try {
+      // pass list repo the book and note
+      final updatedBook = listRepository.updateNoteForListedBook(
+          event.noteId, event.book, event.noteText);
+
+      // add the updated book to the reading list
+      var updatedReadingList =
+          (state as ReadingListLoadSuccess).readingList.map((book) {
+        if (book.bookId == event.book.bookId) {
+          return updatedBook;
+        } else {
+          return book;
+        }
+      }).toList();
+      // yield updated list
+      yield ReadingListLoadSuccess(updatedReadingList);
+      // update the back end
+      await listService.addOrUpdateListItem(
+          event.user.accessToken, updatedBook);
+    } catch (err) {
+      print(err);
+      yield ReadingListLoadFailure();
+    }
   }
 }

@@ -49,10 +49,7 @@ class ListTileItem extends StatelessWidget {
           }
         },
         child: ListTile(
-          leading: Hero(
-            tag: '${item.cover}__heroTag',
-            child: Image.network(item.cover ?? ''),
-          ),
+          leading: Image.network(item.cover ?? ''),
           title: Text(item.titleWithSubtitle ?? ''),
           subtitle: Text(item.authorsAsString ?? ''),
           trailing: RecoTileTrailing(item.recos),

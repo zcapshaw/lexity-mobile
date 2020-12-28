@@ -1,19 +1,14 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lexity_mobile/components/components.dart';
-import 'package:lexity_mobile/screens/add_note_screen.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/blocs/book_details/book_details_cubit.dart';
-import 'package:lexity_mobile/models/listed_book.dart';
 import 'package:lexity_mobile/models/note.dart';
 import 'package:lexity_mobile/models/user.dart';
-import 'package:lexity_mobile/screens/book_details_screen.dart';
-import 'package:lexity_mobile/utils/test_keys.dart';
+import 'package:lexity_mobile/screens/add_note_screen.dart';
 
 class MockBookDetailscubit extends MockBloc<BookDetailsState>
     implements BookDetailsCubit {}
@@ -33,19 +28,6 @@ void main() {
   NavigatorObserver mockObserver;
   var user = User();
 
-  var testNote = Note(
-      comment: 'Great book',
-      created: 1599787528208,
-      sourceName: 'Daniel Rediger');
-
-  var testBook = ListedBook(
-    title: 'Sapiens',
-    authors: <String>['Yuval Noah Harrari'],
-    categories: ['History', 'World'],
-    description: 'Sapiens tackles big questions in vivid language.',
-    notes: [testNote],
-  );
-
   setUp(() {
     bookDetailsCubit = MockBookDetailscubit();
     authenticationBloc = MockAuthenticationBoc();
@@ -55,58 +37,73 @@ void main() {
     when(authenticationBloc.state).thenReturn(Authenticated(user));
   });
 
-  tearDown(() {
-    bookDetailsCubit.close();
-    authenticationBloc.close();
-  });
-
-  group('BookDetailsScreen', () {
-    testWidgets('renders a spinner when in the loading state',
+  group('AddNoteScreen', () {
+    testWidgets('renders an empty state for a new note',
         (WidgetTester tester) async {
-      when(bookDetailsCubit.state).thenReturn(const BookDetailsLoading());
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider.value(
             value: authenticationBloc,
             child: BlocProvider.value(
               value: bookDetailsCubit,
-              child: BookDetailsScreen(),
+              child: const AddNoteScreen(),
             ),
           ),
         ),
       );
-      expect(find.byKey(TestKeys.bookDetailsLoadingSpinner), findsOneWidget);
+      expect(find.text('Add a note on this book'), findsOneWidget);
     });
 
-    testWidgets('renders properly when a listed book is provided',
-        (WidgetTester tester) async {
-      when(bookDetailsCubit.state).thenReturn(
-        BookDetailsReading(testBook),
+    testWidgets('users can add a note', (WidgetTester tester) async {
+      // Build the widget.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider.value(
+            value: authenticationBloc,
+            child: BlocProvider.value(
+              value: readingListBloc,
+              child: BlocProvider.value(
+                value: bookDetailsCubit,
+                child: const AddNoteScreen(),
+              ),
+            ),
+          ),
+        ),
       );
+
+      // Enter 'hi' into the TextField.
+      await tester.enterText(find.byType(TextField), 'hi');
+
+      // Expect to find the item on screen.
+      expect(find.text('hi'), findsOneWidget);
+
+      // Tap the add button.
+      await tester.tap(find.text('Done'));
+    });
+
+    testWidgets('renders note text when passed a note to edit',
+        (WidgetTester tester) async {
+      var testNote = Note(
+          id: '12345',
+          comment: 'Great book',
+          created: 1599787528208,
+          sourceName: 'Daniel Rediger');
+
       await tester.pumpWidget(
         MaterialApp(
           home: BlocProvider.value(
             value: authenticationBloc,
             child: BlocProvider.value(
               value: bookDetailsCubit,
-              child: BookDetailsScreen(),
+              child: AddNoteScreen(
+                noteId: testNote.id,
+                noteText: testNote.comment,
+              ),
             ),
           ),
         ),
       );
-
-      expect(find.text('Yuval Noah Harrari'), findsOneWidget);
-      expect(find.text('Sapiens'), findsOneWidget);
-      expect(find.text('Mark Finished'), findsOneWidget);
-      expect(find.byKey(TestKeys.bookDetailsGenreChip), findsOneWidget);
-      expect(find.text('Description'), findsOneWidget);
-      expect(find.text('Notes'), findsOneWidget);
-      expect(find.byType(ActionButton), findsNWidgets(3));
+      expect(find.text('Great book'), findsOneWidget);
     });
   });
 }
-
-//--TEST CASES--
-//DONE: renders spinner when loading
-//DONE: renders details when details are present
-//TODO: buttons call expected bloc functions

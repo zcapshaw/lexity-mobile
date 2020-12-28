@@ -22,3 +22,5 @@ class ReadingListLoadSuccess extends ReadingListState {
 }
 
 class ReadingListLoadFailure extends ReadingListState {}
+
+class ReadingListUpdating extends ReadingListState {}

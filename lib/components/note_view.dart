@@ -22,16 +22,16 @@ class NoteView extends StatelessWidget {
   final String sourceName;
 
   Future<void> _handleNoteTap(BuildContext context) async {
-    // final action = await showCupertinoModalPopup(
-    //     context: context, builder: (BuildContext context) => NoteActionSheet());
+    final action = await showCupertinoModalPopup<String>(
+        context: context, builder: (BuildContext context) => NoteActionSheet());
 
-    // if (action == 'delete') {
-    //   deleteCallback(context, noteId);
-    // }
+    if (action == 'delete') {
+      deleteCallback(noteId);
+    }
 
-    // if (action == 'edit') {
-    //   editCallback(noteId, comment);
-    // }
+    if (action == 'edit') {
+      editCallback(noteId, comment);
+    }
   }
 
   String _getInitials() {

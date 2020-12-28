@@ -6,17 +6,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
-import 'package:lexity_mobile/blocs/blocs.dart';
-import 'package:lexity_mobile/utils/test_keys.dart';
+import 'package:lexity_mobile/screens/add_note_screen.dart';
 import 'package:time_formatter/time_formatter.dart';
+
+import '../blocs/blocs.dart';
 import '../components/components.dart';
 import '../models/models.dart';
+import '../utils/test_keys.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final user = context.bloc<AuthenticationBloc>().state.user;
     final screenHeight = MediaQuery.of(context).size.height;
     final coverArtHeight = screenHeight * 0.4;
+
+    void _updateBookType(ListedBook book, String newType) {
+      context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, newType));
+      // context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
+      context.bloc<BookDetailsCubit>().closeBookDetails();
+      Navigator.pop(context);
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -25,7 +35,7 @@ class BookDetailsScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
             context.bloc<BookDetailsCubit>().closeBookDetails();
@@ -59,21 +69,48 @@ class BookDetailsScreen extends StatelessWidget {
                       children: <Widget>[
                         buildTitle(state.book.titleWithSubtitle, context),
                         buildAuthors(state.book.authorsAsString, context),
-                        //TODO: add Genre to ListItem model and pass genre in next line
+
+                        /// TODO: add Genre to ListItem model
+                        /// and pass genre in next line
                         buildGenre(state.book.primaryGenre),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             if (state is BookDetailsWantToRead)
-                              startReadingButton(),
-                            if (state is BookDetailsFinished) readAgainButton(),
+                              ActionButton(
+                                icon: Icons.play_arrow,
+                                labelText: 'Start Reading',
+                                callback: () =>
+                                    _updateBookType(state.book, 'READING'),
+                              ),
+                            if (state is BookDetailsFinished)
+                              ActionButton(
+                                icon: Icons.replay,
+                                labelText: 'Read Again',
+                                callback: () =>
+                                    _updateBookType(state.book, 'READING'),
+                              ),
                             if (state is BookDetailsReading)
-                              markFinishedButton(),
-                            if (state is BookDetailsUnlisted) addToListButton(),
+                              ActionButton(
+                                icon: Icons.done,
+                                labelText: 'Mark Finished',
+                                callback: () =>
+                                    _updateBookType(state.book, 'READ'),
+                              ),
+                            if (state is BookDetailsUnlisted)
+                              ActionButton(
+                                icon: Icons.add,
+                                labelText: 'Add To My List',
+                                callback: () {},
+                              ),
                             ActionButton(
                               icon: Icons.comment,
                               labelText: 'Add Note',
-                              callback: () {},
+                              key: TestKeys.addNoteButton,
+                              callback: () {
+                                Navigator.push<void>(
+                                    context, AddNoteScreen.route());
+                              },
                             ),
                             ActionButton(
                               icon: CupertinoIcons.share_up,
@@ -91,7 +128,7 @@ class BookDetailsScreen extends StatelessWidget {
                             description: state.book.description,
                             title: 'Description',
                           ),
-                        buildNotes(state.book.notes),
+                        buildNotes(state.book.notes, user, context, state.book),
                       ],
                     ),
                   ),
@@ -128,13 +165,10 @@ class BookDetailsScreen extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   heightFactor: 0.85,
                   widthFactor: 1.0,
-                  child: Hero(
-                    tag: '${imageUrl}__heroTag',
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.contain,
-                      height: double.infinity,
-                    ),
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.contain,
+                    height: double.infinity,
                   ),
                 ),
               ),
@@ -168,7 +202,7 @@ class BookDetailsScreen extends StatelessWidget {
             child: Chip(
               label: Text(genre.toUpperCase()),
               backgroundColor: Colors.teal[700],
-              labelPadding: EdgeInsets.symmetric(horizontal: 10),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 10),
               labelStyle: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
@@ -183,39 +217,8 @@ class BookDetailsScreen extends StatelessWidget {
           );
   }
 
-  Widget startReadingButton() {
-    return ActionButton(
-      icon: Icons.play_arrow,
-      labelText: 'Start Reading',
-      callback: () {},
-    );
-  }
-
-  Widget markFinishedButton() {
-    return ActionButton(
-      icon: Icons.done,
-      labelText: 'Mark Finished',
-      callback: () {},
-    );
-  }
-
-  Widget readAgainButton() {
-    return ActionButton(
-      icon: Icons.replay,
-      labelText: 'Read Again',
-      callback: () {},
-    );
-  }
-
-  Widget addToListButton() {
-    return ActionButton(
-      icon: Icons.add,
-      labelText: 'Add To My List',
-      callback: () {},
-    );
-  }
-
-  Widget buildNotes(List<Note> notes) {
+  Widget buildNotes(
+      List<Note> notes, User user, BuildContext context, ListedBook book) {
     return notes == null
         ? const SizedBox.shrink()
         : Padding(
@@ -232,14 +235,31 @@ class BookDetailsScreen extends StatelessWidget {
                   children: <Widget>[
                     for (var note in notes)
                       NoteView(
-                        comment: note.comment,
-                        created: formatTime(note.created),
-                        noteId: note.id,
-                        // need to add access to user image
-                        // from a new bloc
-                        // leadingImg: user.profileImg,
-                        deleteCallback: () {},
-                        editCallback: () {},
+                        comment: note.comment ?? '',
+                        created: note.created != null
+                            ? formatTime(note.created)
+                            : '',
+                        noteId: note.id ?? '',
+                        leadingImg: user.profileImg,
+                        deleteCallback: (String noteId) {
+                          // emit event to delete the note
+                          context
+                              .bloc<ReadingListBloc>()
+                              .add(NoteDeleted(noteId, book, user));
+                          // emit event to refresh the book details page
+                          context.bloc<BookDetailsCubit>().notesUpdated(book);
+                        },
+                        editCallback: (String noteId, String comment) {
+                          Navigator.push<Map>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddNoteScreen(
+                                noteId: noteId,
+                                noteText: comment,
+                              ),
+                            ),
+                          );
+                        },
                         sourceName: note.sourceName,
                         isReco: note.isReco,
                       ),

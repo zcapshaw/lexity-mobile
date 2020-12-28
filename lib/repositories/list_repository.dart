@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:pedantic/pedantic.dart';
+import 'package:uuid/uuid.dart';
 
 import '../extensions/extensions.dart';
 import '../models/models.dart';
@@ -40,7 +41,16 @@ class ListRepository {
     return sortedReadingListWithHeaders;
   }
 
-  void removeHeaders(List<ListedBook> readingList) {}
+  List<ListedBook> reindexListWithHeaders(
+      List<ListedBook> unindexedReadingList) {
+    return sortByTypeAndInjectHeaders(_removeHeaders(unindexedReadingList));
+  }
+
+  List<ListedBook> _removeHeaders(List<ListedBook> readingListWithHeaders) {
+    var readingListWithoutHeaders = readingListWithHeaders
+      ..removeWhere((book) => book.runtimeType == ListedBookHeader);
+    return readingListWithoutHeaders;
+  }
 
   List<ListedBook> addBook(ListedBook book, List<ListedBook> readingList) {
     // Get index if exists - will return -1 with no match
@@ -142,6 +152,54 @@ class ListRepository {
     }
 
     return readingList;
+  }
+
+  ListedBook addNoteToListedBook(String noteText, ListedBook book) {
+    // construct a Note object from the text passed from the UI
+    final note = Note(
+      id: Uuid().v4(),
+      comment: noteText,
+      created: DateTime.now().millisecondsSinceEpoch,
+    );
+
+    // insert note as first element in notes list
+    book.notes.insert(0, note);
+
+    // set the updated at timestamp
+    book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+
+    // return updated ListedBook object
+    return book;
+  }
+
+  ListedBook removeNoteFromListedBook(String noteId, ListedBook book) {
+    // remove note by ID and set updated timestamp
+    var newBook = book.clone();
+    print('noteId to remove: $noteId');
+    print('notes before: ${newBook.notes}');
+    newBook.notes.removeWhere((note) => note.id == noteId);
+    newBook.updatedAt = DateTime.now().millisecondsSinceEpoch;
+    print('notes after: ${newBook.notes}');
+
+    // return updated ListedBook object
+    return newBook;
+  }
+
+  ListedBook updateNoteForListedBook(
+      String noteId, ListedBook book, String newText) {
+    // update note text
+    var updatedNotes = book.notes.map((note) {
+      if (note.id == noteId) {
+        note.comment = newText;
+        return note;
+      } else {
+        return note;
+      }
+    }).toList();
+
+    book.notes = updatedNotes;
+
+    return book;
   }
 
   String _getTypeByIndex(int index, int readingCount, int toReadCount) {

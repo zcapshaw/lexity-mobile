@@ -91,3 +91,61 @@ class ReadingListDeleted extends ReadingListEvent {
 }
 
 class ReadingListDismount extends ReadingListEvent {}
+
+class UpdateBookType extends ReadingListEvent {
+  const UpdateBookType(this.book, this.user, this.newType);
+
+  final ListedBook book;
+  final User user;
+  final String newType;
+
+  @override
+  List<Object> get props => [book, user, newType];
+
+  @override
+  String toString() =>
+      'UpdateBookType { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
+}
+
+class NoteAdded extends ReadingListEvent {
+  const NoteAdded(this.book, this.user, this.note);
+
+  final ListedBook book;
+  final User user;
+  final String note;
+
+  @override
+  List<Object> get props => [book, user, note];
+
+  @override
+  String toString() => 'NoteAdded { note: $note }';
+}
+
+class NoteDeleted extends ReadingListEvent {
+  const NoteDeleted(this.noteId, this.book, this.user);
+
+  final String noteId;
+  final ListedBook book;
+  final User user;
+
+  @override
+  List<Object> get props => [noteId, book, user];
+
+  @override
+  String toString() => 'NoteDeleted { noteId: $noteId }';
+}
+
+class NoteUpdated extends ReadingListEvent {
+  const NoteUpdated({this.book, this.user, this.noteText, this.noteId});
+
+  final ListedBook book;
+  final User user;
+  final String noteText;
+  final String noteId;
+
+  @override
+  List<Object> get props => [book, user, noteText, noteId];
+
+  @override
+  String toString() => 'NoteUpdated { noteId: $noteId, comment: $noteText }';
+}

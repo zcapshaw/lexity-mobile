@@ -92,30 +92,19 @@ class _ReadingListState extends State<ReadingList> {
         false; // In case the user dismisses the dialog by clicking away from it
   }
 
-  Future<void> _navigateToBookDetails(
-      BuildContext context, ListedBook book, int listItemIndex) async {
+  void _navigateToBookDetails(
+      BuildContext context, ListedBook book, int listItemIndex) {
     //dispatch a function to update BookDetailsCubit state
-    print(book.notes);
+    print(book.type);
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
     //Navigate to book details screen
-    final result = await Navigator.push<Map>(
+
+    Navigator.push<Map>(
       context,
       MaterialPageRoute(
         builder: (context) => BookDetailsScreen(),
       ),
     );
-    //reset state upon return
-    setState(() {});
-    // TODO: Need to review if this result == true concept still works with new BookDetailCubit
-    if (result == true) {
-      Scaffold.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-          content: const Text('Successfully updated list.'),
-          backgroundColor: Colors.grey[600],
-          duration: const Duration(seconds: 1),
-        ));
-    }
   }
 
   @override
@@ -129,70 +118,91 @@ class _ReadingListState extends State<ReadingList> {
           );
         } else if (state is ReadingListLoadSuccess) {
           final readingList = state.readingList;
-          return Column(
-            children: <Widget>[
-              Flexible(
-                child: RefreshIndicator(
-                  //TODO: The refreshReadingList Future<void> doesn't returnonce the reading list is confirmed refreshed, as it should
-                  onRefresh: () => refreshReadingList(context),
-                  child: CustomReorderableListView(
-                    scrollController: reorderScrollController,
-                    scrollDirection: Axis.vertical,
-                    onReorder: (oldIndex, newIndex) => context
-                        .bloc<ReadingListBloc>()
-                        .add(ReadingListReordered(oldIndex, newIndex, user,
-                            isHomescreen: widget.isHomescreen)),
-                    children: List.generate(readingList.length, (index) {
-                      if (readingList[index] != null) {
-                        if (readingList[index] is ListedBookHeader &&
-                            widget.enableHeaders &&
-                            widget.includedTypes
-                                .contains(readingList[index].type)) {
-                          return ListTileHeader(
-                            type: readingList[index].type,
-                            key: UniqueKey(),
-                          );
-                        } else if (readingList[index] is ListedBook &&
-                            readingList[index] is! ListedBookHeader &&
-                            widget.includedTypes
-                                .contains(readingList[index].type)) {
-                          return ListTileItem(
-                            item: readingList[index],
-                            tileIndex: index,
-                            enableSwipeRight: widget.enableSwipeRight,
-                            onPressTile: _navigateToBookDetails,
-                            deletePrompt: _promptUser,
-                            typeChangeAction: _updateType,
-                            key: ValueKey(readingList[index].bookId),
-                          );
-                        } else {
-                          return Container(
-                              key: UniqueKey(), height: 0, width: 0);
+          return BlocListener<ReadingListBloc, ReadingListState>(
+            listenWhen: (previous, current) {
+              if (previous is ReadingListUpdating) {
+                return true;
+              } else {
+                return false;
+              }
+            },
+            listener: (context, state) {
+              if (state is ReadingListLoadSuccess) {
+                Scaffold.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(SnackBar(
+                    content: const Text('Successfully updated list.'),
+                    backgroundColor: Colors.grey[600],
+                    duration: const Duration(seconds: 2),
+                  ));
+              }
+            },
+            child: Column(
+              children: <Widget>[
+                Flexible(
+                  child: RefreshIndicator(
+                    //TODO: The refreshReadingList Future<void> doesn't returnonce the reading list is confirmed refreshed, as it should
+                    onRefresh: () => refreshReadingList(context),
+                    child: CustomReorderableListView(
+                      scrollController: reorderScrollController,
+                      scrollDirection: Axis.vertical,
+                      onReorder: (oldIndex, newIndex) => context
+                          .bloc<ReadingListBloc>()
+                          .add(ReadingListReordered(oldIndex, newIndex, user,
+                              isHomescreen: widget.isHomescreen)),
+                      children: List.generate(readingList.length, (index) {
+                        if (readingList[index] != null) {
+                          if (readingList[index] is ListedBookHeader &&
+                              widget.enableHeaders &&
+                              widget.includedTypes
+                                  .contains(readingList[index].type)) {
+                            return ListTileHeader(
+                              type: readingList[index].type,
+                              key: UniqueKey(),
+                            );
+                          } else if (readingList[index] is ListedBook &&
+                              readingList[index] is! ListedBookHeader &&
+                              widget.includedTypes
+                                  .contains(readingList[index].type)) {
+                            return ListTileItem(
+                              item: readingList[index],
+                              tileIndex: index,
+                              enableSwipeRight: widget.enableSwipeRight,
+                              onPressTile: _navigateToBookDetails,
+                              deletePrompt: _promptUser,
+                              typeChangeAction: _updateType,
+                              key: ValueKey(readingList[index].bookId),
+                            );
+                          } else {
+                            return Container(
+                                key: UniqueKey(), height: 0, width: 0);
+                          }
                         }
-                      }
-                    }),
+                      }),
+                    ),
                   ),
                 ),
-              ),
-              BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
-                // conditionally show empty list illustration
-                // if reading list is empty
-                if (state is StatsLoadInProgress) {
-                  return Container();
-                } else if (state is StatsLoadSuccess) if (widget.isHomescreen &&
-                    state.readingCount == 0 &&
-                    state.toReadCount == 0) {
-                  return EmptyListIllustration(widget.isHomescreen);
-                } else if (!widget.isHomescreen && state.readCount == 0) {
-                  return EmptyListIllustration(widget.isHomescreen);
-                } else {
-                  return const SizedBox.shrink();
-                }
-                else {
-                  return Container();
-                }
-              }),
-            ],
+                BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
+                  // conditionally show empty list illustration
+                  // if reading list is empty
+                  if (state is StatsLoadInProgress) {
+                    return Container();
+                  } else if (state is StatsLoadSuccess) if (widget
+                          .isHomescreen &&
+                      state.readingCount == 0 &&
+                      state.toReadCount == 0) {
+                    return EmptyListIllustration(widget.isHomescreen);
+                  } else if (!widget.isHomescreen && state.readCount == 0) {
+                    return EmptyListIllustration(widget.isHomescreen);
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                  else {
+                    return Container();
+                  }
+                }),
+              ],
+            ),
           );
         } else {
           return Container();
