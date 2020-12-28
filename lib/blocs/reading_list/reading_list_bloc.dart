@@ -150,9 +150,11 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
         return book;
       }
     }).toList();
-    updatedReadingList = listRepository.updateBookTypeIndex(event.book,
-        updatedReadingList, (state as ReadingListLoadSuccess).readingList);
-    yield ReadingListLoadSuccess(updatedReadingList);
+    var indexedUpdatedReadingList =
+        listRepository.reindexListWithHeaders(updatedReadingList);
+    // updatedReadingList = listRepository.updateBookTypeIndex(event.book,
+    //     updatedReadingList, (state as ReadingListLoadSuccess).readingList);
+    yield ReadingListLoadSuccess(indexedUpdatedReadingList);
     await listService.addOrUpdateListItem(event.user.accessToken, event.book);
   }
 
@@ -184,23 +186,27 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   Stream<ReadingListState> _mapNoteDeletedToState(NoteDeleted event) async* {
     try {
       // delete note
+      // print('event.book: ${event.book.notes}');
       final updatedBook =
           listRepository.removeNoteFromListedBook(event.noteId, event.book);
       // add the updated book to the reading list
       var updatedReadingList =
           (state as ReadingListLoadSuccess).readingList.map((book) {
         if (book.bookId == event.book.bookId) {
-          return updatedBook;
+          // print('Equal? ${book == updatedBook}');
+          print('book: ${book.notes} AND updatedBook: ${updatedBook.notes}');
+          print('book: ${book.notes} AND event.book: ${event.book.notes}');
+          // return updatedBook;
+          return event.book;
         } else {
           return book;
         }
       }).toList();
       // yield updated list
       yield ReadingListLoadSuccess(updatedReadingList);
-      add(ReadingListRefreshed(event.user));
+      // add(ReadingListRefreshed(event.user));
       // update the back end
-      await listService.addOrUpdateListItem(
-          event.user.accessToken, updatedBook);
+      await listService.addOrUpdateListItem(event.user.accessToken, event.book);
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();

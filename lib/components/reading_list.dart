@@ -120,7 +120,6 @@ class _ReadingListState extends State<ReadingList> {
           final readingList = state.readingList;
           return BlocListener<ReadingListBloc, ReadingListState>(
             listenWhen: (previous, current) {
-              print('previous: $previous');
               if (previous is ReadingListUpdating) {
                 return true;
               } else {

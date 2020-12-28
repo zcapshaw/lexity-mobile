@@ -23,7 +23,7 @@ class BookDetailsScreen extends StatelessWidget {
 
     void _updateBookType(ListedBook book, String newType) {
       context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, newType));
-      context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
+      // context.bloc<ReadingListBloc>().add(ReadingListRefreshed(user));
       context.bloc<BookDetailsCubit>().closeBookDetails();
       Navigator.pop(context);
     }

@@ -41,7 +41,16 @@ class ListRepository {
     return sortedReadingListWithHeaders;
   }
 
-  void removeHeaders(List<ListedBook> readingList) {}
+  List<ListedBook> reindexListWithHeaders(
+      List<ListedBook> unindexedReadingList) {
+    return sortByTypeAndInjectHeaders(_removeHeaders(unindexedReadingList));
+  }
+
+  List<ListedBook> _removeHeaders(List<ListedBook> readingListWithHeaders) {
+    var readingListWithoutHeaders = readingListWithHeaders
+      ..removeWhere((book) => book.runtimeType == ListedBookHeader);
+    return readingListWithoutHeaders;
+  }
 
   List<ListedBook> addBook(ListedBook book, List<ListedBook> readingList) {
     // Get index if exists - will return -1 with no match
@@ -165,11 +174,15 @@ class ListRepository {
 
   ListedBook removeNoteFromListedBook(String noteId, ListedBook book) {
     // remove note by ID and set updated timestamp
-    book.notes.removeWhere((note) => note.id == noteId);
-    book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+    var newBook = book.clone();
+    print('noteId to remove: $noteId');
+    print('notes before: ${newBook.notes}');
+    newBook.notes.removeWhere((note) => note.id == noteId);
+    newBook.updatedAt = DateTime.now().millisecondsSinceEpoch;
+    print('notes after: ${newBook.notes}');
 
     // return updated ListedBook object
-    return book;
+    return newBook;
   }
 
   ListedBook updateNoteForListedBook(
