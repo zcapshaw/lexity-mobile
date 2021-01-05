@@ -66,7 +66,7 @@ Future<Null> main() async {
     }
   };
 
-  runZonedGuarded<Future<void>>(() async {
+  await runZonedGuarded<Future<void>>(() async {
     runApp((BlocProvider(
         lazy: false, // load BLoC immediately
         create: (context) {

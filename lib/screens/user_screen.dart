@@ -135,8 +135,8 @@ class _UserInfo extends StatelessWidget {
                         alignment: AlignmentDirectional.centerStart,
                         child: Text(
                           name,
-                          style: TextStyle(
-                            color: const Color(0xFF1A6978),
+                          style: const TextStyle(
+                            color: Color(0xFF1A6978),
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                             letterSpacing: 0.2,
@@ -195,8 +195,8 @@ class _UserInfo extends StatelessWidget {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text: following,
-                        style: TextStyle(
-                          color: const Color(0xFF1A6978),
+                        style: const TextStyle(
+                          color: Color(0xFF1A6978),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                           height: 1.5,
@@ -221,8 +221,8 @@ class _UserInfo extends StatelessWidget {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text: followers,
-                        style: TextStyle(
-                          color: const Color(0xFF1A6978),
+                        style: const TextStyle(
+                          color: Color(0xFF1A6978),
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                           height: 1.5,
@@ -247,8 +247,8 @@ class _UserInfo extends StatelessWidget {
                         textAlign: TextAlign.center,
                         text: TextSpan(
                           text: FollowerNumbers.converter(state.readCount ?? 0),
-                          style: TextStyle(
-                            color: const Color(0xFF1A6978),
+                          style: const TextStyle(
+                            color: Color(0xFF1A6978),
                             fontWeight: FontWeight.w600,
                             fontSize: 13,
                             height: 1.5,
@@ -304,10 +304,10 @@ class _UserMenu extends StatelessWidget {
                   onPressed: () {
                     context.bloc<AuthenticationBloc>().add(const LoggedOut());
                   },
-                  child: Text(
+                  child: const Text(
                     'Logout',
                     style: TextStyle(
-                      color: const Color(0xFF1A6978),
+                      color: Color(0xFF1A6978),
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.3,
@@ -350,7 +350,7 @@ class _ToggleButtons extends StatelessWidget {
                 ),
               ),
             ),
-            child: Icon(Icons.collections_bookmark),
+            child: const Icon(Icons.collections_bookmark),
           ),
           Container(
             width: MediaQuery.of(context).size.width * 0.50,
@@ -363,7 +363,7 @@ class _ToggleButtons extends StatelessWidget {
                 ),
               ),
             ),
-            child: Icon(Icons.chat),
+            child: const Icon(Icons.chat),
           ),
         ],
         isSelected: listStatus,

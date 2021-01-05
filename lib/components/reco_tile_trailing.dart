@@ -18,6 +18,7 @@ class RecoTileTrailing extends StatelessWidget {
 
     if (recos.isNotEmpty) {
       return Container(
+        // ignore: lines_longer_than_80_chars
         // TODO: Discuss whether we want to use the below fixed width instead of MainAxisSize.min
         //width: MediaQuery.of(context).size.width * 0.35,
         child: Column(
@@ -92,7 +93,7 @@ class RecoImg extends StatelessWidget {
       child: Center(
         child: Text(
           initials,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               letterSpacing: 1),

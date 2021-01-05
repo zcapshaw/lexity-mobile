@@ -1,8 +1,8 @@
 class FollowerNumbers {
   static String converter(int number) {
-    String stringNum = number.toString();
-    int length = stringNum?.length;
-    String newNumber = '0';
+    var stringNum = number.toString();
+    var length = stringNum?.length;
+    var newNumber = '0';
     if (length != null) {
       if (length <= 3) {
         newNumber = stringNum;
@@ -14,20 +14,20 @@ class FollowerNumbers {
   }
 
   static String _addNotation(String largeNumber, int length) {
-    String notationNumber = '0';
-    double size = length / 3;
+    var notationNumber = '0';
+    var size = length / 3;
     if (size <= 2) {
-      String base = largeNumber.substring(0, length - 3);
-      String decimal = largeNumber.substring(length - 3, length - 2);
-      notationNumber = base + '.' + decimal + 'K';
+      var base = largeNumber.substring(0, length - 3);
+      var decimal = largeNumber.substring(length - 3, length - 2);
+      notationNumber = '$base.{$decimal}K';
     } else if (size <= 3) {
-      String base = largeNumber.substring(0, length - 6);
-      String decimal = largeNumber.substring(length - 6, length - 5);
-      notationNumber = base + '.' + decimal + 'M';
+      var base = largeNumber.substring(0, length - 6);
+      var decimal = largeNumber.substring(length - 6, length - 5);
+      notationNumber = '$base.{$decimal}M';
     } else if (size <= 4) {
-      String base = largeNumber.substring(0, length - 9);
-      String decimal = largeNumber.substring(length - 9, length - 8);
-      notationNumber = base + '.' + decimal + 'B';
+      var base = largeNumber.substring(0, length - 9);
+      var decimal = largeNumber.substring(length - 9, length - 8);
+      notationNumber = '$base.{$decimal}B';
     }
     return notationNumber;
   }

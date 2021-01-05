@@ -25,14 +25,12 @@ void main() {
   BookDetailsCubit bookDetailsCubit;
   AuthenticationBloc authenticationBloc;
   ReadingListBloc readingListBloc;
-  NavigatorObserver mockObserver;
   var user = User();
 
   setUp(() {
     bookDetailsCubit = MockBookDetailscubit();
     authenticationBloc = MockAuthenticationBoc();
     readingListBloc = MockReadingListBloc();
-    mockObserver = MockNavigatorObserver();
     when(bookDetailsCubit.state).thenReturn(const BookDetailsLoading());
     when(authenticationBloc.state).thenReturn(Authenticated(user));
   });

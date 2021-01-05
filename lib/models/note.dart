@@ -16,12 +16,12 @@ class Note extends Equatable {
       this.sourceImg,
       this.sourceId});
 
-  String id;
+  final String id;
   String comment;
-  int created;
-  String sourceName;
-  String sourceImg;
-  String sourceId;
+  final int created;
+  final String sourceName;
+  final String sourceImg;
+  final String sourceId;
 
   bool get isReco => sourceName != null;
 
@@ -35,6 +35,7 @@ class Note extends Equatable {
   // newly instantiated notes have no id
   bool get newNote => id == null;
 
+  // ignore: sort_constructors_first
   factory Note.fromJson(Map<String, dynamic> json) => _$NoteFromJson(json);
 
   Map<String, dynamic> toJson() => _$NoteToJson(this);

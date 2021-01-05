@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class TextInputModal extends StatefulWidget {
+  TextInputModal({@required this.callback, this.initialText});
+
   final Function callback;
   final String initialText;
-  TextInputModal({@required this.callback, this.initialText});
 
   @override
   _TextInputModalState createState() => _TextInputModalState();
@@ -26,10 +27,11 @@ class _TextInputModalState extends State<TextInputModal> {
     super.dispose();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Container(
       alignment: Alignment.topCenter,
-      padding: EdgeInsets.symmetric(vertical: 5),
+      padding: const EdgeInsets.symmetric(vertical: 5),
       child: Column(
         children: <Widget>[
           Container(
@@ -55,16 +57,16 @@ class _TextInputModalState extends State<TextInputModal> {
                 enableSuggestions: true,
                 maxLines: 5,
                 minLines: 2,
-                padding: EdgeInsets.only(left: 15, top: 10, bottom: 10),
+                padding: const EdgeInsets.only(left: 15, top: 10, bottom: 10),
                 placeholder: 'Jot down notes about this book',
                 suffix: RawMaterialButton(
-                  constraints: BoxConstraints.tightForFinite(),
-                  child: Text(
+                  constraints: const BoxConstraints.tightForFinite(),
+                  child: const Text(
                     'Save',
                     style: TextStyle(color: Colors.blue),
                   ),
                   onPressed: () => widget.callback(_textController.text),
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                 ),
                 suffixMode: OverlayVisibilityMode.editing,
                 textCapitalization: TextCapitalization.sentences,

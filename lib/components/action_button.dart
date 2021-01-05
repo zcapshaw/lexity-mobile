@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class ActionButton extends StatelessWidget {
   const ActionButton(
-      {@required this.icon, this.labelText, @required this.callback, this.key});
+      {@required this.icon, this.labelText, @required this.callback, Key key})
+      : super(key: key);
 
   final IconData icon;
   final String labelText;
   final void Function() callback;
-  final Key key;
 
   @override
   Widget build(BuildContext context) {
@@ -25,8 +25,8 @@ class ActionButton extends StatelessWidget {
               size: 24,
               color: Colors.grey[700],
             ),
-            padding: EdgeInsets.all(16),
-            shape: CircleBorder(),
+            padding: const EdgeInsets.all(16),
+            shape: const CircleBorder(),
           ),
         ),
         Text(labelText),

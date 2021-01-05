@@ -10,12 +10,13 @@ abstract class BookDetailsState extends Equatable {
   ListedBook get book => null;
 }
 
-//The default state, if no book is selected
+// The default state, if no book is selected
 class BookDetailsLoading extends BookDetailsState {
   const BookDetailsLoading();
 }
 
-//The following 4 states allow the screen to conditionally show correct action buttons
+// The following 4 states allow the screen to
+// conditionally show correct action buttons
 class BookDetailsReading extends BookDetailsState {
   const BookDetailsReading(this.book);
   final ListedBook book;

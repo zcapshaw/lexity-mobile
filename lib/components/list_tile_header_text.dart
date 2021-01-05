@@ -7,7 +7,7 @@ class ListTileHeaderText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.only(top: 8),
       child: Text(
         text,
         style: Theme.of(context).textTheme.headline6,

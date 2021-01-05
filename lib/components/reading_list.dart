@@ -141,7 +141,8 @@ class _ReadingListState extends State<ReadingList> {
               children: <Widget>[
                 Flexible(
                   child: RefreshIndicator(
-                    //TODO: The refreshReadingList Future<void> doesn't returnonce the reading list is confirmed refreshed, as it should
+                    // ignore: lines_longer_than_80_chars
+                    //TODO: The refreshReadingList Future<void> doesn't return once the reading list is confirmed refreshed, as it should
                     onRefresh: () => refreshReadingList(context),
                     child: CustomReorderableListView(
                       scrollController: reorderScrollController,
@@ -177,6 +178,9 @@ class _ReadingListState extends State<ReadingList> {
                             return Container(
                                 key: UniqueKey(), height: 0, width: 0);
                           }
+                        } else {
+                          return Container(
+                              key: UniqueKey(), height: 0, width: 0);
                         }
                       }),
                     ),
@@ -187,17 +191,17 @@ class _ReadingListState extends State<ReadingList> {
                   // if reading list is empty
                   if (state is StatsLoadInProgress) {
                     return Container();
-                  } else if (state is StatsLoadSuccess) if (widget
-                          .isHomescreen &&
-                      state.readingCount == 0 &&
-                      state.toReadCount == 0) {
-                    return EmptyListIllustration(widget.isHomescreen);
-                  } else if (!widget.isHomescreen && state.readCount == 0) {
-                    return EmptyListIllustration(widget.isHomescreen);
+                  } else if (state is StatsLoadSuccess) {
+                    if (widget.isHomescreen &&
+                        state.readingCount == 0 &&
+                        state.toReadCount == 0) {
+                      return EmptyListIllustration(widget.isHomescreen);
+                    } else if (!widget.isHomescreen && state.readCount == 0) {
+                      return EmptyListIllustration(widget.isHomescreen);
+                    } else {
+                      return const SizedBox.shrink();
+                    }
                   } else {
-                    return const SizedBox.shrink();
-                  }
-                  else {
                     return Container();
                   }
                 }),

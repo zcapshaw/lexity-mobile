@@ -9,15 +9,15 @@ class SwipeLeftBackground extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Icon(
+                const Icon(
                   Icons.delete_outline,
                   color: Colors.white,
                 ),
-                Text(
+                const Text(
                   'Delete',
                   style: TextStyle(
                     color: Colors.white,
@@ -33,9 +33,9 @@ class SwipeLeftBackground extends StatelessWidget {
 }
 
 class SwipeRightBackground extends StatelessWidget {
-  final String type;
-
   SwipeRightBackground({this.type});
+
+  final String type;
 
   @override
   Widget build(BuildContext context) {
@@ -45,19 +45,17 @@ class SwipeRightBackground extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           Container(
-            padding: EdgeInsets.only(left: 16),
+            padding: const EdgeInsets.only(left: 16),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Icon(
-                  this.type == 'READING'
-                      ? Icons.check
-                      : Icons.play_circle_filled,
+                  type == 'READING' ? Icons.check : Icons.play_circle_filled,
                   color: Colors.white,
                 ),
                 Text(
-                  this.type == 'READING' ? 'Complete' : 'Start',
-                  style: TextStyle(
+                  type == 'READING' ? 'Complete' : 'Start',
+                  style: const TextStyle(
                     color: Colors.white,
                   ),
                 )

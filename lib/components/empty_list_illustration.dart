@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class EmptyListIllustration extends StatelessWidget {
-  final bool isHomeScreen;
-
   EmptyListIllustration(this.isHomeScreen);
+
+  final bool isHomeScreen;
 
   String _getText(bool isHomeScreen) {
     return isHomeScreen
@@ -19,7 +19,7 @@ Tap the + button to add some books.'''
       child: Column(
         children: <Widget>[
           Container(
-            padding: EdgeInsets.fromLTRB(50, 5, 50, 30),
+            padding: const EdgeInsets.fromLTRB(50, 5, 50, 30),
             child: Text(_getText(isHomeScreen),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.subtitle2),
@@ -27,7 +27,7 @@ Tap the + button to add some books.'''
           Flexible(
             flex: 1,
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 100),
+              padding: const EdgeInsets.symmetric(horizontal: 100),
               child: Image.asset('assets/undraw_note_list.png'),
             ),
           ),

@@ -42,18 +42,19 @@ class _MainScreen extends State<MainScreen> {
         body: _widgetScreens.elementAt(_selectedIndex),
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
+          selectedFontSize: 0,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: SizedBox.shrink(),
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.search),
-              title: SizedBox.shrink(),
+              label: '',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle),
-              title: SizedBox.shrink(),
+              label: '',
             ),
           ],
           currentIndex: _selectedIndex,
