@@ -53,11 +53,6 @@ class BookDetailsScreen extends StatelessWidget {
               context: context,
               removeTop: true,
               child: ListView(
-                physics: const ScrollPhysics(
-                  // Scroll physics for environments that prevent the scroll
-                  // offset from reaching beyond the bounds of the content
-                  parent: ClampingScrollPhysics(),
-                ),
                 children: <Widget>[
                   buildCoverArt(state.book.cover ?? '', coverArtHeight),
                   Container(
