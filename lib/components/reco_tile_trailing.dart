@@ -4,13 +4,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../models/models.dart';
 
 class RecoTileTrailing extends StatelessWidget {
-  RecoTileTrailing(this.recos);
+  RecoTileTrailing(this.notes);
 
-  final List<Note> recos;
+  final List<Note> notes;
   final int maxRecoRender = 3;
 
   @override
   Widget build(BuildContext context) {
+    var recos = notes.toList()..retainWhere((Note n) => n?.sourceName != null);
     var recoCount = recos.length;
     var recosBeyondMax = recoCount - maxRecoRender;
     var renderRecos =

@@ -175,10 +175,11 @@ class ListRepository {
   ListedBook removeNoteFromListedBook(String noteId, ListedBook book) {
     // remove note by ID and set updated timestamp
     var newBook = book.clone();
-    print('noteId to remove: $noteId');
-    print('notes before: ${newBook.notes}');
-    newBook.notes.removeWhere((note) => note.id == noteId);
-    newBook.updatedAt = DateTime.now().millisecondsSinceEpoch;
+    var updatedNotes = List<Note>.from(book.notes)
+      ..removeWhere((note) => note.id == noteId);
+    newBook
+      ..notes = updatedNotes
+      ..updatedAt = DateTime.now().millisecondsSinceEpoch;
     print('notes after: ${newBook.notes}');
 
     // return updated ListedBook object

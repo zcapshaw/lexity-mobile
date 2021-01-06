@@ -117,6 +117,7 @@ class _ReadingListState extends State<ReadingList> {
             child: CircularProgressIndicator(),
           );
         } else if (state is ReadingListLoadSuccess) {
+          print('BlocBuilder with ReadingListLoadSuccess');
           final readingList = state.readingList;
           return BlocListener<ReadingListBloc, ReadingListState>(
             listenWhen: (previous, current) {
