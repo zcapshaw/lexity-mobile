@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../extensions/extensions.dart';
 import '../models/models.dart';
 
 class RecoTileTrailing extends StatelessWidget {
@@ -11,7 +12,8 @@ class RecoTileTrailing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var recos = notes.toList()..retainWhere((Note n) => n?.sourceName != null);
+    var allRecos = notes.toList()..retainWhere((Note n) => n.isReco);
+    var recos = allRecos.uniqueSourceName;
     var recoCount = recos.length;
     var recosBeyondMax = recoCount - maxRecoRender;
     var renderRecos =
