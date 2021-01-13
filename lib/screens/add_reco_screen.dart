@@ -1,6 +1,13 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
 
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../blocs/blocs.dart';
 import '../components/list_tile_text_field.dart';
+import '../models/models.dart';
+import '../services/services.dart';
+import '../utils/utils.dart';
 
 class AddRecoScreen extends StatefulWidget {
   const AddRecoScreen({Key key, this.recoSource, this.recoText, this.userId})
@@ -17,12 +24,33 @@ class AddRecoScreen extends StatefulWidget {
 class _AddRecoScreenState extends State<AddRecoScreen> {
   String recoSource;
   String recoText;
+  bool isConnected;
+  ListService listService = ListService();
+  User user;
 
   @override
   void initState() {
     recoSource = widget.recoSource;
     recoText = widget.recoText;
+    user = context.bloc<AuthenticationBloc>().state.user;
+    _isConnected();
     super.initState();
+  }
+
+  // Separate helper function, since initState() is NOT async
+  void _isConnected() async {
+    isConnected = await InternetConnectionTest.isConnected();
+  }
+
+  void _recoSourceInput(String text) async {
+    print('isConnected:$isConnected');
+    final twitterUsers =
+        await listService.searchTwitterUsers(user.accessToken, user.id, text);
+    final decoded = jsonDecode(twitterUsers.data as String) as List;
+    print(decoded);
+    setState(() {
+      recoSource = text;
+    });
   }
 
   @override
@@ -63,11 +91,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                 headerText: 'Who recommended this book to you?',
                 hintText: 'Type a name',
                 maxLines: 1,
-                onTextChange: (text) {
-                  setState(() {
-                    recoSource = text;
-                  });
-                },
+                onTextChange: _recoSourceInput,
               ),
               const Divider(),
               TextFieldTile(
