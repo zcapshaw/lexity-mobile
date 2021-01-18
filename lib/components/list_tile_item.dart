@@ -52,7 +52,7 @@ class ListTileItem extends StatelessWidget {
           leading: Image.network(item.cover ?? ''),
           title: Text(item.titleWithSubtitle ?? ''),
           subtitle: Text(item.authorsAsString ?? ''),
-          trailing: RecoTileTrailing(item.recos),
+          trailing: RecoTileTrailing(item.notes),
           onTap: () => onPressTile(context, item, tileIndex),
         ),
       ),

@@ -144,6 +144,7 @@ class ListService {
     );
   }
 
+  // ignore: lines_longer_than_80_chars
   //TODO: With new API, should eventually name getListedBooksByUser (or something like this) - it should also be passed a User type
   Future<APIResponse<Object>> getListItemSummary(
       String accessToken, String userId) async {

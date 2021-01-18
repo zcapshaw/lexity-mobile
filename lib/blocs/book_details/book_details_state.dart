@@ -10,28 +10,41 @@ abstract class BookDetailsState extends Equatable {
   ListedBook get book => null;
 }
 
-//The default state, if no book is selected
+// The default state, if no book is selected
 class BookDetailsLoading extends BookDetailsState {
   const BookDetailsLoading();
 }
 
-//The following 4 states allow the screen to conditionally show correct action buttons
+// The following 4 states allow the screen to
+// conditionally show correct action buttons
 class BookDetailsReading extends BookDetailsState {
-  final ListedBook book;
   const BookDetailsReading(this.book);
+  final ListedBook book;
+
+  @override
+  List<Object> get props => [book];
 }
 
 class BookDetailsWantToRead extends BookDetailsState {
-  final ListedBook book;
   const BookDetailsWantToRead(this.book);
+  final ListedBook book;
+
+  @override
+  List<Object> get props => [book];
 }
 
 class BookDetailsFinished extends BookDetailsState {
-  final ListedBook book;
   const BookDetailsFinished(this.book);
+  final ListedBook book;
+
+  @override
+  List<Object> get props => [book];
 }
 
 class BookDetailsUnlisted extends BookDetailsState {
-  final ListedBook book;
   const BookDetailsUnlisted(this.book);
+  final ListedBook book;
+
+  @override
+  List<Object> get props => [book];
 }

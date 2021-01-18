@@ -68,7 +68,7 @@ class NoteView extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: Text(
                       'Recommended by $sourceName',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
                 comment == '' ? const SizedBox.shrink() : Text(comment)
@@ -81,7 +81,7 @@ class NoteView extends StatelessWidget {
                   backgroundColor: Colors.grey[600],
                   child: Text(
                     _getInitials(),
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white, fontWeight: FontWeight.bold),
                   ),
                 )

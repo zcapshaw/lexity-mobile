@@ -37,7 +37,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
 
   void _saveListItem(BuildContext context) async {
     final creationDateTime = DateTime.now().millisecondsSinceEpoch;
-    final List<String> labels = [];
+    final labels = <String>[];
     final note = Note(
       id: Uuid().v4(),
       comment: noteText,
@@ -259,8 +259,8 @@ class AddRecoTile extends StatelessWidget {
               ],
             ),
             Container(
-              child:
-                  Icon(Icons.arrow_forward_ios, size: 20, color: Colors.grey),
+              child: const Icon(Icons.arrow_forward_ios,
+                  size: 20, color: Colors.grey),
             ),
           ],
         ),

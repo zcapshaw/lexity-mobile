@@ -72,7 +72,7 @@ void main() {
   });
 
   test('Updated book with different type is moved to appropriate index', () {
-    ListedBook listBookTwoRead = listBookTwo.clone()..changeType = 'READ';
+    var listBookTwoRead = listBookTwo.clone()..changeType = 'READ';
     expect(
         listRepository.updateBookTypeIndex(
           listBookTwoRead,

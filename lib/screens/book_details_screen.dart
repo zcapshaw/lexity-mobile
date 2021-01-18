@@ -53,11 +53,6 @@ class BookDetailsScreen extends StatelessWidget {
               context: context,
               removeTop: true,
               child: ListView(
-                physics: const ScrollPhysics(
-                  // Scroll physics for environments that prevent the scroll
-                  // offset from reaching beyond the bounds of the content
-                  parent: ClampingScrollPhysics(),
-                ),
                 children: <Widget>[
                   buildCoverArt(state.book.cover ?? '', coverArtHeight),
                   Container(
@@ -68,9 +63,6 @@ class BookDetailsScreen extends StatelessWidget {
                       children: <Widget>[
                         buildTitle(state.book.titleWithSubtitle, context),
                         buildAuthors(state.book.authorsAsString, context),
-
-                        /// TODO: add Genre to ListItem model
-                        /// and pass genre in next line
                         buildGenre(state.book.primaryGenre),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -202,7 +194,7 @@ class BookDetailsScreen extends StatelessWidget {
               label: Text(genre.toUpperCase()),
               backgroundColor: Colors.teal[700],
               labelPadding: const EdgeInsets.symmetric(horizontal: 10),
-              labelStyle: TextStyle(
+              labelStyle: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w600,
                 fontSize: 12,
@@ -285,7 +277,7 @@ class ExpandableDescription extends StatelessWidget {
           collapsed: ExpandableButton(
             child: ShaderMask(
               shaderCallback: (rect) {
-                return LinearGradient(
+                return const LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.black, Colors.transparent],

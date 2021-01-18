@@ -31,8 +31,8 @@ class Book {
   final String description;
   final List<String> categories;
   final String listId;
-  final String type;
-  final List<Note> recos;
+  String type;
+  List<Note> recos;
   final bool inUserList;
   final bool userRead;
 

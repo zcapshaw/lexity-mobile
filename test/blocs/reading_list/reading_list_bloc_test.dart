@@ -48,21 +48,4 @@ void main() {
     act: (bloc) => bloc.add(ReadingListDismount()),
     expect: <ReadingListState>[ReadingListLoadInProgress()],
   );
-
-  // blocTest<ReadingListBloc, ReadingListState>(
-  //   'yeilds [ReadingListLoadSuccess] with ReadingListAdded event',
-  //   build: () {
-  //     when(listRepository.addBook(newBook, readingListWithHeaders))
-  //         .thenAnswer((_) => readingListAfterNewBook);
-  //     when(listService.addOrUpdateListItem(user.accessToken, newBook))
-  //         .thenAnswer((_) => Future.value(APIResponse(data: 'data')));
-  //     return readingListBloc
-  //       ..emit(ReadingListLoadSuccess(readingListWithHeaders));
-  //   },
-  //   act: (bloc) {
-  //     bloc.add(ReadingListAdded(newBook, user));
-  //   },
-  //   skip: 0,
-  //   expect: <ReadingListState>[ReadingListLoadSuccess(readingListAfterNewBook)],
-  // );
 }

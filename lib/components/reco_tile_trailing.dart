@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import '../extensions/extensions.dart';
 import '../models/models.dart';
 
 class RecoTileTrailing extends StatelessWidget {
-  RecoTileTrailing(this.recos);
+  RecoTileTrailing(this.notes);
 
-  final List<Note> recos;
+  final List<Note> notes;
   final int maxRecoRender = 3;
 
   @override
   Widget build(BuildContext context) {
+    var allRecos = notes.toList()..retainWhere((Note n) => n.isReco);
+    var recos = allRecos.uniqueSourceName;
     var recoCount = recos.length;
     var recosBeyondMax = recoCount - maxRecoRender;
     var renderRecos =
@@ -18,6 +21,7 @@ class RecoTileTrailing extends StatelessWidget {
 
     if (recos.isNotEmpty) {
       return Container(
+        // ignore: lines_longer_than_80_chars
         // TODO: Discuss whether we want to use the below fixed width instead of MainAxisSize.min
         //width: MediaQuery.of(context).size.width * 0.35,
         child: Column(
@@ -92,7 +96,7 @@ class RecoImg extends StatelessWidget {
       child: Center(
         child: Text(
           initials,
-          style: TextStyle(
+          style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
               letterSpacing: 1),

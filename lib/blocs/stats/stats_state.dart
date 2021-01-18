@@ -11,11 +11,11 @@ abstract class StatsState extends Equatable {
 class StatsLoadInProgress extends StatsState {}
 
 class StatsLoadSuccess extends StatsState {
+  const StatsLoadSuccess(this.readingCount, this.toReadCount, this.readCount);
+
   final int readingCount;
   final int toReadCount;
   final int readCount;
-
-  const StatsLoadSuccess(this.readingCount, this.toReadCount, this.readCount);
 
   @override
   List<Object> get props => [readingCount, toReadCount, readCount];
@@ -24,13 +24,13 @@ class StatsLoadSuccess extends StatsState {
     int count;
     switch (type) {
       case 'READING':
-        count = this.readingCount;
+        count = readingCount;
         break;
       case 'TO_READ':
-        count = this.toReadCount;
+        count = toReadCount;
         break;
       case 'READ':
-        count = this.readCount;
+        count = readCount;
         break;
     }
     return count ?? 0;
@@ -38,6 +38,7 @@ class StatsLoadSuccess extends StatsState {
 
   @override
   String toString() {
+    // ignore: lines_longer_than_80_chars
     return 'StatsLoadSuccess { readingCount: $readingCount, toReadCount: $toReadCount, readCount: $readCount }';
   }
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lexity_mobile/components/components.dart';
-import 'package:lexity_mobile/screens/add_note_screen.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:lexity_mobile/blocs/blocs.dart';
@@ -29,8 +28,6 @@ class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 void main() {
   BookDetailsCubit bookDetailsCubit;
   AuthenticationBloc authenticationBloc;
-  ReadingListBloc readingListBloc;
-  NavigatorObserver mockObserver;
   var user = User();
 
   var testNote = Note(
@@ -49,8 +46,6 @@ void main() {
   setUp(() {
     bookDetailsCubit = MockBookDetailscubit();
     authenticationBloc = MockAuthenticationBoc();
-    readingListBloc = MockReadingListBloc();
-    mockObserver = MockNavigatorObserver();
     when(bookDetailsCubit.state).thenReturn(const BookDetailsLoading());
     when(authenticationBloc.state).thenReturn(Authenticated(user));
   });

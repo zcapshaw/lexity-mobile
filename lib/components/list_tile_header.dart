@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 
 class ListTileHeader extends StatelessWidget {
-  final String type;
-
   ListTileHeader({@required this.type, @required Key key}) : super(key: key);
 
+  final String type;
+
+  @override
   Widget build(BuildContext context) {
     return ListTile(
       title: BuildTitle(type),
@@ -18,9 +19,9 @@ class ListTileHeader extends StatelessWidget {
 }
 
 class BuildTitle extends StatelessWidget {
-  final String headingType;
-
   BuildTitle(this.headingType);
+
+  final String headingType;
 
 // Construct Header text based on list type
   String _getHeaderText(String type, int count) {
@@ -50,11 +51,12 @@ class BuildTitle extends StatelessWidget {
     return headerText;
   }
 
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<StatsCubit, StatsState>(builder: (context, state) {
       return Container(
         alignment: Alignment.topLeft,
-        margin: EdgeInsets.only(top: 30, bottom: 10),
+        margin: const EdgeInsets.only(top: 30, bottom: 10),
         child: Text(
           (state is StatsLoadSuccess)
               ? _getHeaderText(headingType, state.countByType(headingType))

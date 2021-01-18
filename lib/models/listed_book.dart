@@ -8,21 +8,20 @@ part 'listed_book.g.dart';
 @JsonSerializable(includeIfNull: false)
 class ListedBook extends Book with EquatableMixin {
   ListedBook(
-      {String
-          title, // TODO: See if this test to instantiate worked - if so, apply elsewhere
-      this.subtitle,
-      this.authors,
+      {String title,
+      String subtitle,
+      List authors,
       this.cover,
-      this.googleId,
-      this.description,
-      this.categories,
-      this.listId,
+      String googleId,
+      String description,
+      List<String> categories,
+      String listId,
       this.userId,
       this.bookId,
-      this.type,
-      this.inUserList,
-      this.userRead,
-      this.recos,
+      String type,
+      bool inUserList,
+      bool userRead,
+      List<Note> recos,
       this.labels,
       this.notes,
       this.created,
@@ -41,22 +40,11 @@ class ListedBook extends Book with EquatableMixin {
           userRead: userRead,
         );
 
-  //final String title;
-  final String subtitle;
-  final List authors;
   final String cover;
-  final String googleId;
-  final String description;
-  final List<String> categories;
-  final String listId;
   final String userId;
   final String bookId;
-  final bool inUserList;
-  final bool userRead;
   final int created;
   int updated;
-  String type;
-  List<Note> recos;
   List labels;
   List<Note> notes;
 
@@ -102,11 +90,12 @@ class ListedBook extends Book with EquatableMixin {
   // ignore: sort_constructors_first
   factory ListedBook.fromJson(Map<String, dynamic> json) =>
       _$ListedBookFromJson(json);
+  @override
   Map<String, dynamic> toJson() => _$ListedBookToJson(this);
 
-// Custom json serialization, to isolate only variables used on the backend
-// for the LIST vertice. Several other ListedBook inherited values (e.g. Title, Authors)
-// belong to the Books node
+  /// Custom json serialization, to isolate only variables used on the backend
+  /// for the LIST vertice. Several other ListedBook inherited values
+  /// (e.g. Title, Authors) belong to the Books node
   Map<String, dynamic> listElementsToJson() {
     final val = <String, dynamic>{};
 

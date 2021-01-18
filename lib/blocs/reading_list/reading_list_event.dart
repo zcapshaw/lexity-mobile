@@ -56,6 +56,7 @@ class ReadingListUpdated extends ReadingListEvent {
 
   @override
   String toString() =>
+      // ignore: lines_longer_than_80_chars
       'ReadingListUpdated { updatedBook: ${updatedBook.bookId}, user: ${user.id} }';
 }
 
@@ -73,6 +74,7 @@ class ReadingListReordered extends ReadingListEvent {
 
   @override
   String toString() =>
+      // ignore: lines_longer_than_80_chars
       'ReadingListReordered { oldIndex: $oldIndex, newIndex: $newIndex, user: ${user.id}, isHomescreen: $isHomescreen }';
 }
 
@@ -104,6 +106,7 @@ class UpdateBookType extends ReadingListEvent {
 
   @override
   String toString() =>
+      // ignore: lines_longer_than_80_chars
       'UpdateBookType { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
 }
 
