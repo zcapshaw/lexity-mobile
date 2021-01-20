@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,8 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
   bool isConnected;
   ListService listService = ListService();
   User user;
+  final double twitterImgSize = 50.0;
+  Timer _debounce;
 
   @override
   void initState() {
@@ -37,19 +40,26 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
   // Separate helper function, since initState() is NOT async
   void _isConnected() async {
     isConnected = await InternetConnectionTest.isConnected();
   }
 
-  void _recoSourceInput(String text) async {
-    print('isConnected:$isConnected');
-    final twitterUsers =
-        await listService.searchTwitterUsers(user.accessToken, user.id, text);
-    final decoded = jsonDecode(twitterUsers.data as String) as List;
-    print(decoded);
-    setState(() {
-      recoSource = text;
+  Future<List> _twitterUserList() async {
+    if (_debounce?.isActive ?? false) _debounce.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      print('isConnected:$isConnected');
+      final twitterUsers = await listService.searchTwitterUsers(
+          user.accessToken, user.id, recoSource);
+      final decoded = jsonDecode(twitterUsers.data as String) as List;
+      print(decoded);
+      return decoded;
     });
   }
 
@@ -84,26 +94,71 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
-          child: ListView(
+          child: Column(
             children: <Widget>[
               TextFieldTile(
                 intialValue: recoSource,
                 headerText: 'Who recommended this book to you?',
                 hintText: 'Type a name',
                 maxLines: 1,
-                onTextChange: _recoSourceInput,
-              ),
-              const Divider(),
-              TextFieldTile(
-                intialValue: recoText,
-                headerText: 'Notes',
-                hintText: 'Add a note about what they said...',
-                maxLines: null,
                 onTextChange: (text) {
                   setState(() {
-                    recoText = text;
+                    recoSource = text;
                   });
                 },
+              ),
+              const Divider(),
+              Expanded(
+                child: FutureBuilder(
+                    future: _twitterUserList(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<List> snapshot) {
+                      print('snapshot data ${snapshot.data}');
+                      if (snapshot.data == null ||
+                          snapshot.data.isEmpty ||
+                          recoSource.isEmpty) {
+                        return TextFieldTile(
+                          intialValue: recoText,
+                          headerText: 'Notes',
+                          hintText: 'Add a note about what they said...',
+                          maxLines: null,
+                          onTextChange: (text) {
+                            setState(() {
+                              recoText = text;
+                            });
+                          },
+                        );
+                      }
+                      return ListView.builder(
+                        itemCount: snapshot.data.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return Column(
+                            children: <Widget>[
+                              ListTile(
+                                title: Text(
+                                    snapshot.data[index]['name'].toString()),
+                                subtitle: Text(
+                                    '@${snapshot.data[index]['screen_name'].toString()}'),
+                                leading: Container(
+                                  width: twitterImgSize,
+                                  height: twitterImgSize,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(snapshot.data[index]
+                                                  ['profile_image_url_https']
+                                              .toString() ??
+                                          ''),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    }),
               ),
             ],
           ),
