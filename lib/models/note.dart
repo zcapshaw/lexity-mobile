@@ -13,15 +13,21 @@ class Note extends Equatable {
       this.comment,
       this.created,
       this.sourceName,
+      this.sourceTwitterScreenName,
       this.sourceImg,
-      this.sourceId});
+      this.sourceId,
+      this.sourceTwitterId,
+      this.sourceTwitterVerified});
 
   final String id;
   String comment;
   final int created;
   final String sourceName;
+  final String sourceTwitterScreenName;
   final String sourceImg;
   final String sourceId;
+  final int sourceTwitterId;
+  final bool sourceTwitterVerified;
 
   bool get isReco => sourceName != null;
 
