@@ -6,15 +6,21 @@ class TextFieldTile extends StatelessWidget {
   TextFieldTile(
       {@required this.onTextChange,
       @required this.maxLines,
+      this.onSubmitted,
       this.headerText = '',
       this.hintText,
-      this.intialValue});
+      this.intialValue,
+      this.focusNode,
+      this.controller});
 
   final void Function(String) onTextChange;
   final int maxLines;
+  final void Function(String) onSubmitted;
   final String headerText;
   final String hintText;
   final String intialValue;
+  final FocusNode focusNode;
+  final TextEditingController controller;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +31,8 @@ class TextFieldTile extends StatelessWidget {
         children: <Widget>[
           ListTileHeaderText(headerText),
           TextFormField(
+            focusNode: focusNode,
+            controller: controller,
             initialValue: intialValue,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
@@ -34,6 +42,7 @@ class TextFieldTile extends StatelessWidget {
             ),
             maxLines: maxLines,
             onChanged: onTextChange,
+            onFieldSubmitted: onSubmitted,
           )
         ],
       ),
