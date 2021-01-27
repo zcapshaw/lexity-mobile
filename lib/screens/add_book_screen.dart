@@ -25,6 +25,11 @@ class _AddBookScreenState extends State<AddBookScreen> {
   String noteText;
   String recoSource;
   String recoText;
+  String recoTwitterScreenName;
+  String sourceImg;
+  int sourceTwitterId;
+  bool sourceTwitterVerified;
+
   User user;
   ListService get listService => GetIt.I<ListService>();
 
@@ -33,6 +38,21 @@ class _AddBookScreenState extends State<AddBookScreen> {
     super.initState();
     // assign user for access to UserModel methods
     user = context.bloc<AuthenticationBloc>().state.user;
+  }
+
+  void _test() {
+    final creationDateTime = DateTime.now().millisecondsSinceEpoch;
+    final reco = Note(
+        id: Uuid().v4(),
+        sourceId: null,
+        sourceTwitterId: sourceTwitterId,
+        sourceName: recoSource,
+        sourceTwitterScreenName: recoTwitterScreenName,
+        sourceImg: sourceImg,
+        comment: recoText,
+        sourceTwitterVerified: sourceTwitterVerified,
+        created: creationDateTime);
+    print('test reco: $reco');
   }
 
   void _saveListItem(BuildContext context) async {
@@ -46,9 +66,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
     final reco = Note(
         id: Uuid().v4(),
         sourceId: null,
+        sourceTwitterId: sourceTwitterId,
         sourceName: recoSource,
-        sourceImg: null,
+        sourceTwitterScreenName: recoTwitterScreenName,
+        sourceImg: sourceImg,
         comment: recoText,
+        sourceTwitterVerified: sourceTwitterVerified,
         created: creationDateTime);
     final notes = [note, reco];
 
@@ -90,7 +113,12 @@ class _AddBookScreenState extends State<AddBookScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => AddRecoScreen(
-            userId: user.id, recoSource: recoSource, recoText: recoText),
+            recoSource: recoSource,
+            recoText: recoText,
+            recoTwitterScreenName: recoTwitterScreenName,
+            sourceImg: sourceImg,
+            sourceTwitterId: sourceTwitterId,
+            sourceTwitterVerified: sourceTwitterVerified),
       ),
     );
 
@@ -98,6 +126,15 @@ class _AddBookScreenState extends State<AddBookScreen> {
       this.recoSource =
           result != null ? result['recoSource'] as String : recoSource;
       this.recoText = result != null ? result['recoText'] as String : recoText;
+      sourceTwitterId =
+          result != null ? result['sourceTwitterId'] as int : sourceTwitterId;
+      recoTwitterScreenName = result != null
+          ? result['recoTwitterScreenName'] as String
+          : recoTwitterScreenName;
+      sourceImg = result != null ? result['sourceImg'] as String : sourceImg;
+      sourceTwitterVerified = result != null
+          ? result['sourceTwitterVerified'] as bool
+          : sourceTwitterVerified;
     });
   }
 
@@ -114,7 +151,8 @@ class _AddBookScreenState extends State<AddBookScreen> {
           actions: <Widget>[
             FlatButton(
               onPressed: () {
-                _saveListItem(context);
+                //_saveListItem(context);
+                _test();
               },
               child: Text(
                 'Done',
