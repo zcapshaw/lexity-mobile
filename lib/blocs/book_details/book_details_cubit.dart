@@ -19,14 +19,15 @@ class BookDetailsCubit extends Cubit<BookDetailsState> {
   }
 
   void noteDeleted(ListedBook book, String noteId) {
+    emit(const BookDetailsLoading());
+
     // remove the deleted note from the book and
     // emit new state to refresh the view
-    var updatedBook = book.clone();
     var updatedNotes = List<Note>.from(book.notes)
       ..removeWhere((note) => note.id == noteId);
-    updatedBook.notes = updatedNotes;
+    book.notes = updatedNotes;
 
-    viewBookDetails(updatedBook);
+    viewBookDetails(book);
   }
 
   void viewBookDetails(ListedBook book) {

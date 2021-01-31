@@ -2,11 +2,13 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lexity_mobile/blocs/book_details/book_details_cubit.dart';
 import 'package:lexity_mobile/models/listed_book.dart';
+import 'package:lexity_mobile/models/note.dart';
 
 void main() {
+  var testNote = Note(id: '123', comment: 'comment');
   var readingBook = ListedBook(type: 'READING');
   var wantToReadBook = ListedBook(type: 'TO_READ');
-  var readBook = ListedBook(type: 'READ');
+  var readBook = ListedBook(type: 'READ', notes: [testNote]);
 
   group('BookDetailsCubit', () {
     test('initial state is loading', () {
@@ -41,9 +43,19 @@ void main() {
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
-      'refreshes the state of the page after updating a note',
+      'refreshes the page after updating a note',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.notesUpdated(readBook),
+      expect: <BookDetailsState>[
+        const BookDetailsLoading(),
+        BookDetailsFinished(readBook)
+      ],
+    );
+
+    blocTest<BookDetailsCubit, BookDetailsState>(
+      'refreshes the page after deleting a note',
+      build: () => BookDetailsCubit(),
+      act: (cubit) => cubit.noteDeleted(readBook, '123'),
       expect: <BookDetailsState>[
         const BookDetailsLoading(),
         BookDetailsFinished(readBook)
