@@ -8,7 +8,7 @@ void main() {
   var testNote = Note(id: '123', comment: 'comment');
   var readingBook = ListedBook(type: 'READING');
   var wantToReadBook = ListedBook(type: 'TO_READ');
-  var readBook = ListedBook(type: 'READ', notes: [testNote]);
+  var readBook = ListedBook(type: 'READ', title: 'Sapiens', notes: [testNote]);
 
   group('BookDetailsCubit', () {
     test('initial state is loading', () {
@@ -53,13 +53,14 @@ void main() {
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
-      'refreshes the page after deleting a note',
+      'Deleting a note refreshes the page and removes note by id',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.noteDeleted(readBook, '123'),
       expect: <BookDetailsState>[
         const BookDetailsLoading(),
         BookDetailsFinished(readBook)
       ],
+      verify: (cubit) => expect(cubit.state.book.notes, isEmpty),
     );
   });
 }
