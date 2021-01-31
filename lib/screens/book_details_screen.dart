@@ -233,12 +233,15 @@ class BookDetailsScreen extends StatelessWidget {
                         noteId: note.id ?? '',
                         leadingImg: user.profileImg,
                         deleteCallback: (String noteId) {
-                          // emit event to delete the note
+                          // emit event to delete the note from reading list
                           context
                               .bloc<ReadingListBloc>()
                               .add(NoteDeleted(noteId, book, user));
-                          // emit event to refresh the book details page
-                          context.bloc<BookDetailsCubit>().notesUpdated(book);
+                          print(book.notes);
+                          // emit event to re-render the view
+                          context
+                              .bloc<BookDetailsCubit>()
+                              .noteDeleted(book, noteId);
                         },
                         editCallback: (String noteId, String comment) {
                           Navigator.push<Map>(

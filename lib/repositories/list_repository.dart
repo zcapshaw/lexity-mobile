@@ -180,7 +180,6 @@ class ListRepository {
     newBook
       ..notes = updatedNotes
       ..updatedAt = DateTime.now().millisecondsSinceEpoch;
-    print('notes after: ${newBook.notes}');
 
     // return updated ListedBook object
     return newBook;
