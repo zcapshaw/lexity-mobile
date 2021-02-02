@@ -216,7 +216,7 @@ class AddBookBackground extends StatelessWidget {
     return Column(
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 80),
+          padding: const EdgeInsets.symmetric(horizontal: 80),
           child: Container(
             child: Text(
               'Pro tip: You can search by title, author, or ISBN',
@@ -230,7 +230,7 @@ class AddBookBackground extends StatelessWidget {
             ),
           ),
         ),
-        Container(
+        Expanded(
           child: Image.asset('assets/undraw_reading_time_gvg0.png'),
         ),
       ],
