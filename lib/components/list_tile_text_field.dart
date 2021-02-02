@@ -11,7 +11,8 @@ class TextFieldTile extends StatelessWidget {
       this.hintText,
       this.intialValue,
       this.focusNode,
-      this.controller});
+      this.controller,
+      this.bgColor});
 
   final void Function(String) onTextChange;
   final int maxLines;
@@ -21,6 +22,7 @@ class TextFieldTile extends StatelessWidget {
   final String intialValue;
   final FocusNode focusNode;
   final TextEditingController controller;
+  final Color bgColor;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +45,7 @@ class TextFieldTile extends StatelessWidget {
             maxLines: maxLines,
             onChanged: onTextChange,
             onFieldSubmitted: onSubmitted,
+            style: TextStyle(backgroundColor: bgColor),
           )
         ],
       ),

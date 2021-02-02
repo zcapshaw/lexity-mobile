@@ -47,6 +47,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
   FocusNode recoSourceFocus = FocusNode();
   TextEditingController recoSourceTxtController;
   TextEditingController recoTextTxtController;
+  Color recoSourceTxtBackground;
 
   @override
   void initState() {
@@ -56,6 +57,9 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
     sourceImg = widget.sourceImg;
     sourceTwitterId = widget.sourceTwitterId;
     sourceTwitterVerified = widget.sourceTwitterVerified;
+    recoSourceTxtBackground = widget.sourceTwitterId == null
+        ? Colors.transparent
+        : const Color(0XFFC0EBFC);
     recoSourceTxtController = TextEditingController(text: widget.recoSource);
     recoTextTxtController = TextEditingController(text: widget.recoText);
     recoSourceFocus.addListener(_onRecoSourceFocusChange);
@@ -78,6 +82,9 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
 
   // called by onTextChange of reco input
   void _debounceRecoSource(String text) {
+    setState(() {
+      recoSourceTxtBackground = Colors.transparent;
+    });
     if (_debounce?.isActive ?? false) _debounce.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
@@ -100,16 +107,15 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
       recoTwitterScreenName = twitterScreenName;
       sourceImg = twitterImg;
       sourceTwitterVerified = twitterVerified;
+      recoSourceTxtBackground = const Color(0XFFC0EBFC);
     });
   }
 
   Future<List> _twitterUserList() async {
-    print('isConnected:$isConnected');
     if (recoSourceFocus.hasFocus) {
       final twitterUsers = await listService.searchTwitterUsers(
           user.accessToken, user.id, recoSource);
       final decoded = jsonDecode(twitterUsers.data as String) as List;
-      print(decoded);
       return decoded;
     } else {
       return <String>[];
@@ -135,6 +141,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
       sourceImg = null;
       sourceTwitterId = null;
       sourceTwitterVerified = null;
+      recoSourceTxtBackground = Colors.transparent;
     });
   }
 
@@ -187,6 +194,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                   _debounceRecoSource(text);
                 },
                 onSubmitted: _onRecoSourceSubmitted,
+                bgColor: recoSourceTxtBackground,
               ),
               const Divider(),
               Expanded(
@@ -194,8 +202,6 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                     future: _twitterUserList(),
                     builder:
                         (BuildContext context, AsyncSnapshot<List> snapshot) {
-                      print('snapshot data: ${snapshot.data}');
-                      print('Focused? ${recoSourceFocus.hasFocus}');
                       if (recoSourceFocus.hasFocus) {
                         if (snapshot.data == null ||
                             snapshot.data.isEmpty ||
@@ -230,8 +236,8 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                                       ),
                                     ),
                                     onTap: () => _onTapTwitterUser(
-                                        twitterId:
-                                            snapshot.data[index]['id'] as int,
+                                        twitterId: snapshot.data[index]
+                                            ['twitter_id'] as int,
                                         twitterName: snapshot.data[index]
                                             ['name'] as String,
                                         twitterScreenName: snapshot.data[index]
