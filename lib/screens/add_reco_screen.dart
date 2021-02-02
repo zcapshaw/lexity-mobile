@@ -181,7 +181,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                 focusNode: recoSourceFocus,
                 controller: recoSourceTxtController,
                 headerText: 'Who recommended this book to you?',
-                hintText: 'Type a name',
+                hintText: 'Type a name or Twitter handle',
                 maxLines: 1,
                 onTextChange: (text) {
                   _debounceRecoSource(text);
