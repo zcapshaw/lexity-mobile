@@ -14,9 +14,10 @@ import 'package:lexity_mobile/screens/add_book_screen.dart';
 enum Origin { fab, navSearch }
 
 class BookSearchScreen extends StatefulWidget {
-  BookSearchScreen({this.origin});
+  BookSearchScreen({this.origin, this.navCallback});
 
   final Origin origin;
+  final void Function() navCallback;
 
   @override
   _BookSearchScreenState createState() => _BookSearchScreenState();
@@ -26,12 +27,27 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
   final String illustration = 'assets/undraw_reading_time_gvg0.svg';
   String queryText = '';
   User user;
+  FocusNode searchInput;
 
   @override
   void initState() {
     super.initState();
     // assign user for access to UserModel methods
     user = context.bloc<AuthenticationBloc>().state.user;
+    searchInput = FocusNode();
+
+    //autofocus the keyboard if user is coming from FAB click
+    if (widget.origin == Origin.fab) {
+      searchInput.requestFocus();
+    }
+  }
+
+  @override
+  void dispose() {
+    // Clean up the focus node when the Form is disposed.
+    searchInput.dispose();
+
+    super.dispose();
   }
 
   //This async function returns a List of Books from the API response
@@ -53,34 +69,6 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
       } catch (err) {
         print('Issue generating list of books from search: $err');
       }
-      // Populate the books array by looping over jsonData
-      // and creating a Book for each element
-      // for (var b in jsonData) {
-      //   // handle books that come back from Google with missing data
-      //   final cover =
-      //       b['cover'] != null ? b['cover']['thumbnail'] as String : '';
-      //   final subtitle = b['subtitle'] as String ?? '';
-      //   final inUserList = b['inUserList'] as bool;
-      //   final userRead = b['userRead'] as bool;
-      //   final title = b['title'] as String ?? '';
-      //   final authors = b['authors'] as List<dynamic> ?? <String>[''];
-      //   final description = b['description'] as String ?? '';
-      //   final categories = b['categories'] as List<String> ?? <String>[''];
-      //   final googleId = b['googleId'] as String;
-      //   //construct a Book object and add it to the books array
-      //   final book = Book(
-      //       title: title,
-      //       subtitle: subtitle,
-      //       authors: authors,
-      //       inUserList: inUserList,
-      //       userRead: userRead,
-      //       thumbnail: cover,
-      //       categories: categories,
-      //       description: description,
-      //       googleId: googleId);
-
-      //   books.add(book);
-      // }
     } else {
       print(data.statusCode);
       print(data.reasonPhrase);
@@ -138,7 +126,7 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                       children: <Widget>[
                         Expanded(
                           child: CupertinoTextField(
-                            autofocus: true,
+                            focusNode: searchInput,
                             autocorrect: false,
                             clearButtonMode: OverlayVisibilityMode.editing,
                             decoration: BoxDecoration(
@@ -164,17 +152,18 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
                         const SizedBox(
                           width: 5,
                         ),
-                        // this button should not be shown on main_screen under
-                        // search it should only be shown in the add a book flow
-                        if (widget.origin == Origin.fab)
-                          FlatButton(
-                            onPressed: () {
+                        FlatButton(
+                          onPressed: () {
+                            if (widget.origin == Origin.fab) {
                               Navigator.pop(context);
-                            },
-                            child: const Text('Cancel'),
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                          )
+                            } else {
+                              widget.navCallback();
+                            }
+                          },
+                          child: const Text('Cancel'),
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                        )
                       ],
                     ),
                   ),
