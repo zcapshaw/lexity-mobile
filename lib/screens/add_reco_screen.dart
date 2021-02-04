@@ -82,13 +82,16 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
 
   // called by onTextChange of reco input
   void _debounceRecoSource(String text) {
-    setState(() {
-      recoSourceTxtBackground = Colors.transparent;
-    });
     if (_debounce?.isActive ?? false) _debounce.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       setState(() {
         recoSource = text;
+
+        // While it creates a slight delayed, it's important to have this
+        // setState in the debouncer, as it otherwise causes the
+        // _twitterUserList() to be called every time there's a keystroke
+        // which is highly ennificent and overwhelms the backend
+        recoSourceTxtBackground = Colors.transparent;
       });
     });
   }
@@ -112,7 +115,8 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
   }
 
   Future<List> _twitterUserList() async {
-    if (recoSourceFocus.hasFocus) {
+    if (recoSourceFocus.hasFocus && recoSource.isNotEmpty) {
+      print('called');
       final twitterUsers = await listService.searchTwitterUsers(
           user.accessToken, user.id, recoSource);
       final decoded = jsonDecode(twitterUsers.data as String) as List;
