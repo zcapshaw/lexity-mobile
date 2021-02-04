@@ -40,21 +40,6 @@ class _AddBookScreenState extends State<AddBookScreen> {
     user = context.bloc<AuthenticationBloc>().state.user;
   }
 
-  void _test() {
-    final creationDateTime = DateTime.now().millisecondsSinceEpoch;
-    final reco = Note(
-        id: Uuid().v4(),
-        sourceId: null,
-        sourceTwitterId: sourceTwitterId,
-        sourceName: recoSource,
-        sourceTwitterScreenName: recoTwitterScreenName,
-        sourceImg: sourceImg,
-        comment: recoText,
-        sourceTwitterVerified: sourceTwitterVerified,
-        created: creationDateTime);
-    print('test reco: $reco');
-  }
-
   void _saveListItem(BuildContext context) async {
     final creationDateTime = DateTime.now().millisecondsSinceEpoch;
     final labels = <String>[];
@@ -151,8 +136,7 @@ class _AddBookScreenState extends State<AddBookScreen> {
           actions: <Widget>[
             FlatButton(
               onPressed: () {
-                //_saveListItem(context);
-                _test();
+                _saveListItem(context);
               },
               child: Text(
                 'Done',
