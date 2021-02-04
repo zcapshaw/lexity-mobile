@@ -116,7 +116,6 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
 
   Future<List> _twitterUserList() async {
     if (recoSourceFocus.hasFocus && recoSource.isNotEmpty) {
-      print('called');
       final twitterUsers = await listService.searchTwitterUsers(
           user.accessToken, user.id, recoSource);
       final decoded = jsonDecode(twitterUsers.data as String) as List;
