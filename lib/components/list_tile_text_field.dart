@@ -12,7 +12,7 @@ class TextFieldTile extends StatelessWidget {
       this.intialValue,
       this.focusNode,
       this.controller,
-      this.bgColor});
+      this.bgColor = Colors.transparent});
 
   final void Function(String) onTextChange;
   final int maxLines;
