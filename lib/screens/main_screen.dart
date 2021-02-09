@@ -34,12 +34,20 @@ class _MainScreen extends State<MainScreen> {
     });
   }
 
+  Future<bool> _onBackPressed() async {
+    if (_selectedIndex != 0) {
+      setState(() {
+        _selectedIndex = 0;
+      });
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+      onWillPop: _onBackPressed,
       child: Scaffold(
         body: IndexedStack(
           index: _selectedIndex,
