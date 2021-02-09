@@ -90,7 +90,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
         // While it creates a slight delayed, it's important to have this
         // setState in the debouncer, as it otherwise causes the
         // _twitterUserList() to be called every time there's a keystroke
-        // which is highly ennificent and overwhelms the backend
+        // which is highly inefficient and overwhelms the backend
         recoSourceTxtBackground = Colors.transparent;
       });
     });
@@ -157,29 +157,33 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
           style: Theme.of(context).textTheme.subtitle1,
         ),
         actions: <Widget>[
-          FlatButton(
-            onPressed: () {
-              recoSource.isEmpty && recoText.isNotEmpty
-                  ? Scaffold.of(context).showSnackBar(SnackBar(
-                      backgroundColor: Colors.red[300],
-                      content: const Text('Reco notes require a source.')))
-                  : Navigator.pop(context, {
-                      'recoSource': recoSource,
-                      'recoText': recoText,
-                      'sourceTwitterId': sourceTwitterId,
-                      'recoTwitterScreenName': recoTwitterScreenName,
-                      'sourceImg': sourceImg,
-                      'sourceTwitterVerified': sourceTwitterVerified
-                    });
-            },
-            child: Text(
-              'Done',
-              style: TextStyle(
-                color: Colors.teal[700],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
+          // Have to use builder widget to prevent showSnackBar from being
+          // called on the same level as the created Scaffold
+          Builder(
+              builder: (context) => FlatButton(
+                    onPressed: () {
+                      recoSource.isEmpty && recoText.isNotEmpty
+                          ? Scaffold.of(context).showSnackBar(SnackBar(
+                              backgroundColor: Colors.red[300],
+                              content:
+                                  const Text('Reco notes require a source.')))
+                          : Navigator.pop(context, {
+                              'recoSource': recoSource,
+                              'recoText': recoText,
+                              'sourceTwitterId': sourceTwitterId,
+                              'recoTwitterScreenName': recoTwitterScreenName,
+                              'sourceImg': sourceImg,
+                              'sourceTwitterVerified': sourceTwitterVerified
+                            });
+                    },
+                    child: Text(
+                      'Done',
+                      style: TextStyle(
+                        color: Colors.teal[700],
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ))
         ],
       ),
       body: SafeArea(
@@ -209,7 +213,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                         if (snapshot.data == null ||
                             snapshot.data.isEmpty ||
                             recoSource.isEmpty) {
-                          return buildRecoTextInput();
+                          return _buildRecoTextInput();
                         } else {
                           return ListView.builder(
                             itemCount: snapshot.data.length,
@@ -259,7 +263,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
                         }
                       } else {
                         // if !recoSourceFocus.hasFocus
-                        return buildRecoTextInput();
+                        return _buildRecoTextInput();
                       }
                     }),
               ),
@@ -270,7 +274,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
     );
   }
 
-  Widget buildRecoTextInput() {
+  Widget _buildRecoTextInput() {
     return TextFieldTile(
       controller: recoTextTxtController,
       headerText: 'Notes',
