@@ -53,12 +53,17 @@ class _UserScreenState extends State<UserScreen> {
                     booksRead: FollowerNumbers.converter(0),
                   ),
                 ),
-                _ToggleButtons(
-                  selectedIndex: selectedIndex,
-                  listStatus: listStatus,
-                  callback: buttonCallback,
-                ),
-                if (selectedIndex == 0) readList,
+                readList,
+
+                // For now, commenting out toggle buttons, as we don't have
+                // any additional data or design to leverage at this time
+
+                // _ToggleButtons(
+                //   selectedIndex: selectedIndex,
+                //   listStatus: listStatus,
+                //   callback: buttonCallback,
+                // ),
+                // if (selectedIndex == 0) readList,
               ],
             ),
           ),
