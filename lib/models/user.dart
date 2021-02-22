@@ -20,4 +20,7 @@ class User {
   int joined;
   int followers;
   int friends;
+  int twitterId;
+
+  bool get hasTwitterConnected => twitterId != null;
 }
