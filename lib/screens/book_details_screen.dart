@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lexity_mobile/screens/add_note_screen.dart';
 import 'package:time_formatter/time_formatter.dart';
 
@@ -217,9 +218,16 @@ class BookDetailsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Padding(
-                  padding: EdgeInsets.only(bottom: 8.0),
-                  child: ListTileHeaderText('Notes'),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    children: [
+                      const ListTileHeaderText('Notes'),
+                      TwitterShareButton(),
+                    ],
+                  ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -263,6 +271,30 @@ class BookDetailsScreen extends StatelessWidget {
               ],
             ),
           );
+  }
+}
+
+class TwitterShareButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: OutlineButton(
+        onPressed: () {
+          Navigator.push<void>(context, AddNoteScreen.route());
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const FaIcon(
+              FontAwesomeIcons.twitter,
+              size: 16,
+              color: Colors.lightBlueAccent,
+            ),
+            Text('  Share Notes', style: Theme.of(context).textTheme.bodyText2),
+          ],
+        ),
+      ),
+    );
   }
 }
 
