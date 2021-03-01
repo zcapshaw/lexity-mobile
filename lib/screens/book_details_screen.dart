@@ -8,6 +8,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lexity_mobile/screens/add_note_screen.dart';
+import 'package:lexity_mobile/screens/select_notes_screen.dart';
 import 'package:time_formatter/time_formatter.dart';
 
 import '../blocs/blocs.dart';
@@ -280,7 +281,7 @@ class TwitterShareButton extends StatelessWidget {
     return Container(
       child: OutlineButton(
         onPressed: () {
-          Navigator.push<void>(context, AddNoteScreen.route());
+          Navigator.push<void>(context, SelectNotesScreen.route());
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
