@@ -97,9 +97,22 @@ class NoteSelectorCard extends StatelessWidget {
         ListTile(
           title: Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[Text(noteText)],
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Flexible(
+                  child: Text(
+                    noteText,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Checkbox(
+                    value: true,
+                    onChanged: null,
+                  ),
+                )
+              ],
             ),
           ),
           onTap: () {},
