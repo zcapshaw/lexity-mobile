@@ -13,11 +13,11 @@ void main() {
       });
     });
 
-    group('LoginWithTwitter', () {
+    group('LogInWithService', () {
       test('supports value comparisons', () {
         expect(
-          const LogInWithTwitter(),
-          const LogInWithTwitter(),
+          const LogInWithService('twitter'),
+          const LogInWithService('twitter'),
         );
       });
     });
