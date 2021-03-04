@@ -17,7 +17,7 @@ class AppStarted extends AuthenticationEvent {
 class LogInWithService extends AuthenticationEvent {
   const LogInWithService(this.service);
 
-  final String service;
+  final LogInService service;
 }
 
 // User has logged in

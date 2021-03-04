@@ -5,6 +5,7 @@ import 'package:lexity_mobile/models/models.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
 import 'package:lexity_mobile/repositories/repositories.dart';
+import 'package:lexity_mobile/utils/utils.dart';
 import 'package:uni_links/uni_links.dart';
 import 'package:url_launcher/url_launcher.dart';
 

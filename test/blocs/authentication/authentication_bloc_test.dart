@@ -4,6 +4,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/models/models.dart';
+import 'package:lexity_mobile/utils/utils.dart';
 import 'package:lexity_mobile/repositories/repositories.dart';
 import 'package:mockito/mockito.dart';
 
@@ -72,7 +73,7 @@ void main() {
         authenticationRepository: authenticationRepository,
         userRepository: userRepository,
       ),
-      act: (bloc) => bloc.add(const LogInWithService('twitter')),
+      act: (bloc) => bloc.add(const LogInWithService(LogInService.twitter)),
       expect: const <AuthenticationState>[
         AuthenticationLoading(),
         Unauthenticated(),
