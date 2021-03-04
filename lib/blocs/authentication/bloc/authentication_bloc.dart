@@ -51,9 +51,9 @@ class AuthenticationBloc
     if (event is LoggedOut) {
       yield const Unauthenticated();
     }
-    if (event is LogInWithTwitter) {
+    if (event is LogInWithService) {
       yield const AuthenticationLoading();
-      await _authenticationRepository.logInWithTwitter();
+      await _authenticationRepository.logInWithService(event.service);
       yield const Unauthenticated();
     }
     if (event is InboundUriLinkReceived) {
@@ -61,7 +61,7 @@ class AuthenticationBloc
       if (success) {
         // if user successfully retreived, set state to Authenticated
         yield Authenticated(_userRepository.appUser);
-        // close the twitter web view
+        // close the logInWithService web view
         await closeWebView();
       } else {
         yield const AuthenticationFailed();

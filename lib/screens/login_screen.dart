@@ -21,12 +21,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool signUp = true;
 
   void _logInWithTwitter() {
-    context.bloc<AuthenticationBloc>().add(const LogInWithTwitter());
+    context.bloc<AuthenticationBloc>().add(const LogInWithService('twitter'));
   }
 
-  // Temporary for quick quick auth testing
-  void signUpWithApple() async {
-    context.bloc<AuthenticationBloc>().add(const LoggedIn());
+  void _loginWithApple() {
+    context.bloc<AuthenticationBloc>().add(const LogInWithService('apple'));
   }
 
   void _toggleSignin() {
@@ -90,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             buttonText: signUp
                                 ? 'SIGN UP WITH APPLE'
                                 : 'SIGN IN WITH APPLE',
-                            callback: signUpWithApple,
+                            callback: _loginWithApple,
                             icon: const FaIcon(
                               FontAwesomeIcons.apple,
                               color: Color(0xFF000000),
