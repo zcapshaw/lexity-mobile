@@ -34,7 +34,7 @@ android/key.properties
 .pub/
 /build/
 /debug/
-*..last_build_id
+**/ios/Flutter/.last_build_id
 
 
 # Web related
