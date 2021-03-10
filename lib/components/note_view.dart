@@ -8,14 +8,16 @@ class NoteView extends StatelessWidget {
       this.noteId,
       this.deleteCallback,
       this.editCallback,
-      this.leadingImg,
+      this.noteSrcImg,
+      this.userImg,
       this.isReco,
       this.sourceName});
 
   final String comment;
   final String created;
   final String noteId;
-  final String leadingImg;
+  final String noteSrcImg;
+  final String userImg;
   final Function deleteCallback;
   final Function editCallback;
   final bool isReco;
@@ -53,6 +55,31 @@ class NoteView extends StatelessWidget {
     return initials;
   }
 
+  Widget _getAvatar() {
+    if (sourceName != null) {
+      if (noteSrcImg != null) {
+        return CircleAvatar(
+          backgroundImage: NetworkImage(noteSrcImg ?? ''),
+          backgroundColor: Colors.grey[600],
+        );
+      } else {
+        return CircleAvatar(
+          backgroundColor: Colors.grey[600],
+          child: Text(
+            _getInitials(),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        );
+      }
+    } else {
+      return CircleAvatar(
+        backgroundImage: NetworkImage(userImg ?? ''),
+        backgroundColor: Colors.grey[600],
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -76,19 +103,7 @@ class NoteView extends StatelessWidget {
             ),
           ),
           subtitle: Text(created),
-          leading: sourceName != null
-              ? CircleAvatar(
-                  backgroundColor: Colors.grey[600],
-                  child: Text(
-                    _getInitials(),
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                )
-              : CircleAvatar(
-                  backgroundImage: NetworkImage(leadingImg ?? ''),
-                  backgroundColor: Colors.grey[600],
-                ),
+          leading: _getAvatar(),
           onTap: () => _handleNoteTap(context),
         ),
         const Divider(),
