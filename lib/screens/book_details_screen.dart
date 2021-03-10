@@ -231,7 +231,8 @@ class BookDetailsScreen extends StatelessWidget {
                             ? formatTime(note.created)
                             : '',
                         noteId: note.id ?? '',
-                        leadingImg: user.profileImg,
+                        noteSrcImg: note.sourceImg,
+                        userImg: user.profileImg,
                         deleteCallback: (String noteId) {
                           // emit event to delete the note from reading list
                           context
