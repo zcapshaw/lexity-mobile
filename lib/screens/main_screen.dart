@@ -18,28 +18,48 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _widgetScreens = [
-    HomeScreen(),
-    BookSearchScreen(
-      origin: Origin.navSearch,
-    ),
-    UserScreen()
-  ];
-
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  void _returnHome() {
+    // dismiss OS keyboard
+    FocusScope.of(context).unfocus();
+
+    //return to home screen
+    setState(() {
+      _selectedIndex = 0;
+    });
+  }
+
+  Future<bool> _onBackPressed() async {
+    if (_selectedIndex != 0) {
+      setState(() {
+        _selectedIndex = 0;
+      });
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+      onWillPop: _onBackPressed,
       child: Scaffold(
-        body: _widgetScreens.elementAt(_selectedIndex),
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: <Widget>[
+            HomeScreen(),
+            BookSearchScreen(
+              origin: Origin.navSearch,
+              navCallback: _returnHome,
+            ),
+            UserScreen()
+          ],
+        ),
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
           selectedFontSize: 0,
