@@ -4,7 +4,10 @@ import 'package:lexity_mobile/components/reading_list.dart';
 import 'package:lexity_mobile/screens/book_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  HomeScreen({Key key}) : super(key: key);
+  HomeScreen({this.navIndex, Key key}) : super(key: key);
+
+  final int navIndex;
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -37,6 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ReadingList(
                 includedTypes: ['READING', 'TO_READ'],
                 isHomescreen: true,
+                navIndex: widget.navIndex,
               ),
             ],
           ),

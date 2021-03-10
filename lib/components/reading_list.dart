@@ -13,18 +13,19 @@ import './list_tile_item.dart';
 import './reorderable_list_w_physics.dart';
 
 class ReadingList extends StatefulWidget {
-  ReadingList({
-    @required this.includedTypes,
-    this.enableSwipeRight = true,
-    this.enableHeaders = true,
-    this.isHomescreen = false,
-  });
+  ReadingList(
+      {@required this.includedTypes,
+      this.enableSwipeRight = true,
+      this.enableHeaders = true,
+      this.isHomescreen = false,
+      this.navIndex});
 
   final List<String> includedTypes;
   final bool enableSwipeRight;
   final bool enableHeaders;
   // used for conditional indexing on homescreen (when there's no READ list)
   final bool isHomescreen;
+  final int navIndex;
 
   @override
   _ReadingListState createState() => _ReadingListState();
@@ -109,6 +110,7 @@ class _ReadingListState extends State<ReadingList> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.navIndex);
     return Flexible(
       child: BlocBuilder<ReadingListBloc, ReadingListState>(
           builder: (context, state) {

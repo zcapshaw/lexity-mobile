@@ -17,6 +17,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
+  final ScrollController scrollController = ScrollController();
 
   void _onItemTapped(int index) {
     setState(() {
@@ -52,7 +53,9 @@ class _MainScreen extends State<MainScreen> {
         body: IndexedStack(
           index: _selectedIndex,
           children: <Widget>[
-            HomeScreen(),
+            HomeScreen(
+              navIndex: _selectedIndex,
+            ),
             BookSearchScreen(
               origin: Origin.navSearch,
               navCallback: _returnHome,
