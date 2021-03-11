@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/blocs/blocs.dart';
 
 import 'package:lexity_mobile/screens/home_screen.dart';
 import 'package:lexity_mobile/screens/user_screen.dart';
@@ -17,9 +19,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
-  final ScrollController scrollController = ScrollController();
 
-  void _onItemTapped(int index) {
+  void _onItemTapped(BuildContext context, int index) {
+    index == _selectedIndex
+        ? context.bloc<NavigationCubit>().selectNavButton(index, true)
+        : context.bloc<NavigationCubit>().selectNavButton(index, false);
     setState(() {
       _selectedIndex = index;
     });
@@ -53,9 +57,7 @@ class _MainScreen extends State<MainScreen> {
         body: IndexedStack(
           index: _selectedIndex,
           children: <Widget>[
-            HomeScreen(
-              navIndex: _selectedIndex,
-            ),
+            HomeScreen(),
             BookSearchScreen(
               origin: Origin.navSearch,
               navCallback: _returnHome,
@@ -81,7 +83,7 @@ class _MainScreen extends State<MainScreen> {
             ),
           ],
           currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+          onTap: (index) => _onItemTapped(context, index),
           backgroundColor: Colors.grey[200],
         ),
       ),

@@ -17,15 +17,13 @@ class ReadingList extends StatefulWidget {
       {@required this.includedTypes,
       this.enableSwipeRight = true,
       this.enableHeaders = true,
-      this.isHomescreen = false,
-      this.navIndex});
+      this.isHomescreen = false});
 
   final List<String> includedTypes;
   final bool enableSwipeRight;
   final bool enableHeaders;
   // used for conditional indexing on homescreen (when there's no READ list)
   final bool isHomescreen;
-  final int navIndex;
 
   @override
   _ReadingListState createState() => _ReadingListState();
@@ -40,6 +38,14 @@ class _ReadingListState extends State<ReadingList> {
     super.initState();
     // assign user for access to UserModel methods
     user = context.bloc<AuthenticationBloc>().state.user;
+    context.bloc<NavigationCubit>().listen((state) => {
+          if (state is NavScreenSelected)
+            {_scrollOnReclick(state.index, state.reclick)}
+        });
+    reorderScrollController.addListener(() {
+      var navCubit = context.bloc<NavigationCubit>();
+      navCubit.reclickToFalse(navCubit.state.index);
+    });
   }
 
   void _updateType(ListedBook book) async {
@@ -108,9 +114,22 @@ class _ReadingListState extends State<ReadingList> {
     );
   }
 
+  void _scrollOnReclick(int screenIndex, bool reclick) {
+    // This condition allows for reclick scrolling on both the HomeScreen
+    // (index == 0) and the UserScreen with the read list (index == 2)
+    if (widget.isHomescreen && screenIndex == 0 ||
+        !widget.isHomescreen && screenIndex == 2) {
+      if (reclick && reorderScrollController.hasClients) {
+        reorderScrollController.animateTo(
+            reorderScrollController.position.minScrollExtent,
+            duration: const Duration(milliseconds: 1500),
+            curve: Curves.easeOutExpo);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    print(widget.navIndex);
     return Flexible(
       child: BlocBuilder<ReadingListBloc, ReadingListState>(
           builder: (context, state) {

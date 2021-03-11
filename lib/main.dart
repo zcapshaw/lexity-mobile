@@ -103,6 +103,9 @@ class App extends StatelessWidget {
             readingListBloc: BlocProvider.of<ReadingListBloc>(context),
           ),
         ),
+        BlocProvider<NavigationCubit>(
+          create: (context) => NavigationCubit(),
+        ),
       ],
       child: AppView(),
     );
