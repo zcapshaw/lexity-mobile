@@ -103,7 +103,7 @@ class NoteView extends StatelessWidget {
             ),
           ),
           subtitle: Text(created),
-          leading: _getAvatar(),
+          leading: isReco ? _getAvatar() : null,
           onTap: () => _handleNoteTap(context),
         ),
         const Divider(),

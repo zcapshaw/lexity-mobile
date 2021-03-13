@@ -31,14 +31,31 @@ class BookDetailsCubit extends Cubit<BookDetailsState> {
   }
 
   void viewBookDetails(ListedBook book) {
+    var recos = getRecosFromBook(book);
+    var notes = getNotesFromBook(book);
+
     if (book.type == 'READING') {
-      emit(BookDetailsReading(book));
+      emit(BookDetailsReading(book, recos, notes));
     } else if (book.type == 'TO_READ') {
-      emit(BookDetailsWantToRead(book));
+      emit(BookDetailsWantToRead(book, recos, notes));
     } else if (book.type == 'READ') {
-      emit(BookDetailsFinished(book));
+      emit(BookDetailsFinished(book, recos, notes));
     } else {
-      emit(BookDetailsUnlisted(book));
+      emit(BookDetailsUnlisted(book, recos, notes));
     }
+  }
+
+  List<Note> getRecosFromBook(ListedBook book) {
+    var recosWithoutNotes = List<Note>.from(book.notes)
+      ..removeWhere((n) => n.isReco == false);
+
+    return recosWithoutNotes;
+  }
+
+  List<Note> getNotesFromBook(ListedBook book) {
+    var notesWithoutRecos = List<Note>.from(book.notes)
+      ..removeWhere((n) => n.isReco == true);
+
+    return notesWithoutRecos;
   }
 }

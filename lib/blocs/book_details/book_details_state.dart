@@ -8,6 +8,8 @@ abstract class BookDetailsState extends Equatable {
   List<Object> get props => [];
 
   ListedBook get book => null;
+  List<Note> get notes => null;
+  List<Note> get recos => null;
 }
 
 // The default state, if no book is selected
@@ -18,33 +20,57 @@ class BookDetailsLoading extends BookDetailsState {
 // The following 4 states allow the screen to
 // conditionally show correct action buttons
 class BookDetailsReading extends BookDetailsState {
-  const BookDetailsReading(this.book);
-  final ListedBook book;
+  const BookDetailsReading(this.book, this.recos, this.notes);
 
   @override
-  List<Object> get props => [book];
+  final ListedBook book;
+  @override
+  final List<Note> recos;
+  @override
+  final List<Note> notes;
+
+  @override
+  List<Object> get props => [book, recos, notes];
 }
 
 class BookDetailsWantToRead extends BookDetailsState {
-  const BookDetailsWantToRead(this.book);
-  final ListedBook book;
+  const BookDetailsWantToRead(this.book, this.recos, this.notes);
 
   @override
-  List<Object> get props => [book];
+  final ListedBook book;
+  @override
+  final List<Note> recos;
+  @override
+  final List<Note> notes;
+
+  @override
+  List<Object> get props => [book, recos, notes];
 }
 
 class BookDetailsFinished extends BookDetailsState {
-  const BookDetailsFinished(this.book);
-  final ListedBook book;
+  const BookDetailsFinished(this.book, this.recos, this.notes);
 
   @override
-  List<Object> get props => [book];
+  final ListedBook book;
+  @override
+  final List<Note> recos;
+  @override
+  final List<Note> notes;
+
+  @override
+  List<Object> get props => [book, recos, notes];
 }
 
 class BookDetailsUnlisted extends BookDetailsState {
-  const BookDetailsUnlisted(this.book);
-  final ListedBook book;
+  const BookDetailsUnlisted(this.book, this.recos, this.notes);
 
   @override
-  List<Object> get props => [book];
+  final ListedBook book;
+  @override
+  final List<Note> recos;
+  @override
+  final List<Note> notes;
+
+  @override
+  List<Object> get props => [book, recos, notes];
 }

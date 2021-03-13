@@ -122,7 +122,8 @@ class BookDetailsScreen extends StatelessWidget {
                             description: state.book.description,
                             title: 'Description',
                           ),
-                        buildNotes(state.book.notes, user, context, state.book),
+                        buildNotes(state.notes, user, context, state.book),
+                        buildRecos(state.recos, user, context, state.book),
                       ],
                     ),
                   ),
@@ -213,7 +214,8 @@ class BookDetailsScreen extends StatelessWidget {
 
   Widget buildNotes(
       List<Note> notes, User user, BuildContext context, ListedBook book) {
-    return notes == null
+    print(notes);
+    return notes.isEmpty
         ? const SizedBox.shrink()
         : Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
@@ -226,8 +228,71 @@ class BookDetailsScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     children: [
-                      const ListTileHeaderText('Notes'),
+                      const ListTileHeaderText('My Notes'),
                       TwitterShareButton(notes),
+                    ],
+                  ),
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    for (var note in notes)
+                      NoteView(
+                        comment: note.comment ?? '',
+                        created: note.created != null
+                            ? formatTime(note.created)
+                            : '',
+                        noteId: note.id ?? '',
+                        noteSrcImg: note.sourceImg,
+                        userImg: user.profileImg,
+                        deleteCallback: (String noteId) {
+                          // emit event to delete the note from reading list
+                          context
+                              .bloc<ReadingListBloc>()
+                              .add(NoteDeleted(noteId, book, user));
+                          print(book.notes);
+                          // emit event to re-render the view
+                          context
+                              .bloc<BookDetailsCubit>()
+                              .noteDeleted(book, noteId);
+                        },
+                        editCallback: (String noteId, String comment) {
+                          Navigator.push<Map>(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AddNoteScreen(
+                                noteId: noteId,
+                                noteText: comment,
+                              ),
+                            ),
+                          );
+                        },
+                        sourceName: note.sourceName,
+                        isReco: note.isReco,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+          );
+  }
+
+  Widget buildRecos(
+      List<Note> notes, User user, BuildContext context, ListedBook book) {
+    return notes.isEmpty
+        ? const SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.only(bottom: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    children: [
+                      const ListTileHeaderText('Recos'),
                     ],
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/blocs/notes/notes_cubit.dart';
 
 import '../blocs/blocs.dart';
 import '../components/empty_list_illustration.dart';
@@ -94,9 +95,9 @@ class _ReadingListState extends State<ReadingList> {
 
   void _navigateToBookDetails(
       BuildContext context, ListedBook book, int listItemIndex) {
-    //dispatch a function to update BookDetailsCubit state
-    print(book.type);
+    //dispatch a function to update BookDetailsCubit and NotesCubit state
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
+    context.bloc<NotesCubit>().loadNotes(book.notes);
     //Navigate to book details screen
 
     Navigator.push<Map>(
