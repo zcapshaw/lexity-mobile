@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/blocs/notes/notes_cubit.dart';
 import 'package:lexity_mobile/models/models.dart';
 import 'package:lexity_mobile/utils/utils.dart';
 
@@ -46,14 +47,14 @@ class SelectNotesScreen extends StatelessWidget {
             ),
           ],
         ),
-        body: BlocBuilder<BookDetailsCubit, BookDetailsState>(
+        body: BlocBuilder<NotesCubit, NotesState>(
           builder: (context, state) {
-            if (state is BookDetailsLoading) {
+            if (state is NotesInitial) {
               return Center(
                 key: TestKeys.bookDetailsLoadingSpinner,
                 child: const CircularProgressIndicator(),
               );
-            } else if (state.book != null) {
+            } else if (state.notes != null) {
               return SafeArea(
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -62,14 +63,14 @@ class SelectNotesScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 24.0, bottom: 8.0),
                         child: Text(
-                          '${state.book.notes.length} selected',
+                          '${state.notes.length} selected',
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                       const Divider(),
-                      for (var note in state.book.notes)
+                      for (var note in state.notes)
                         NoteSelectorCard(
-                          noteText: note.comment ?? '',
+                          noteText: note ?? '',
                         ),
                     ],
                   ),
@@ -105,8 +106,8 @@ class NoteSelectorCard extends StatelessWidget {
                     noteText,
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
+                const Padding(
+                  padding: EdgeInsets.only(left: 8.0),
                   child: Checkbox(
                     value: true,
                     onChanged: null,

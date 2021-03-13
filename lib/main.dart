@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
+import 'package:lexity_mobile/blocs/notes/notes_cubit.dart';
 import 'package:sentry/sentry.dart';
 
 import './blocs/blocs.dart';
@@ -103,6 +104,9 @@ class App extends StatelessWidget {
             readingListBloc: BlocProvider.of<ReadingListBloc>(context),
           ),
         ),
+        BlocProvider<NotesCubit>(
+          create: (context) => NotesCubit(),
+        )
       ],
       child: AppView(),
     );

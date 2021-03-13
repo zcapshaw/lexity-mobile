@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lexity_mobile/blocs/notes/notes_cubit.dart';
 import 'package:lexity_mobile/screens/add_note_screen.dart';
 import 'package:lexity_mobile/screens/select_notes_screen.dart';
 import 'package:time_formatter/time_formatter.dart';
@@ -226,7 +227,7 @@ class BookDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.baseline,
                     children: [
                       const ListTileHeaderText('Notes'),
-                      TwitterShareButton(),
+                      TwitterShareButton(notes),
                     ],
                   ),
                 ),
@@ -276,11 +277,16 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 class TwitterShareButton extends StatelessWidget {
+  TwitterShareButton(this.notes);
+
+  final List<Note> notes;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: OutlineButton(
         onPressed: () {
+          context.bloc<NotesCubit>().loadNotes(notes);
           Navigator.push<void>(context, SelectNotesScreen.route());
         },
         child: Row(
