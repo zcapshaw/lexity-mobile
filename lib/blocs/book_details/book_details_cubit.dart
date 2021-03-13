@@ -46,15 +46,23 @@ class BookDetailsCubit extends Cubit<BookDetailsState> {
   }
 
   List<Note> getRecosFromBook(ListedBook book) {
-    var recosWithoutNotes = List<Note>.from(book.notes)
-      ..removeWhere((n) => n.isReco == false);
+    var recosWithoutNotes = <Note>[];
+
+    if (book.notes != null) {
+      recosWithoutNotes = List<Note>.from(book.notes)
+        ..removeWhere((n) => n.isReco == false);
+    }
 
     return recosWithoutNotes;
   }
 
   List<Note> getNotesFromBook(ListedBook book) {
-    var notesWithoutRecos = List<Note>.from(book.notes)
-      ..removeWhere((n) => n.isReco == true);
+    var notesWithoutRecos = <Note>[];
+
+    if (book.notes != null) {
+      notesWithoutRecos = List<Note>.from(book.notes)
+        ..removeWhere((n) => n.isReco == true);
+    }
 
     return notesWithoutRecos;
   }

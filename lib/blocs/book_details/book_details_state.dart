@@ -20,7 +20,7 @@ class BookDetailsLoading extends BookDetailsState {
 // The following 4 states allow the screen to
 // conditionally show correct action buttons
 class BookDetailsReading extends BookDetailsState {
-  const BookDetailsReading(this.book, this.recos, this.notes);
+  const BookDetailsReading(this.book, [this.recos, this.notes]);
 
   @override
   final ListedBook book;
@@ -34,7 +34,7 @@ class BookDetailsReading extends BookDetailsState {
 }
 
 class BookDetailsWantToRead extends BookDetailsState {
-  const BookDetailsWantToRead(this.book, this.recos, this.notes);
+  const BookDetailsWantToRead(this.book, [this.recos, this.notes]);
 
   @override
   final ListedBook book;
@@ -48,7 +48,7 @@ class BookDetailsWantToRead extends BookDetailsState {
 }
 
 class BookDetailsFinished extends BookDetailsState {
-  const BookDetailsFinished(this.book, this.recos, this.notes);
+  const BookDetailsFinished(this.book, [this.recos, this.notes]);
 
   @override
   final ListedBook book;
@@ -62,7 +62,7 @@ class BookDetailsFinished extends BookDetailsState {
 }
 
 class BookDetailsUnlisted extends BookDetailsState {
-  const BookDetailsUnlisted(this.book, this.recos, this.notes);
+  const BookDetailsUnlisted(this.book, [this.recos, this.notes]);
 
   @override
   final ListedBook book;

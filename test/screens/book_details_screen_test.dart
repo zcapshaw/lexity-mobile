@@ -76,7 +76,7 @@ void main() {
     testWidgets('renders properly when a listed book is provided',
         (WidgetTester tester) async {
       when(bookDetailsCubit.state).thenReturn(
-        BookDetailsReading(testBook),
+        BookDetailsReading(testBook, [], [testNote]),
       );
       await tester.pumpWidget(
         MaterialApp(
@@ -95,7 +95,7 @@ void main() {
       expect(find.text('Mark Finished'), findsOneWidget);
       expect(find.byKey(TestKeys.bookDetailsGenreChip), findsOneWidget);
       expect(find.text('Description'), findsOneWidget);
-      expect(find.text('Notes'), findsOneWidget);
+      expect(find.text('My Notes'), findsOneWidget);
       expect(find.byType(ActionButton), findsNWidgets(3));
     });
   });

@@ -57,7 +57,7 @@ class SelectNotesScreen extends StatelessWidget {
             } else if (state.notes != null) {
               return SafeArea(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListView(
                     children: [
                       Padding(
@@ -96,25 +96,12 @@ class NoteSelectorCard extends StatelessWidget {
     return Column(
       children: <Widget>[
         ListTile(
-          title: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Flexible(
-                  child: Text(
-                    noteText,
-                  ),
-                ),
-                const Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Checkbox(
-                    value: true,
-                    onChanged: null,
-                  ),
-                )
-              ],
-            ),
+          leading: Checkbox(
+            value: true,
+            onChanged: null,
+          ),
+          title: Text(
+            noteText,
           ),
           onTap: () {},
         ),

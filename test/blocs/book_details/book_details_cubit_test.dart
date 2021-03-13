@@ -25,21 +25,23 @@ void main() {
       'emits Reading state when viewing details on book I\'m reading',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.viewBookDetails(readingBook),
-      expect: <BookDetailsState>[BookDetailsReading(readingBook)],
+      expect: <BookDetailsState>[BookDetailsReading(readingBook, [], [])],
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits WantToRead state when viewing details on book I want to read',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.viewBookDetails(wantToReadBook),
-      expect: <BookDetailsState>[BookDetailsWantToRead(wantToReadBook)],
+      expect: <BookDetailsState>[BookDetailsWantToRead(wantToReadBook, [], [])],
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits Read state when viewing details on book I\'ve read',
       build: () => BookDetailsCubit(),
       act: (cubit) => cubit.viewBookDetails(readBook),
-      expect: <BookDetailsState>[BookDetailsFinished(readBook)],
+      expect: <BookDetailsState>[
+        BookDetailsFinished(readBook, [], [testNote])
+      ],
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
@@ -48,7 +50,7 @@ void main() {
       act: (cubit) => cubit.notesUpdated(readBook),
       expect: <BookDetailsState>[
         const BookDetailsLoading(),
-        BookDetailsFinished(readBook)
+        BookDetailsFinished(readBook, [], [testNote])
       ],
     );
 
@@ -58,7 +60,7 @@ void main() {
       act: (cubit) => cubit.noteDeleted(readBook, '123'),
       expect: <BookDetailsState>[
         const BookDetailsLoading(),
-        BookDetailsFinished(readBook)
+        BookDetailsFinished(readBook, [], [])
       ],
       verify: (cubit) => expect(cubit.state.book.notes, isEmpty),
     );
