@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 
 import '../blocs/blocs.dart';
 import '../components/reading_list.dart';
 import '../models/user.dart';
-import '../utils/follower_numbers.dart';
+import '../utils/utils.dart';
 
 class UserScreen extends StatefulWidget {
   UserScreen({Key key}) : super(key: key);
@@ -283,6 +284,8 @@ class _UserInfo extends StatelessWidget {
 }
 
 class _UserMenu extends StatelessWidget {
+  final urlLauncher = UrlLauncher();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -308,16 +311,33 @@ class _UserMenu extends StatelessWidget {
                     color: Color(0xFF1A6978),
                   ),
                   onPressed: () {
-                    context.bloc<AuthenticationBloc>().add(const LoggedOut());
+                    urlLauncher.launchInWebViewOrVC(
+                        // Initiate tweet of "@lexityapp "
+                        'https://twitter.com/intent/tweet?text=%40lexityapp%20',
+                        false,
+                        false);
                   },
-                  child: const Text(
-                    'Logout',
-                    style: TextStyle(
-                      color: Color(0xFF1A6978),
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.3,
-                    ),
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        child: const Text('Send us Feedback',
+                            style: TextStyle(
+                              color: Color(0xFF1A6978),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
+                            )),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        alignment: Alignment.centerRight,
+                        child: const FaIcon(
+                          FontAwesomeIcons.twitter,
+                          color: Color(0xFF00ACEE),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
