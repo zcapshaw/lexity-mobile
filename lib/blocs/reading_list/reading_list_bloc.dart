@@ -159,6 +159,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   }
 
   Stream<ReadingListState> _mapNoteAddedToState(NoteAdded event) async* {
+    yield ReadingListUpdating();
     try {
       // pass list repo the book and note
       final updatedBook =

@@ -97,7 +97,6 @@ class _ReadingListState extends State<ReadingList> {
       BuildContext context, ListedBook book, int listItemIndex) {
     //dispatch a function to update BookDetailsCubit and NotesCubit state
     context.bloc<BookDetailsCubit>().viewBookDetails(book);
-    context.bloc<NotesCubit>().loadNotes(book.notes);
     //Navigate to book details screen
 
     Navigator.push<Map>(

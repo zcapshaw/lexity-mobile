@@ -41,7 +41,6 @@ class AddNoteScreen extends StatelessWidget {
               if (noteId != null) {
                 context.bloc<ReadingListBloc>().add(NoteUpdated(
                     book: book, user: user, noteId: noteId, noteText: note));
-                context.bloc<BookDetailsCubit>().notesUpdated(book);
               }
 
               // If note isn't null or empty string emit a NoteAdded event
@@ -49,7 +48,6 @@ class AddNoteScreen extends StatelessWidget {
                 context
                     .bloc<ReadingListBloc>()
                     .add(NoteAdded(book, user, note));
-                context.bloc<BookDetailsCubit>().notesUpdated(book);
               }
               //return to BookDetails
               Navigator.pop(context);

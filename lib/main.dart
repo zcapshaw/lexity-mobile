@@ -96,7 +96,9 @@ class App extends StatelessWidget {
           ),
         ),
         BlocProvider<BookDetailsCubit>(
-          create: (context) => BookDetailsCubit(),
+          create: (context) => BookDetailsCubit(
+            BlocProvider.of<ReadingListBloc>(context),
+          ),
         ),
         BlocProvider<StatsCubit>(
           lazy: false, // load cubit immediately, for list header counts
@@ -105,6 +107,7 @@ class App extends StatelessWidget {
           ),
         ),
         BlocProvider<NotesCubit>(
+          lazy: false,
           create: (context) => NotesCubit(),
         )
       ],

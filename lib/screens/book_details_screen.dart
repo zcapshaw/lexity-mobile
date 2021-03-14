@@ -214,7 +214,6 @@ class BookDetailsScreen extends StatelessWidget {
 
   Widget buildNotes(
       List<Note> notes, User user, BuildContext context, ListedBook book) {
-    print(notes);
     return notes.isEmpty
         ? const SizedBox.shrink()
         : Padding(
@@ -250,11 +249,6 @@ class BookDetailsScreen extends StatelessWidget {
                           context
                               .bloc<ReadingListBloc>()
                               .add(NoteDeleted(noteId, book, user));
-                          print(book.notes);
-                          // emit event to re-render the view
-                          context
-                              .bloc<BookDetailsCubit>()
-                              .noteDeleted(book, noteId);
                         },
                         editCallback: (String noteId, String comment) {
                           Navigator.push<Map>(
@@ -313,11 +307,6 @@ class BookDetailsScreen extends StatelessWidget {
                           context
                               .bloc<ReadingListBloc>()
                               .add(NoteDeleted(noteId, book, user));
-                          print(book.notes);
-                          // emit event to re-render the view
-                          context
-                              .bloc<BookDetailsCubit>()
-                              .noteDeleted(book, noteId);
                         },
                         editCallback: (String noteId, String comment) {
                           Navigator.push<Map>(
@@ -349,7 +338,7 @@ class TwitterShareButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: OutlineButton(
+      child: TextButton(
         onPressed: () {
           context.bloc<NotesCubit>().loadNotes(notes);
           Navigator.push<void>(context, SelectNotesScreen.route());
