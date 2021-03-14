@@ -301,6 +301,28 @@ class _UserMenu extends StatelessWidget {
               ),
               Container(
                 width: MediaQuery.of(context).size.width * 0.75,
+                margin: const EdgeInsets.only(bottom: 20),
+                child: OutlineButton(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF1A6978),
+                  ),
+                  onPressed: () {
+                    context.bloc<AuthenticationBloc>().add(const LoggedOut());
+                  },
+                  child: const Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Color(0xFF1A6978),
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.75,
                 child: OutlineButton(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   borderSide: const BorderSide(
