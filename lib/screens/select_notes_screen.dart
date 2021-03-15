@@ -17,8 +17,8 @@ class SelectNotesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.bloc<AuthenticationBloc>().state.user;
-    final book = context.bloc<BookDetailsCubit>().state.book;
+    // final user = context.bloc<AuthenticationBloc>().state.user;
+    // final book = context.bloc<BookDetailsCubit>().state.book;
 
     return Scaffold(
         appBar: AppBar(
@@ -63,15 +63,12 @@ class SelectNotesScreen extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(top: 24.0, bottom: 8.0),
                         child: Text(
-                          '${state.notes.length} selected',
+                          '${state.selectedCount} selected',
                           style: Theme.of(context).textTheme.headline6,
                         ),
                       ),
                       const Divider(),
-                      for (var note in state.notes)
-                        NoteSelectorCard(
-                          noteText: note ?? '',
-                        ),
+                      for (var note in state.notes) NoteSelectorCard(note),
                     ],
                   ),
                 ),
@@ -87,9 +84,9 @@ class SelectNotesScreen extends StatelessWidget {
 }
 
 class NoteSelectorCard extends StatelessWidget {
-  const NoteSelectorCard({this.noteText});
+  NoteSelectorCard(this.note);
 
-  final String noteText;
+  final SelectableNote note;
 
   @override
   Widget build(BuildContext context) {
@@ -97,13 +94,15 @@ class NoteSelectorCard extends StatelessWidget {
       children: <Widget>[
         ListTile(
           leading: Checkbox(
-            value: true,
-            onChanged: null,
+            value: note.selected,
+            onChanged: (value) {},
           ),
           title: Text(
-            noteText,
+            note.comment,
           ),
-          onTap: () {},
+          onTap: () {
+            context.bloc<NotesCubit>().toggleSelection(note);
+          },
         ),
         const Divider(),
       ],

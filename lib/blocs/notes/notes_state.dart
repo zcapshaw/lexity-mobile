@@ -6,16 +6,19 @@ abstract class NotesState extends Equatable {
   @override
   List<Object> get props => [];
 
-  List<String> get notes => null;
+  List<SelectableNote> get notes => null;
+  int get selectedCount => null;
 }
 
 class NotesInitial extends NotesState {}
 
 class NotesLoaded extends NotesState {
-  const NotesLoaded(this.notes);
+  const NotesLoaded(this.notes, this.selectedCount);
 
   @override
-  final List<String> notes;
+  final List<SelectableNote> notes;
+  @override
+  final int selectedCount;
 
   @override
   List<Object> get props => [notes];

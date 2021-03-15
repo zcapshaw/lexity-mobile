@@ -7,19 +7,47 @@ part 'notes_state.dart';
 class NotesCubit extends Cubit<NotesState> {
   NotesCubit() : super(NotesInitial());
 
+  void toggleSelection(SelectableNote note) {
+    var updatedNote = SelectableNote(
+        comment: note.comment,
+        id: note.id,
+        created: note.created,
+        selected: !note.selected);
+
+    var updatedNotesArray = (state as NotesLoaded).notes.map((n) {
+      if (n.id == note.id) {
+        return updatedNote;
+      } else {
+        return n;
+      }
+    }).toList();
+
+    emit(NotesLoaded(
+        updatedNotesArray, getSelectedNotesCount(updatedNotesArray)));
+  }
+
   void loadNotes(List<Note> notes) {
-    var notesArray = <String>[];
+    var selectableNotesArray = <SelectableNote>[];
 
-    //remove the recos from the array
-    var notesWithoutRecos = List<Note>.from(notes)
-      ..removeWhere((n) => n.isReco == true);
+    //convert notes to SelectableNotes
+    for (var note in notes) {
+      var sn = SelectableNote(
+          comment: note.comment,
+          id: note.id,
+          created: note.created,
+          selected: true);
 
-    //convert notes to plain text array
-    for (var note in notesWithoutRecos) {
-      notesArray.add(note.comment);
+      selectableNotesArray.add(sn);
     }
 
     // emit state with plain text notes array for UI
-    emit(NotesLoaded(notesArray));
+    emit(NotesLoaded(
+        selectableNotesArray, getSelectedNotesCount(selectableNotesArray)));
+  }
+
+  int getSelectedNotesCount(List<SelectableNote> notes) {
+    var selectedCount = notes.where((n) => n.selected == true).toList().length;
+
+    return selectedCount;
   }
 }
