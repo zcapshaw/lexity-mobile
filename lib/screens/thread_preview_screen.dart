@@ -14,11 +14,11 @@ class ThreadPreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.bloc<AuthenticationBloc>().state.user;
-    final notes = context.bloc<NotesCubit>().state.notes;
+    final tweets = context.bloc<NotesCubit>().state.tweets;
 
-    var selectedNotes = List<SelectableNote>.from(notes)
-      ..removeWhere((n) => n.selected == false)
-      ..toList();
+    // var selectedNotes = List<SelectableNote>.from(notes)
+    //   ..removeWhere((n) => n.selected == false)
+    //   ..toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +40,9 @@ class ThreadPreviewScreen extends StatelessWidget {
               child: const Text(
                 'Tweet',
               ),
-              onPressed: () {},
+              onPressed: () {
+                // context.bloc<NotesCubit>().tweetNotes(selectedNotes, user);
+              },
             ),
           ),
         ],
@@ -58,8 +60,8 @@ class ThreadPreviewScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: ListView(
                   children: [
-                    for (var note in selectedNotes)
-                      TweetPreviewCard(note, user.profileImg),
+                    for (var tweet in tweets)
+                      TweetPreviewCard(tweet, user.profileImg),
                   ],
                 ),
               ),
@@ -76,9 +78,9 @@ class ThreadPreviewScreen extends StatelessWidget {
 }
 
 class TweetPreviewCard extends StatelessWidget {
-  TweetPreviewCard(this.note, this.profileImg);
+  TweetPreviewCard(this.tweet, this.profileImg);
 
-  final SelectableNote note;
+  final String tweet;
   final String profileImg;
 
   @override
@@ -93,11 +95,9 @@ class TweetPreviewCard extends StatelessWidget {
               backgroundColor: Colors.grey[600],
             ),
             title: Text(
-              note.comment,
+              tweet,
             ),
-            onTap: () {
-              context.bloc<NotesCubit>().toggleSelection(note);
-            },
+            onTap: () {},
           ),
         ),
         const Divider(),
