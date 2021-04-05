@@ -5,6 +5,7 @@ import 'package:lexity_mobile/screens/book_search_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
