@@ -56,28 +56,7 @@ class NotesCubit extends Cubit<NotesState> {
   }
 
   void tweetNotes(List<Note> notes, User user) {
-    var tweetStringArray = <String>[];
-
-    for (var n in notes) {
-      void splitNoteIntoTweets(String str) {
-        if (str.length <= 280) {
-          // add the comment to an array of strings if it's short enough
-          tweetStringArray.add(str);
-        } else {
-          // split off a tweet sized chunk of text with ellipses
-          var splitPoint = str.lastIndexOf(' ', 276);
-          var tweet = '${str.substring(0, splitPoint)}...';
-          tweetStringArray.add(tweet);
-
-          // recursively call this function on the remaining note text
-          splitNoteIntoTweets(str.substring(splitPoint + 1));
-        }
-      }
-
-      splitNoteIntoTweets(n.comment);
-    }
-
-    print(tweetStringArray);
+    // add code to talk to an API service
   }
 
   int getSelectedNotesCount(List<SelectableNote> notes) {
@@ -114,7 +93,6 @@ class NotesCubit extends Cubit<NotesState> {
       splitNoteIntoTweets(n.comment);
     }
 
-    print(tweetStringArray);
     return tweetStringArray;
   }
 }
