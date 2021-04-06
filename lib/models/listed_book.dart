@@ -18,6 +18,8 @@ class ListedBook extends Book with EquatableMixin {
       String listId,
       this.userId,
       this.bookId,
+      this.prev,
+      this.next,
       String type,
       bool inUserList,
       bool userRead,
@@ -44,6 +46,8 @@ class ListedBook extends Book with EquatableMixin {
   final String userId;
   final String bookId;
   final int created;
+  String prev;
+  String next;
   int updated;
   List labels;
   List<Note> notes;
@@ -79,6 +83,8 @@ class ListedBook extends Book with EquatableMixin {
         listId: listId,
         userId: userId,
         bookId: bookId,
+        prev: prev,
+        next: next,
         type: type,
         inUserList: inUserList,
         userRead: userRead,

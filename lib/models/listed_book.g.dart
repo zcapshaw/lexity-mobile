@@ -18,6 +18,8 @@ ListedBook _$ListedBookFromJson(Map<String, dynamic> json) {
     listId: json['listId'] as String,
     userId: json['userId'] as String,
     bookId: json['bookId'] as String,
+    prev: json['prev'] as String,
+    next: json['next'] as String,
     type: json['type'] as String,
     inUserList: json['inUserList'] as bool,
     userRead: json['userRead'] as bool,
@@ -60,6 +62,8 @@ Map<String, dynamic> _$ListedBookToJson(ListedBook instance) {
   writeNotNull('userId', instance.userId);
   writeNotNull('bookId', instance.bookId);
   writeNotNull('created', instance.created);
+  writeNotNull('prev', instance.prev);
+  writeNotNull('next', instance.next);
   writeNotNull('updated', instance.updated);
   writeNotNull('labels', instance.labels);
   writeNotNull('notes', instance.notes);
