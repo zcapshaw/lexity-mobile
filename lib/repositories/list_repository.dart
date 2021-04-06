@@ -52,7 +52,11 @@ class ListRepository {
     return readingListWithoutHeaders;
   }
 
-  List<ListedBook> addBook(ListedBook book, List<ListedBook> readingList) {
+  /// Add a book to the current reading list, updating it if it already exists.
+  /// The added book will be synced to the remote db, and the doubly linked list
+  /// updated to reflect the inserted book
+  List<ListedBook> addBook(
+      User user, ListedBook book, List<ListedBook> readingList) {
     // Get index if exists - will return -1 with no match
     final matchingIndex =
         readingList.indexWhere((b) => b.bookId == book.bookId);
@@ -80,6 +84,14 @@ class ListRepository {
     } else {
       readingList.insert(insertIndex, book);
     }
+
+    // Try and update in the remote database
+    try {
+      unawaited(listService.addOrUpdateListItem(user.accessToken, book));
+    } catch (err) {
+      print('Could not update list type on the backend: $err');
+    }
+
     return readingList;
   }
 
