@@ -52,28 +52,31 @@ class _BookSearchScreenState extends State<BookSearchScreen> {
 
   //This async function returns a List of Books from the API response
   Future<List<Book>> _fetchResults() async {
-    List<Book> books;
-    //fetch google books results based on queryText
-    final data = await http.get(
-        'https://api.lexity.co/search/private/books?userId=${user.id}&searchText=$queryText',
-        headers: {
-          'access-token': '${user.accessToken}',
-        });
+    if (user.id != null && queryText.isNotEmpty) {
+      List<Book> books;
+      //fetch google books results based on queryText
+      final data = await http.get(
+          'https://api.lexity.co/search/private/books?userId=${user.id}&searchText=$queryText',
+          headers: {
+            'access-token': '${user.accessToken}',
+          });
 
-    if (data.statusCode == 200) {
-      try {
-        final decoded = json.decode(data.body) as List;
-        books = decoded
-            .map((dynamic book) => Book.fromJson(book as Map<String, dynamic>))
-            .toList();
-      } catch (err) {
-        print('Issue generating list of books from search: $err');
+      if (data.statusCode == 200) {
+        try {
+          final decoded = json.decode(data.body) as List;
+          books = decoded
+              .map(
+                  (dynamic book) => Book.fromJson(book as Map<String, dynamic>))
+              .toList();
+        } catch (err) {
+          print('Issue generating list of books from search: $err');
+        }
+      } else {
+        print(data.statusCode);
+        print(data.reasonPhrase);
       }
-    } else {
-      print(data.statusCode);
-      print(data.reasonPhrase);
+      return books;
     }
-    return books;
   }
 
   void _createBook(Book book) async {
