@@ -15,8 +15,6 @@ class UserScreen extends StatefulWidget {
   _UserScreenState createState() => _UserScreenState();
 }
 
-User user; //declare global variable
-
 class _UserScreenState extends State<UserScreen> {
   final readList = ReadingList(
       includedTypes: ['READ'], enableHeaders: false, enableSwipeRight: false);
@@ -35,40 +33,48 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    user = context.bloc<AuthenticationBloc>().state.user;
     return Scaffold(
       body: Container(
         color: const Color(0xFFC3E0E0),
-        child: SafeArea(
-          child: Container(
-            color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  child: _UserInfo(
-                    profileImg: user.profileImg,
-                    name: user.name,
-                    username: '@${user.username}',
-                    following: FollowerNumbers.converter(user.friends),
-                    followers: FollowerNumbers.converter(user.followers),
-                    booksRead: FollowerNumbers.converter(0),
-                  ),
+        child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            builder: (context, state) {
+          if (state is Authenticated) {
+            return SafeArea(
+              child: Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      child: _UserInfo(
+                        profileImg: state.user.profileImg,
+                        name: state.user.name,
+                        username: '@${state.user.username}',
+                        following:
+                            FollowerNumbers.converter(state.user.friends),
+                        followers:
+                            FollowerNumbers.converter(state.user.followers),
+                        booksRead: FollowerNumbers.converter(0),
+                      ),
+                    ),
+                    readList,
+
+                    // For now, commenting out toggle buttons, as we don't have
+                    // any additional data or design to leverage at this time
+
+                    // _ToggleButtons(
+                    //   selectedIndex: selectedIndex,
+                    //   listStatus: listStatus,
+                    //   callback: buttonCallback,
+                    // ),
+                    // if (selectedIndex == 0) readList,
+                  ],
                 ),
-                readList,
-
-                // For now, commenting out toggle buttons, as we don't have
-                // any additional data or design to leverage at this time
-
-                // _ToggleButtons(
-                //   selectedIndex: selectedIndex,
-                //   listStatus: listStatus,
-                //   callback: buttonCallback,
-                // ),
-                // if (selectedIndex == 0) readList,
-              ],
-            ),
-          ),
-        ),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        }),
       ),
     );
   }
