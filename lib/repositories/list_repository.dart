@@ -60,11 +60,13 @@ class ListRepository {
     // Get index if exists - will return -1 with no match
     final matchingIndex =
         readingList.indexWhere((b) => b.bookId == book.bookId);
-    var insertIndex = _getTypeChangeIndex(book.type, readingList);
+    var insertIndex = _getIndexByType(book.type, readingList);
 
     // >= 0 implies that bookId is already present in the readingList
     if (matchingIndex >= 0) {
       var oldBook = readingList.removeAt(matchingIndex);
+      // If the newer position is lower in the list, all tiles will 'slide'
+      // up the list, therefore the new index should be decreased by one
       if (insertIndex > matchingIndex) {
         insertIndex -= 1;
       }
@@ -100,11 +102,12 @@ class ListRepository {
     final oldIndex =
         newReadingList.indexWhere((b) => b.bookId == updatedBook.bookId);
 
-    if (oldIndex > 0) {
-      var newIndex = _getTypeChangeIndex(updatedBook.type, prevReadingList);
+    // >= 0 implies that bookId is already present in the readingList
+    if (oldIndex >= 0) {
+      var newIndex = _getIndexByType(updatedBook.type, prevReadingList);
 
-      // // If the newer position is lower in the list, all tiles will 'slide'
-      // // up the list, therefore the new index should be decreased by one
+      // If the newer position is lower in the list, all tiles will 'slide'
+      // up the list, therefore the new index should be decreased by one
       if (newIndex > oldIndex) {
         newIndex -= 1;
       }
@@ -124,15 +127,16 @@ class ListRepository {
       int newIndex, User user, bool isHomescreen) {
     //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
 
-    // // This is an inflexible, somewhat 'hacky', solution.
-    // // Given that the List BLoC is shared between the UserScreen and HomeScreen
-    // // We render the HomeScreen and filter out (empty containers) all type = 'READ'
-    // // An outcome of this, is that a drag to the bottom of the "Want to read"
-    // // section will have a newIndex at the end of the overall array, because
-    // // the newIndex is read as AFTER all of the empty 'READ' containers.
-    // // To solve this, isHomescreen bool was created, so that a drag to an index that is
-    // // beyond the scope of HomeScreen - that is, an index that would be 'READ' - will be
-    // // automatically reassigned to the last acceptable HomeScreen view index of readingList
+    // This is an inflexible, somewhat 'hacky', solution.
+    // Given that the ReadingList is shared between UserScreen and HomeScreen,
+    // we render the HomeScreen and filter (empty container) all type = 'READ'.
+    // An outcome of this is that a drag to the bottom of the "Want to read"
+    // section will have a newIndex at the end of the overall array, because
+    // the newIndex is read as AFTER all of the empty 'READ' containers.
+    // To solve this, isHomescreen bool was created, so that a drag to an index
+    // that is beyond the scope of HomeScreen - that is, an index that would be
+    //  'READ' - will be automatically reassigned to the last acceptable
+    // HomeScreen view index of readingList
     if (isHomescreen && newIndex > readingList.lengthWithoutRead) {
       newIndex = readingList.lengthWithoutRead;
     }
@@ -142,8 +146,8 @@ class ListRepository {
     final oldIndexType = _getTypeByIndex(
         oldIndex, readingList.readingCount, readingList.toReadCount);
 
-    // // If the newer position is lower in the list, all tiles will 'slide'
-    // // up the list, therefore the new index should be decreased by one
+    // If the newer position is lower in the list, all tiles will 'slide'
+    // up the list, therefore the new index should be decreased by one
     if (newIndex > oldIndex) {
       newIndex -= 1;
     }
@@ -228,7 +232,11 @@ class ListRepository {
   }
 }
 
-int _getTypeChangeIndex(String newType, List<ListedBook> readingList) {
+/// Based on the book type, an appropriate index in the readingList will be
+/// provided. Types of 'READING' or 'TO_READ' will provide the index at the
+/// bottom of those respective type subsections, whereas a 'READ' type will
+/// provide the index at the top of the 'READ' subsection.
+int _getIndexByType(String newType, List<ListedBook> readingList) {
   int newIndex;
   switch (newType) {
     case 'READING':

@@ -93,6 +93,10 @@ class ListedBook extends Book with EquatableMixin {
         notes: notes);
   }
 
+  ListedBook linkListOnly() {
+    return ListedBook(userId: userId, bookId: bookId, prev: prev, next: next);
+  }
+
   // ignore: sort_constructors_first
   factory ListedBook.fromJson(Map<String, dynamic> json) =>
       _$ListedBookFromJson(json);
@@ -117,6 +121,8 @@ class ListedBook extends Book with EquatableMixin {
     writeNotNull('labels', labels);
     writeNotNull('notes', notes);
     writeNotNull('updated', updated);
+    writeNotNull('prev', prev);
+    writeNotNull('next', next);
     return val;
   }
 }
