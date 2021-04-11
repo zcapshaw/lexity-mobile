@@ -36,7 +36,7 @@ void main() {
 
   test('New book is added to list in correct position', () {
     expect(
-        listRepository.addBook(newBook, [
+        listRepository.addBook(user, newBook, [
           readingHeader,
           listBookOne,
           toReadHeader,
@@ -55,7 +55,7 @@ void main() {
 
   test('Existing book is added to list with appended recos, notes, labels', () {
     expect(
-        listRepository.addBook(existingBook, [
+        listRepository.addBook(user, existingBook, [
           readingHeader,
           listBookOne,
           toReadHeader,
