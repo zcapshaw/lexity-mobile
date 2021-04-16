@@ -107,6 +107,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
   Stream<ReadingListState> _mapReadingListReorderedToState(
       ReadingListReordered event) async* {
     if (state is ReadingListLoadSuccess) {
+      print((state as ReadingListLoadSuccess).readingList[1].next);
       final updatedReadingList = listRepository.reorderBook(
           List.from((state as ReadingListLoadSuccess).readingList),
           event.oldIndex,
