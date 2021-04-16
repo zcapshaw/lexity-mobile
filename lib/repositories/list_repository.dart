@@ -45,13 +45,7 @@ class ListRepository {
 
   List<ListedBook> reindexListWithHeaders(
       List<ListedBook> unindexedReadingList) {
-    return sortByTypeAndInjectHeaders(_removeHeaders(unindexedReadingList));
-  }
-
-  List<ListedBook> _removeHeaders(List<ListedBook> readingListWithHeaders) {
-    var readingListWithoutHeaders = readingListWithHeaders
-      ..removeWhere((book) => book.runtimeType == ListedBookHeader);
-    return readingListWithoutHeaders;
+    return sortByTypeAndInjectHeaders(unindexedReadingList.removeHeaders);
   }
 
   /// Add a book to the current reading list, updating it if it already exists.
@@ -59,6 +53,7 @@ class ListRepository {
   /// updated to reflect the inserted book
   List<ListedBook> addBook(
       User user, ListedBook book, List<ListedBook> readingList) {
+    List<ListedBook> books;
     // Get index if exists - will return -1 with no match
     final matchingIndex =
         readingList.indexWhere((b) => b.bookId == book.bookId);
@@ -79,16 +74,20 @@ class ListRepository {
         ..addAllNotes = oldBook.notes ?? []
         ..updatedAt = DateTime.now().millisecondsSinceEpoch;
 
+      books = [book]; // declare, in event below if fnctn generates no books
+
       // If type is NOT changing, then replace the book in the matchingIndex
       if (book.type == oldBook.type) {
         readingList.insert(matchingIndex, book);
       } else {
         readingList.insert(insertIndex, book);
-        var books =
+        books =
             dll.moveExistingBook(user, readingList, matchingIndex, insertIndex);
       }
     } else {
       readingList.insert(insertIndex, book);
+      books =
+          dll.moveExistingBook(user, readingList, matchingIndex, insertIndex);
     }
 
     // Try and update in the remote database
@@ -101,6 +100,7 @@ class ListRepository {
     return readingList;
   }
 
+  //TODO have to get this working with new link list backend sync
   List<ListedBook> updateBookTypeIndex(ListedBook updatedBook,
       List<ListedBook> newReadingList, List<ListedBook> prevReadingList) {
     final oldIndex =
@@ -127,18 +127,19 @@ class ListRepository {
     }
   }
 
+  /// This is an inflexible, somewhat 'hacky', solution.
+  /// Given that the ReadingList is shared between UserScreen and HomeScreen,
+  /// we render the HomeScreen and filter (empty container) all type = 'READ'.
+  /// An outcome of this is that a drag to the bottom of the "Want to read"
+  /// section will have a newIndex at the end of the overall array, because
+  /// the newIndex is read as AFTER all of the empty 'READ' containers.
+  /// To solve this, isHomescreen bool was created, so that a drag to an index
+  /// that is beyond the scope of HomeScreen - that is, an index that would be
+  ///  'READ' - will be automatically reassigned to the last acceptable
+  /// HomeScreen view index of readingList
   List<ListedBook> reorderBook(List<ListedBook> readingList, int oldIndex,
       int newIndex, User user, bool isHomescreen) {
-    // This is an inflexible, somewhat 'hacky', solution.
-    // Given that the ReadingList is shared between UserScreen and HomeScreen,
-    // we render the HomeScreen and filter (empty container) all type = 'READ'.
-    // An outcome of this is that a drag to the bottom of the "Want to read"
-    // section will have a newIndex at the end of the overall array, because
-    // the newIndex is read as AFTER all of the empty 'READ' containers.
-    // To solve this, isHomescreen bool was created, so that a drag to an index
-    // that is beyond the scope of HomeScreen - that is, an index that would be
-    //  'READ' - will be automatically reassigned to the last acceptable
-    // HomeScreen view index of readingList
+    List<ListedBook> books;
     if (isHomescreen && newIndex > readingList.lengthWithoutRead) {
       newIndex = readingList.lengthWithoutRead;
     }
@@ -155,16 +156,15 @@ class ListRepository {
     }
 
     final book = readingList.removeAt(oldIndex);
+    books = [book]; // declare, in event below if function fails
 
     if (newIndexType == oldIndexType) {
       readingList.insert(newIndex, book);
-      var books = dll.moveExistingBook(user, readingList, oldIndex, newIndex);
-      print(books[1]);
+      books = dll.moveExistingBook(user, readingList, oldIndex, newIndex);
     } else {
       book.changeType = newIndexType;
       readingList.insert(newIndex, book);
-      var books = dll.moveExistingBook(user, readingList, oldIndex, newIndex);
-      print(books[1]);
+      books = dll.moveExistingBook(user, readingList, oldIndex, newIndex);
     }
 
     try {
