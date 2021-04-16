@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:lexity_mobile/utils/doubly_linked_list.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:uuid/uuid.dart';
 
@@ -8,6 +9,7 @@ import '../services/services.dart';
 
 class ListRepository {
   ListService listService = ListService();
+  DoublyLinkedList dll = DoublyLinkedList();
 
   Future<List<ListedBook>> loadReadingList(User user) async {
     List<ListedBook> readingList;
@@ -82,6 +84,8 @@ class ListRepository {
         readingList.insert(matchingIndex, book);
       } else {
         readingList.insert(insertIndex, book);
+        var books =
+            dll.moveExistingBook(user, readingList, matchingIndex, insertIndex);
       }
     } else {
       readingList.insert(insertIndex, book);
@@ -125,8 +129,6 @@ class ListRepository {
 
   List<ListedBook> reorderBook(List<ListedBook> readingList, int oldIndex,
       int newIndex, User user, bool isHomescreen) {
-    //final ReadingListIndexes listIndexes = ReadingListIndexes(readingList);
-
     // This is an inflexible, somewhat 'hacky', solution.
     // Given that the ReadingList is shared between UserScreen and HomeScreen,
     // we render the HomeScreen and filter (empty container) all type = 'READ'.
@@ -156,9 +158,13 @@ class ListRepository {
 
     if (newIndexType == oldIndexType) {
       readingList.insert(newIndex, book);
+      var books = dll.moveExistingBook(user, readingList, oldIndex, newIndex);
+      print(books[1]);
     } else {
       book.changeType = newIndexType;
       readingList.insert(newIndex, book);
+      var books = dll.moveExistingBook(user, readingList, oldIndex, newIndex);
+      print(books[1]);
     }
 
     try {
