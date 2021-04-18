@@ -13,6 +13,12 @@ abstract class NotesState extends Equatable {
 
 class NotesInitial extends NotesState {}
 
+class NotesLoading extends NotesState {}
+
+class TweetFailed extends NotesState {}
+
+class TweetSucceeded extends NotesState {}
+
 class NotesLoaded extends NotesState {
   const NotesLoaded(this.notes, this.tweets, this.selectedCount);
 

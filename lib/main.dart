@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:lexity_mobile/blocs/notes/notes_cubit.dart';
+import 'package:lexity_mobile/services/services.dart';
 import 'package:sentry/sentry.dart';
 
 import './blocs/blocs.dart';
@@ -54,6 +55,7 @@ Future<void> _reportError(dynamic error, dynamic stackTrace) async {
 Future<Null> main() async {
   Bloc.observer = SimpleBlocObserver();
   GetIt.I.registerLazySingleton(() => ListService());
+  GetIt.I.registerLazySingleton(() => TwitterService());
 
 // This captures errors reported by the Flutter framework.
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -108,7 +110,7 @@ class App extends StatelessWidget {
         ),
         BlocProvider<NotesCubit>(
           lazy: false,
-          create: (context) => NotesCubit(),
+          create: (context) => NotesCubit(twitterService: TwitterService()),
         )
       ],
       child: AppView(),

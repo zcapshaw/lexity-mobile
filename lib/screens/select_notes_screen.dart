@@ -97,7 +97,9 @@ class NoteSelectorCard extends StatelessWidget {
         ListTile(
           leading: Checkbox(
             value: note.selected,
-            onChanged: (value) {},
+            onChanged: (value) {
+              context.bloc<NotesCubit>().toggleSelection(note);
+            },
           ),
           title: Text(
             note.comment,

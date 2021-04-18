@@ -1,11 +1,15 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:lexity_mobile/models/models.dart';
+import 'package:lexity_mobile/services/services.dart';
 
 part 'notes_state.dart';
 
 class NotesCubit extends Cubit<NotesState> {
-  NotesCubit() : super(NotesInitial());
+  NotesCubit({@required this.twitterService}) : super(NotesInitial());
+
+  final TwitterService twitterService;
 
   void toggleSelection(SelectableNote note) {
     var updatedNote = SelectableNote(
@@ -55,7 +59,32 @@ class NotesCubit extends Cubit<NotesState> {
     );
   }
 
-  void tweetNotes(List<Note> notes, User user) {
+  void tweetNotes(List<String> tweets, User user) async {
+    print(user.username);
+    print(tweets.length);
+
+    try {
+      emit(NotesLoading());
+      print('loading');
+      var res = await twitterService.shareTwitterNotes(
+          user.accessToken, user.id, tweets);
+
+      if (res.error == true) {
+        // the api returned an error..
+        print(res.errorCode);
+        print(res.errorMessage);
+        emit(TweetFailed());
+      } else {
+        // the api call was successful
+        print('tweet succeeded');
+        emit(TweetSucceeded());
+      }
+    } catch (err) {
+      print(err);
+      print('tweet failed');
+      emit(TweetFailed());
+    }
+
     // add code to talk to an API service
   }
 
