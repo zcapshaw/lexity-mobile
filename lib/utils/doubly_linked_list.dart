@@ -5,7 +5,7 @@ import 'package:lexity_mobile/extensions/extensions.dart';
 import 'package:lexity_mobile/services/services.dart';
 
 class DoublyLinkedList {
-  ListService listService = ListService();
+  UserService userService = UserService();
 
   ///
   /// Make appropriate updates to prev, next, firstNode and lastNode of the
@@ -158,7 +158,7 @@ class DoublyLinkedList {
       var userUpdate = {'list': user.list};
 
       // update the list firstNode/lastNode in the backend/DB
-      unawaited(listService.updateUser(user, userUpdate));
+      unawaited(userService.updateUser(user, userUpdate));
     }
   }
 }
