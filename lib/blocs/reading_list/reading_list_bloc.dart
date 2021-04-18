@@ -99,8 +99,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
             (state as ReadingListLoadSuccess).readingList);
       }
       yield ReadingListLoadSuccess(updatedReadingList);
-      await listService.addOrUpdateListItem(
-          event.user.accessToken, event.updatedBook);
+      await listService.addOrUpdateListItem(event.user, [event.updatedBook]);
     }
   }
 
@@ -155,7 +154,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
     // updatedReadingList = listRepository.updateBookTypeIndex(event.book,
     //     updatedReadingList, (state as ReadingListLoadSuccess).readingList);
     yield ReadingListLoadSuccess(indexedUpdatedReadingList);
-    await listService.addOrUpdateListItem(event.user.accessToken, event.book);
+    await listService.addOrUpdateListItem(event.user, [event.book]);
   }
 
   Stream<ReadingListState> _mapNoteAddedToState(NoteAdded event) async* {
@@ -176,8 +175,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       // yield updated list
       yield ReadingListLoadSuccess(updatedReadingList);
       // update the back end
-      await listService.addOrUpdateListItem(
-          event.user.accessToken, updatedBook);
+      await listService.addOrUpdateListItem(event.user, [updatedBook]);
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();
@@ -202,8 +200,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       // yield updated list
       yield ReadingListLoadSuccess(updatedReadingList);
       // update the back end
-      await listService.addOrUpdateListItem(
-          event.user.accessToken, updatedBook);
+      await listService.addOrUpdateListItem(event.user, [updatedBook]);
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();
@@ -228,8 +225,7 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       // yield updated list
       yield ReadingListLoadSuccess(updatedReadingList);
       // update the back end
-      await listService.addOrUpdateListItem(
-          event.user.accessToken, updatedBook);
+      await listService.addOrUpdateListItem(event.user, [updatedBook]);
     } catch (err) {
       print(err);
       yield ReadingListLoadFailure();

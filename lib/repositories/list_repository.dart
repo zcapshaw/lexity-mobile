@@ -92,7 +92,7 @@ class ListRepository {
 
     // Try and update in the remote database
     try {
-      unawaited(listService.addOrUpdateListItem(user.accessToken, book));
+      unawaited(listService.addOrUpdateListItem(user, books));
     } catch (err) {
       print('Could not update list type on the backend: $err');
     }
@@ -168,7 +168,7 @@ class ListRepository {
     }
 
     try {
-      unawaited(listService.addOrUpdateListItem(user.accessToken, book));
+      unawaited(listService.addOrUpdateListItem(user, books));
     } catch (err) {
       print('Could not update list type on the backend: $err');
     }
