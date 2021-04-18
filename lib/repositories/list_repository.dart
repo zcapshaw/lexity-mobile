@@ -100,30 +100,59 @@ class ListRepository {
     return readingList;
   }
 
-  //TODO have to get this working with new link list backend sync
-  List<ListedBook> updateBookTypeIndex(ListedBook updatedBook,
-      List<ListedBook> newReadingList, List<ListedBook> prevReadingList) {
-    final oldIndex =
-        newReadingList.indexWhere((b) => b.bookId == updatedBook.bookId);
+  /// Update a book in the reading list and when the type value changes,
+  /// determine the appropriate new index for the updatedBook, such that it is
+  /// located in the correct list location. Changes the list order will also
+  /// prompt an update the Doubly Linked List which will update the prev, next
+  /// firstNode, and lastNode values as neccessary and handle backend DB sync
+  List<ListedBook> updateBook(
+      User user, ListedBook updatedBook, List<ListedBook> readingList) {
+    List<ListedBook> books;
+    final index = readingList.indexWhere((b) => b.bookId == updatedBook.bookId);
+    final book = readingList[index];
 
-    // >= 0 implies that bookId is already present in the readingList
-    if (oldIndex >= 0) {
-      var newIndex = _getIndexByType(updatedBook.type, prevReadingList);
+    // index will be -1 if the book to be updated can't be found in readingList
+    if (index >= 0) {
+      // if type is the same, then list order doesn't change and updatedBook
+      // can simply be inserted into the index of the book
+      if (book.type == updatedBook.type) {
+        updatedBook.updatedAt = DateTime.now().millisecondsSinceEpoch;
+        readingList
+          ..removeAt(index)
+          ..insert(index, updatedBook);
+        return readingList;
+      } else {
+        // else type is different and list order will change
+        var newTypeIndex = _getIndexByType(updatedBook.type, readingList);
 
-      // If the newer position is lower in the list, all tiles will 'slide'
-      // up the list, therefore the new index should be decreased by one
-      if (newIndex > oldIndex) {
-        newIndex -= 1;
+        // If the newer position is lower in the list, all tiles will 'slide'
+        // up the list, therefore the new index should be decreased by one
+        if (newTypeIndex > index) {
+          newTypeIndex -= 1;
+        }
+
+        updatedBook.updatedAt = DateTime.now().millisecondsSinceEpoch;
+        readingList
+          ..removeAt(index)
+          ..insert(newTypeIndex ?? index, updatedBook);
+
+        // Update the doubly linked list given the list reordering impact
+        // caused by the change in updatedBook.type
+        books = dll.moveExistingBook(user, readingList, index, newTypeIndex);
+
+        // Try and update in the remote database
+        try {
+          unawaited(listService.addOrUpdateListItem(user, books));
+        } catch (err) {
+          print('Could not update list type on the backend: $err');
+        }
+
+        return readingList;
       }
-
-      newReadingList
-        ..removeAt(oldIndex)
-        ..insert(newIndex ?? oldIndex, updatedBook);
-      return newReadingList;
     } else {
       print(
           'No matching bookID found to update; returning original ReadingList');
-      return newReadingList;
+      return readingList;
     }
   }
 
