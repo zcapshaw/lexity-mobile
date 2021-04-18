@@ -1,8 +1,12 @@
+import 'package:pedantic/pedantic.dart';
 import 'package:lexity_mobile/models/listed_book.dart';
 import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/extensions/extensions.dart';
+import 'package:lexity_mobile/services/services.dart';
 
 class DoublyLinkedList {
+  ListService listService = ListService();
+
   ///
   /// Make appropriate updates to prev, next, firstNode and lastNode of the
   /// doubly linked list to ensure list integrity. Updates will be made on local
@@ -151,7 +155,10 @@ class DoublyLinkedList {
         user.list['lastNode'] != readingList.lastBook.bookId) {
       user.list['firstNode'] = readingList.firstBook.bookId;
       user.list['lastNode'] = readingList.lastBook.bookId;
-      print(user.list);
+      var userUpdate = {'list': user.list};
+
+      // update the list firstNode/lastNode in the backend/DB
+      unawaited(listService.updateUser(user, userUpdate));
     }
   }
 }
