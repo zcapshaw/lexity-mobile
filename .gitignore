@@ -13,8 +13,6 @@
 /lib/dsn.dart
 android/key.properties
 
-/lib/main.dart
-
 # IntelliJ related
 *.iml
 *.ipr

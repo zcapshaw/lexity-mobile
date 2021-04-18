@@ -14,25 +14,27 @@ void main() {
   var wantToReadBook = ListedBook(type: 'TO_READ');
   var readBook = ListedBook(type: 'READ', title: 'Sapiens', notes: [testNote]);
   ReadingListBloc readingList;
+  BookDetailsCubit bookDetailsCubit;
 
   setUp(() {
     readingList = MockReadingList();
+    bookDetailsCubit = BookDetailsCubit(readingList);
   });
 
   group('BookDetailsCubit', () {
     test('initial state is loading', () {
-      expect(BookDetailsCubit(readingList).state, const BookDetailsLoading());
+      expect(bookDetailsCubit.state, const BookDetailsLoading());
     });
 
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits [] when nothing is called',
-      build: () => BookDetailsCubit(readingList),
+      build: () => bookDetailsCubit,
       expect: <BookDetailsState>[],
     );
 
     blocTest<BookDetailsCubit, BookDetailsState>(
       'emits Reading state when viewing details on book I\'m reading',
-      build: () => BookDetailsCubit(readingList),
+      build: () => bookDetailsCubit,
       act: (cubit) => cubit.viewBookDetails(readingBook),
       expect: <BookDetailsState>[BookDetailsReading(readingBook, [], [])],
     );

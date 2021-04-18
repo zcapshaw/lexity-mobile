@@ -79,7 +79,7 @@ class BookDetailsCubit extends Cubit<BookDetailsState> {
 
   @override
   Future<void> close() {
-    readingListSubscription.cancel();
+    readingListSubscription?.cancel(); // '?' provides null safety for tests
     return super.close();
   }
 }

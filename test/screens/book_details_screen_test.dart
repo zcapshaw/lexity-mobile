@@ -43,6 +43,13 @@ void main() {
     notes: [testNote],
   );
 
+  var testBookWithoutNotes = ListedBook(
+    title: 'Dune',
+    authors: <String>['Frank Herbert'],
+    categories: ['Sci-Fi'],
+    description: 'An iconic piece of science fiction',
+  );
+
   setUp(() {
     bookDetailsCubit = MockBookDetailscubit();
     authenticationBloc = MockAuthenticationBoc();
@@ -73,7 +80,7 @@ void main() {
       expect(find.byKey(TestKeys.bookDetailsLoadingSpinner), findsOneWidget);
     });
 
-    testWidgets('renders properly when a listed book is provided',
+    testWidgets('renders properly when a listed book with notes is provided',
         (WidgetTester tester) async {
       when(bookDetailsCubit.state).thenReturn(
         BookDetailsReading(testBook, [], [testNote]),
@@ -96,7 +103,31 @@ void main() {
       expect(find.byKey(TestKeys.bookDetailsGenreChip), findsOneWidget);
       expect(find.text('Description'), findsOneWidget);
       expect(find.text('My Notes'), findsOneWidget);
+      expect(find.byType(TwitterShareButton), findsNWidgets(1));
       expect(find.byType(ActionButton), findsNWidgets(3));
+    });
+
+    testWidgets('books without notes hide the Notes section and share button',
+        (WidgetTester tester) async {
+      when(bookDetailsCubit.state).thenReturn(
+        BookDetailsReading(testBookWithoutNotes, [], []),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BlocProvider.value(
+            value: authenticationBloc,
+            child: BlocProvider.value(
+              value: bookDetailsCubit,
+              child: BookDetailsScreen(),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Dune'), findsOneWidget);
+      expect(find.text('Frank Herbert'), findsOneWidget);
+      expect(find.text('My Notes'), findsNothing);
+      expect(find.byType(TwitterShareButton), findsNWidgets(0));
     });
   });
 }
