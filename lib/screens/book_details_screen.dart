@@ -22,7 +22,12 @@ class BookDetailsScreen extends StatelessWidget {
     final coverArtHeight = screenHeight * 0.4;
 
     void _updateBookType(ListedBook book, String newType) {
-      context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, newType));
+      var updatedBook = book.clone()..changeType = newType;
+      context
+          .bloc<ReadingListBloc>()
+          .add(ReadingListUpdated(updatedBook, user));
+      //TODO if we determine using ReadingListUpdated event works, delete below line
+      // context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, newType));
       context.bloc<BookDetailsCubit>().closeBookDetails();
       Navigator.pop(context);
     }
