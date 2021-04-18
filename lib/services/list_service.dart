@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:rxdart/streams.dart';
 
 import '../models/models.dart';
 
@@ -8,15 +9,20 @@ class ListService {
   // ignore: constant_identifier_names
   static const API = 'https://api.lexity.co';
 
-  Future<APIResponse> addOrUpdateListItem(String accessToken, ListedBook book) {
+  Future<APIResponse> addOrUpdateListItem(User user, List<ListedBook> books) {
+    var jsonBooks = <dynamic>[];
+    for (var book in books) {
+      jsonBooks.add(book.listElementsToJson());
+    }
     return http
         .post(
       '$API/list/add',
       headers: {
-        'access-token': accessToken,
+        'access-token': user.accessToken,
+        'user-id': user.id,
         'Content-Type': 'application/json',
       },
-      body: jsonEncode(book.listElementsToJson()),
+      body: jsonEncode(jsonBooks),
     )
         .then((res) {
       if (res.statusCode == 200) {
