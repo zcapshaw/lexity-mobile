@@ -14,8 +14,10 @@ class AppStarted extends AuthenticationEvent {
 }
 
 // User taps Sign In/Up with Twitter
-class LogInWithTwitter extends AuthenticationEvent {
-  const LogInWithTwitter();
+class LogInWithService extends AuthenticationEvent {
+  const LogInWithService(this.service);
+
+  final LogInService service;
 }
 
 // User has logged in

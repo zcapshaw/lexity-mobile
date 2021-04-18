@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 
 import '../blocs/blocs.dart';
 import '../components/reading_list.dart';
 import '../models/user.dart';
-import '../utils/follower_numbers.dart';
+import '../utils/utils.dart';
 
 class UserScreen extends StatefulWidget {
   UserScreen({Key key}) : super(key: key);
@@ -53,12 +54,17 @@ class _UserScreenState extends State<UserScreen> {
                     booksRead: FollowerNumbers.converter(0),
                   ),
                 ),
-                _ToggleButtons(
-                  selectedIndex: selectedIndex,
-                  listStatus: listStatus,
-                  callback: buttonCallback,
-                ),
-                if (selectedIndex == 0) readList,
+                readList,
+
+                // For now, commenting out toggle buttons, as we don't have
+                // any additional data or design to leverage at this time
+
+                // _ToggleButtons(
+                //   selectedIndex: selectedIndex,
+                //   listStatus: listStatus,
+                //   callback: buttonCallback,
+                // ),
+                // if (selectedIndex == 0) readList,
               ],
             ),
           ),
@@ -278,6 +284,8 @@ class _UserInfo extends StatelessWidget {
 }
 
 class _UserMenu extends StatelessWidget {
+  final urlLauncher = UrlLauncher();
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -292,6 +300,45 @@ class _UserMenu extends StatelessWidget {
                   Icons.maximize,
                   size: 36,
                   color: Colors.grey[700],
+                ),
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width * 0.75,
+                margin: const EdgeInsets.only(bottom: 20),
+                child: OutlineButton(
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF1A6978),
+                  ),
+                  onPressed: () {
+                    urlLauncher.launchInWebViewOrVC(
+                        // Initiate tweet of "@lexityapp "
+                        'https://twitter.com/intent/tweet?text=%40lexityapp%20',
+                        false,
+                        false);
+                  },
+                  child: Stack(
+                    children: <Widget>[
+                      Container(
+                        alignment: Alignment.center,
+                        child: const Text('Send us Feedback',
+                            style: TextStyle(
+                              color: Color(0xFF1A6978),
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.3,
+                            )),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(right: 10),
+                        alignment: Alignment.centerRight,
+                        child: const FaIcon(
+                          FontAwesomeIcons.twitter,
+                          color: Color(0xFF00ACEE),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               Container(

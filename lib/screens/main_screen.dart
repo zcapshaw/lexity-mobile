@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lexity_mobile/blocs/blocs.dart';
 
 import 'package:lexity_mobile/screens/home_screen.dart';
 import 'package:lexity_mobile/screens/user_screen.dart';
@@ -18,28 +20,51 @@ class MainScreen extends StatefulWidget {
 class _MainScreen extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _widgetScreens = [
-    HomeScreen(),
-    BookSearchScreen(
-      origin: Origin.navSearch,
-    ),
-    UserScreen()
-  ];
-
-  void _onItemTapped(int index) {
+  void _onItemTapped(BuildContext context, int index) {
+    index == _selectedIndex
+        ? context.bloc<NavigationCubit>().selectNavButton(index, true)
+        : context.bloc<NavigationCubit>().selectNavButton(index, false);
     setState(() {
       _selectedIndex = index;
     });
   }
 
+  void _returnHome() {
+    // dismiss OS keyboard
+    FocusScope.of(context).unfocus();
+
+    //return to home screen
+    setState(() {
+      _selectedIndex = 0;
+    });
+  }
+
+  Future<bool> _onBackPressed() async {
+    if (_selectedIndex != 0) {
+      setState(() {
+        _selectedIndex = 0;
+      });
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
+      onWillPop: _onBackPressed,
       child: Scaffold(
-        body: _widgetScreens.elementAt(_selectedIndex),
+        body: IndexedStack(
+          index: _selectedIndex,
+          children: <Widget>[
+            HomeScreen(),
+            BookSearchScreen(
+              origin: Origin.navSearch,
+              navCallback: _returnHome,
+            ),
+            UserScreen()
+          ],
+        ),
         backgroundColor: Colors.white,
         bottomNavigationBar: BottomNavigationBar(
           selectedFontSize: 0,
@@ -58,7 +83,7 @@ class _MainScreen extends State<MainScreen> {
             ),
           ],
           currentIndex: _selectedIndex,
-          onTap: _onItemTapped,
+          onTap: (index) => _onItemTapped(context, index),
           backgroundColor: Colors.grey[200],
         ),
       ),

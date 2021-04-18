@@ -4,6 +4,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/models/models.dart';
+import 'package:lexity_mobile/utils/utils.dart';
 import 'package:lexity_mobile/repositories/repositories.dart';
 import 'package:mockito/mockito.dart';
 
@@ -67,12 +68,12 @@ void main() {
     );
 
     blocTest<AuthenticationBloc, AuthenticationState>(
-      'emits correct sequence of states when tapping login via twitter',
+      'emits correct sequence of states when tapping login on a 3rd party svc',
       build: () => AuthenticationBloc(
         authenticationRepository: authenticationRepository,
         userRepository: userRepository,
       ),
-      act: (bloc) => bloc.add(const LogInWithTwitter()),
+      act: (bloc) => bloc.add(const LogInWithService(LogInService.twitter)),
       expect: const <AuthenticationState>[
         AuthenticationLoading(),
         Unauthenticated(),

@@ -111,7 +111,10 @@ class App extends StatelessWidget {
         BlocProvider<NotesCubit>(
           lazy: false,
           create: (context) => NotesCubit(twitterService: TwitterService()),
-        )
+        ),
+        BlocProvider<NavigationCubit>(
+          create: (context) => NavigationCubit(),
+        ),
       ],
       child: AppView(),
     );

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
+import 'package:lexity_mobile/utils/enums.dart';
 
 class LoginScreen extends StatefulWidget {
   LoginScreen({Key key}) : super(key: key);
@@ -21,12 +22,15 @@ class _LoginScreenState extends State<LoginScreen> {
   bool signUp = true;
 
   void _logInWithTwitter() {
-    context.bloc<AuthenticationBloc>().add(const LogInWithTwitter());
+    context
+        .bloc<AuthenticationBloc>()
+        .add(const LogInWithService(LogInService.twitter));
   }
 
-  // Temporary for quick quick auth testing
-  void signUpWithApple() async {
-    context.bloc<AuthenticationBloc>().add(const LoggedIn());
+  void _loginWithApple() {
+    context
+        .bloc<AuthenticationBloc>()
+        .add(const LogInWithService(LogInService.apple));
   }
 
   void _toggleSignin() {
@@ -90,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             buttonText: signUp
                                 ? 'SIGN UP WITH APPLE'
                                 : 'SIGN IN WITH APPLE',
-                            callback: signUpWithApple,
+                            callback: _loginWithApple,
                             icon: const FaIcon(
                               FontAwesomeIcons.apple,
                               color: Color(0xFF000000),

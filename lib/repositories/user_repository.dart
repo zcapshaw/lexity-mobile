@@ -31,7 +31,8 @@ class UserRepository {
             website: decoded['website'] as String,
             joined: decoded['joined'] as int,
             followers: decoded['followers'] as int,
-            friends: decoded['friends'] as int);
+            friends: decoded['friends'] as int,
+            twitterId: decoded['twitterId'] as int);
         return true;
       } else {
         print('Error loaded user from database - status: ${res.statusCode}');
@@ -69,7 +70,10 @@ class UserRepository {
             : int.tryParse(allValues['followers'] as String) ?? 0
         ..friends = allValues['friends'] == null
             ? 0
-            : int.tryParse(allValues['friends'] as String) ?? 0;
+            : int.tryParse(allValues['friends'] as String) ?? 0
+        ..twitterId = allValues['twitterId'] == null
+            ? null
+            : int.tryParse(allValues['joined'] as String) ?? 0;
       print('user id from storage is: ${allValues['userId']}');
       return true;
     } else {
@@ -90,7 +94,8 @@ class UserRepository {
       String website,
       int joined,
       int followers,
-      int friends}) {
+      int friends,
+      int twitterId}) {
     appUser
       ..authN = authN
       ..id = id ?? appUser.id
@@ -104,7 +109,8 @@ class UserRepository {
       ..website = website ?? appUser.website
       ..joined = joined ?? appUser.joined
       ..followers = followers ?? appUser.followers ?? 0
-      ..friends = friends ?? appUser.friends ?? 0;
+      ..friends = friends ?? appUser.friends ?? 0
+      ..twitterId = twitterId ?? appUser.twitterId;
     _writeStorage('userId', appUser.id);
     _writeStorage('accessToken', appUser.accessToken);
     _writeStorage('authN', appUser.authN.toString());
@@ -118,6 +124,7 @@ class UserRepository {
     _writeStorage('joined', appUser.joined.toString());
     _writeStorage('followers', appUser.followers.toString());
     _writeStorage('friends', appUser.friends.toString());
+    _writeStorage('twitterId', appUser.twitterId.toString());
   }
 
   // create getters
@@ -135,6 +142,7 @@ class UserRepository {
   int get joined => appUser.joined;
   int get followers => appUser.followers;
   int get friends => appUser.friends;
+  int get twitterId => appUser.twitterId;
   User get currentUser => appUser;
 
   Future<Null> _writeStorage(String key, String value) async {

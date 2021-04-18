@@ -14,12 +14,11 @@ import './list_tile_item.dart';
 import './reorderable_list_w_physics.dart';
 
 class ReadingList extends StatefulWidget {
-  ReadingList({
-    @required this.includedTypes,
-    this.enableSwipeRight = true,
-    this.enableHeaders = true,
-    this.isHomescreen = false,
-  });
+  ReadingList(
+      {@required this.includedTypes,
+      this.enableSwipeRight = true,
+      this.enableHeaders = true,
+      this.isHomescreen = false});
 
   final List<String> includedTypes;
   final bool enableSwipeRight;
@@ -40,6 +39,14 @@ class _ReadingListState extends State<ReadingList> {
     super.initState();
     // assign user for access to UserModel methods
     user = context.bloc<AuthenticationBloc>().state.user;
+    context.bloc<NavigationCubit>().listen((state) => {
+          if (state is NavScreenSelected)
+            {_scrollOnReclick(state.index, state.reclick)}
+        });
+    reorderScrollController.addListener(() {
+      var navCubit = context.bloc<NavigationCubit>();
+      navCubit.reclickToFalse(navCubit.state.index);
+    });
   }
 
   void _updateType(ListedBook book) async {
@@ -105,6 +112,20 @@ class _ReadingListState extends State<ReadingList> {
         builder: (context) => BookDetailsScreen(),
       ),
     );
+  }
+
+  void _scrollOnReclick(int screenIndex, bool reclick) {
+    // This condition allows for reclick scrolling on both the HomeScreen
+    // (index == 0) and the UserScreen with the read list (index == 2)
+    if (widget.isHomescreen && screenIndex == 0 ||
+        !widget.isHomescreen && screenIndex == 2) {
+      if (reclick && reorderScrollController.hasClients) {
+        reorderScrollController.animateTo(
+            reorderScrollController.position.minScrollExtent,
+            duration: const Duration(milliseconds: 1500),
+            curve: Curves.easeOutExpo);
+      }
+    }
   }
 
   @override
