@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:rxdart/streams.dart';
 
-import '../models/models.dart';
+import 'package:lexity_mobile/models/models.dart';
+import 'package:lexity_mobile/utils/utils.dart';
 
 // TODO: add all my API call functions to this service
 class ListService {
@@ -195,14 +195,4 @@ class ListService {
           error: true, errorMessage: 'An error occured'),
     );
   }
-}
-
-class APIResponse<T> {
-  const APIResponse(
-      {this.data, this.errorMessage, this.errorCode, this.error = false});
-
-  final T data;
-  final bool error;
-  final int errorCode;
-  final String errorMessage;
 }
