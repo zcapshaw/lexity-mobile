@@ -29,7 +29,8 @@ class TwitterService {
       return APIResponse<bool>(
           error: true,
           errorCode: res.statusCode,
-          errorMessage: res.reasonPhrase);
+          errorMessage: res.reasonPhrase,
+          responseBody: res.body);
     }).catchError(
       (dynamic err) => const APIResponse<bool>(
           error: true, errorMessage: 'An error occured'),

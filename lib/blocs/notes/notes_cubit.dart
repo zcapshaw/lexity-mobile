@@ -73,6 +73,7 @@ class NotesCubit extends Cubit<NotesState> {
         // the api returned an error..
         print(res.errorCode);
         print(res.errorMessage);
+        print(res.responseBody);
         emit(TweetFailed());
       } else {
         // the api call was successful
