@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/blocs/blocs.dart';
 import 'package:lexity_mobile/screens/screens.dart';
 import 'package:lexity_mobile/utils/test_keys.dart';
+import 'package:lexity_mobile/utils/utils.dart';
 
 class ThreadPreviewScreen extends StatelessWidget {
   const ThreadPreviewScreen();
@@ -18,6 +17,7 @@ class ThreadPreviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = context.bloc<AuthenticationBloc>().state.user;
     final tweets = context.bloc<NotesCubit>().state.tweets;
+    final urlLauncher = UrlLauncher();
 
     return BlocBuilder<NotesCubit, NotesState>(builder: (context, state) {
       return Scaffold(
@@ -101,7 +101,13 @@ class ThreadPreviewScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                urlLauncher.launchInWebViewOrVC(
+                                    // Initiate tweet of "@lexityapp "
+                                    state.tweetUrl ?? 'https://twitter.com/',
+                                    false,
+                                    false);
+                              },
                               child: const Text(
                                 'View on Twitter',
                               ),

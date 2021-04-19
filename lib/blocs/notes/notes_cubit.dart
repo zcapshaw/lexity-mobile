@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -62,6 +64,7 @@ class NotesCubit extends Cubit<NotesState> {
   void tweetNotes(List<String> tweets, User user) async {
     print(user.username);
     print(tweets.length);
+    var tweetUrl = 'https://twitter.com/';
 
     try {
       emit(NotesLoading());
@@ -77,8 +80,12 @@ class NotesCubit extends Cubit<NotesState> {
         emit(TweetFailed());
       } else {
         // the api call was successful
+        final decoded = jsonDecode(res.responseBody) as Map;
+        tweetUrl = decoded['url'] as String;
+
         print('tweet succeeded');
-        emit(TweetSucceeded());
+        print(tweetUrl);
+        emit(TweetSucceeded(tweetUrl));
       }
     } catch (err) {
       print(err);

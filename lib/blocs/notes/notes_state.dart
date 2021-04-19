@@ -9,6 +9,7 @@ abstract class NotesState extends Equatable {
   List<SelectableNote> get notes => null;
   int get selectedCount => 0;
   List<String> get tweets => null;
+  String get tweetUrl => null;
 }
 
 class NotesInitial extends NotesState {}
@@ -17,7 +18,15 @@ class NotesLoading extends NotesState {}
 
 class TweetFailed extends NotesState {}
 
-class TweetSucceeded extends NotesState {}
+class TweetSucceeded extends NotesState {
+  const TweetSucceeded(this.tweetUrl);
+
+  @override
+  final String tweetUrl;
+
+  @override
+  List<Object> get props => [tweetUrl];
+}
 
 class NotesLoaded extends NotesState {
   const NotesLoaded(this.notes, this.tweets, this.selectedCount);
