@@ -81,8 +81,7 @@ class ListRepository {
         readingList.insert(matchingIndex, book);
       } else {
         readingList.insert(insertIndex, book);
-        books =
-            dll.moveExistingBook(user, readingList, matchingIndex, insertIndex);
+        books = dll.addBook(user, readingList, insertIndex);
       }
     } else {
       readingList.insert(insertIndex, book);
