@@ -94,21 +94,22 @@ class ReadingListDeleted extends ReadingListEvent {
 
 class ReadingListDismount extends ReadingListEvent {}
 
-class UpdateBookType extends ReadingListEvent {
-  const UpdateBookType(this.book, this.user, this.newType);
+//TODO - look at deleting this deprecated event - leveraging ReadingListUpdated instead
+// class UpdateBookType extends ReadingListEvent {
+//   const UpdateBookType(this.book, this.user, this.newType);
 
-  final ListedBook book;
-  final User user;
-  final String newType;
+//   final ListedBook book;
+//   final User user;
+//   final String newType;
 
-  @override
-  List<Object> get props => [book, user, newType];
+//   @override
+//   List<Object> get props => [book, user, newType];
 
-  @override
-  String toString() =>
-      // ignore: lines_longer_than_80_chars
-      'UpdateBookType { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
-}
+//   @override
+//   String toString() =>
+//       // ignore: lines_longer_than_80_chars
+//       'UpdateBookType { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
+// }
 
 class NoteAdded extends ReadingListEvent {
   const NoteAdded(this.book, this.user, this.note);
