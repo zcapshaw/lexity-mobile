@@ -81,12 +81,12 @@ class ListRepository {
         readingList.insert(matchingIndex, book);
       } else {
         readingList.insert(insertIndex, book);
-        books = dll.addBook(user, readingList, insertIndex);
+        books =
+            dll.moveExistingBook(user, readingList, matchingIndex, insertIndex);
       }
     } else {
       readingList.insert(insertIndex, book);
-      books =
-          dll.moveExistingBook(user, readingList, matchingIndex, insertIndex);
+      books = dll.addBook(user, readingList, insertIndex);
     }
 
     // Try and update in the remote database

@@ -58,13 +58,19 @@ class TestVariables {
       ],
       labels: <String>[]);
 
-  static ListedBook newBook =
-      ListedBook(bookId: 'hij678', title: 'Parry Hotter', type: 'READING');
+  static ListedBook newBook = ListedBook(
+      bookId: 'hij678',
+      title: 'Parry Hotter',
+      type: 'READING',
+      prev: 'def456',
+      next: 'klm789');
 
   static ListedBook modifiedBookOne = ListedBook(
       bookId: 'abc123',
       title: 'The best test book ever',
       type: 'TO_READ',
+      prev: 'klm789',
+      next: 'nop123',
       recos: [
         Note(sourceName: 'Daniel', sourceImg: null),
         Note(sourceName: 'Joe', sourceImg: null),

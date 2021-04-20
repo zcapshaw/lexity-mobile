@@ -71,78 +71,116 @@ void main() {
         [
           readingHeader,
           listBookOne,
-          listBookTwo,
+          listBookTwo.clone(next: 'hij678'),
           newBook,
           toReadHeader,
+          listBookThree.clone(prev: 'hij678'),
+          readHeader,
+          listBookFour,
+          listBookLast,
+        ]);
+  });
+
+  test(
+      'Existing book is added to list with appended recos, notes, labels - type change updates list position w saved list order',
+      () {
+    expect(
+        listRepository.addBook(user, existingBook, [
+          readingHeader,
+          listBookOne,
+          listBookTwo,
+          toReadHeader,
           listBookThree,
+          readHeader,
+          listBookFour,
+          listBookLast
+        ]),
+        [
+          readingHeader,
+          listBookTwo.clone(prev: null),
+          toReadHeader,
+          listBookThree.clone(next: 'abc123'),
+          modifiedListBookOne,
+          readHeader,
+          listBookFour.clone(prev: 'abc123'),
+          listBookLast,
+        ]);
+  });
+
+  test(
+      'Updated book with different type is moved to appropriate index w saved list order',
+      () {
+    var listBookTwoRead = listBookTwo.clone(prev: 'klm189', next: 'nop123')
+      ..changeType = 'READ';
+    expect(
+        listRepository.updateBook(user, listBookTwoRead, [
+          readingHeader,
+          listBookOne,
+          listBookTwo,
+          toReadHeader,
+          listBookThree,
+          readHeader,
+          listBookFour,
+          listBookLast
+        ]),
+        [
+          readingHeader,
+          listBookOne.clone(next: 'klm789'),
+          toReadHeader,
+          listBookThree.clone(prev: 'abc123'),
+          readHeader,
+          listBookTwoRead,
+          listBookFour.clone(prev: 'def456'),
+          listBookLast
+        ]);
+  });
+
+  test('Reordered book is moved to appropriate index with type changed', () {
+    expect(
+        listRepository.reorderBook([
+          readingHeader,
+          listBookOne,
+          listBookTwo,
+          toReadHeader,
+          listBookThree,
+          readHeader,
+          listBookFour,
+          listBookLast
+        ], 1, 4, user, true),
+        [
+          readingHeader,
+          listBookTwo.clone(prev: null),
+          toReadHeader,
+          listBookOne.clone(prev: 'def456', next: 'klm789'),
+          listBookThree.clone(prev: 'abc123'),
           readHeader,
           listBookFour,
           listBookLast
         ]);
   });
 
-  test('Existing book is added to list with appended recos, notes, labels', () {
-    expect(
-        listRepository.addBook(user, existingBook, [
-          readingHeader,
-          listBookOne,
-          toReadHeader,
-          listBookTwo,
-          readHeader
-        ]),
-        [
-          readingHeader,
-          toReadHeader,
-          listBookTwo,
-          modifiedListBookOne,
-          readHeader
-        ]);
-  });
-
-  //TODO - need to create updateBook test instead
-  // test('Updated book with different type is moved to appropriate index', () {
-  //   var listBookTwoRead = listBookTwo.clone()..changeType = 'READ';
-  //   expect(
-  //       listRepository.updateBook(
-  //         listBookTwoRead,
-  //         [
-  //           readingHeader,
-  //           listBookOne,
-  //           toReadHeader,
-  //           listBookTwoRead,
-  //           readHeader
-  //         ],
-  //         [readingHeader, listBookOne, toReadHeader, listBookTwo, readHeader],
-  //       ),
-  //       [
-  //         readingHeader,
-  //         listBookOne,
-  //         toReadHeader,
-  //         readHeader,
-  //         listBookTwoRead
-  //       ]);
-  // });
-
-  test('Reordered book is moved to appropriate index with type changed', () {
-    expect(
-        listRepository.reorderBook(
-            [readingHeader, listBookOne, toReadHeader, listBookTwo, readHeader],
-            1,
-            3,
-            user,
-            true),
-        [readingHeader, toReadHeader, listBookOne, listBookTwo, readHeader]);
-  });
-
   test('When isHomeScreen is true, ensure all reorders adhere to max index',
       () {
     expect(
-        listRepository.reorderBook(
-            [readingHeader, listBookOne, toReadHeader, listBookTwo, readHeader],
-            1,
-            10,
-            user,
-            true),
-        [readingHeader, toReadHeader, listBookTwo, listBookOne, readHeader]);
+        listRepository.reorderBook([
+          readingHeader,
+          listBookOne,
+          listBookTwo,
+          toReadHeader,
+          listBookThree,
+          readHeader,
+          listBookFour,
+          listBookLast
+        ], 1, 10, user, true),
+        [
+          readingHeader,
+          listBookTwo.clone(prev: null),
+          toReadHeader,
+          listBookThree.clone(next: 'abc123'),
+          listBookOne.clone(prev: 'klm789', next: 'nop123'),
+          readHeader,
+          listBookFour,
+          listBookLast
+        ]);
   });
 }
