@@ -149,7 +149,7 @@ void main() {
         ], 1, 4, user, true),
         [
           readingHeader,
-          listBookTwo.clone(prev: null),
+          listBookTwo.clone(prev: null, next: 'abc123'),
           toReadHeader,
           listBookOne.clone(prev: 'def456', next: 'klm789'),
           listBookThree.clone(prev: 'abc123'),
@@ -181,6 +181,31 @@ void main() {
           readHeader,
           listBookFour,
           listBookLast
+        ]);
+  });
+
+  test('Reordered book moved to end of list has appropriate link list updates',
+      () {
+    expect(
+        listRepository.reorderBook([
+          readingHeader,
+          listBookOne,
+          listBookTwo,
+          toReadHeader,
+          listBookThree,
+          readHeader,
+          listBookFour,
+          listBookLast
+        ], 1, 8, user, false),
+        [
+          readingHeader,
+          listBookTwo.clone(prev: null),
+          toReadHeader,
+          listBookThree,
+          readHeader,
+          listBookFour,
+          listBookLast.clone(next: 'abc123'),
+          listBookOne.clone(prev: 'qrs456', next: null),
         ]);
   });
 }
