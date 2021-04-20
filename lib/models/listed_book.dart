@@ -53,7 +53,7 @@ class ListedBook extends Book with EquatableMixin {
   List<Note> notes;
 
   @override
-  List<Object> get props => [bookId, type, notes, recos, labels];
+  List<Object> get props => [bookId, type, notes, recos, labels, prev, next];
 
   @override
   String toString() => 'ListedBook: ${toJson()}';
@@ -71,7 +71,7 @@ class ListedBook extends Book with EquatableMixin {
       recos.addAll(List<Note>.from(oldRecos
         ..removeWhere((reco) => recoSourceNames.contains(reco.sourceName))));
 
-  ListedBook clone() {
+  ListedBook clone({String prev, String next}) {
     return ListedBook(
         title: title,
         subtitle: subtitle,
@@ -83,8 +83,8 @@ class ListedBook extends Book with EquatableMixin {
         listId: listId,
         userId: userId,
         bookId: bookId,
-        prev: prev,
-        next: next,
+        prev: prev ?? this.prev, // allow overriding in clone, helpful in tests
+        next: next ?? this.next, // allow overriding in clone, helpful in tests
         type: type,
         inUserList: inUserList,
         userRead: userRead,
