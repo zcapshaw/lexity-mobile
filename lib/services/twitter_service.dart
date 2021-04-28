@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'list_service.dart';
+import 'package:lexity_mobile/utils/utils.dart';
 
 class TwitterService {
   // ignore: constant_identifier_names
