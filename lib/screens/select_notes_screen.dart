@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lexity_mobile/blocs/notes/notes_cubit.dart';
@@ -12,6 +13,32 @@ class SelectNotesScreen extends StatelessWidget {
 
   static Route route() {
     return MaterialPageRoute<void>(builder: (_) => const SelectNotesScreen());
+  }
+
+  Future<void> _showExplainerDialog(BuildContext context) async {
+    return showCupertinoDialog<void>(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Select at least one note to proceed.'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -34,18 +61,40 @@ class SelectNotesScreen extends StatelessWidget {
           style: Theme.of(context).textTheme.subtitle1,
         ),
         actions: <Widget>[
-          TextButton(
-            child: Text(
-              'Next',
-              style: TextStyle(
-                color: Colors.teal[700],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            onPressed: () {
-              Navigator.push<void>(context, ThreadPreviewScreen.route());
+          BlocBuilder<NotesCubit, NotesState>(
+            builder: (context, state) {
+              if (state.selectedCount == 0) {
+                return TextButton(
+                  style: ButtonStyle(
+                    overlayColor:
+                        MaterialStateProperty.all<Color>(Colors.grey[300]),
+                  ),
+                  child: Text(
+                    'Next',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                  onPressed: () {
+                    _showExplainerDialog(context);
+                  },
+                );
+              } else {
+                return TextButton(
+                  child: const Text(
+                    'Next',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.push<void>(context, ThreadPreviewScreen.route());
+                  },
+                );
+              }
             },
-          ),
+          )
         ],
       ),
       body: BlocBuilder<NotesCubit, NotesState>(
