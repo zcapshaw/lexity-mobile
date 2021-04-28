@@ -17,6 +17,7 @@ import 'package:lexity_mobile/models/listed_book.dart';
 import 'package:lexity_mobile/models/note.dart';
 import 'package:lexity_mobile/models/user.dart';
 import 'package:lexity_mobile/utils/test_keys.dart';
+import 'package:lexity_mobile/utils/utils.dart';
 
 class MockAuthenticationBoc extends MockBloc<AuthenticationState>
     implements AuthenticationBloc {}
