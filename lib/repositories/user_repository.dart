@@ -75,7 +75,7 @@ class UserRepository {
         ..twitterId = allValues['twitterId'] == null
             ? null
             : int.tryParse(allValues['twitterId'] as String) ?? 0
-        ..list = jsonDecode(allValues['list'] as String) as Map;
+        ..list = _getJsonList(allValues['list'] as String);
       print('user id from storage is: ${allValues['userId']}');
       return true;
     } else {
@@ -161,5 +161,16 @@ class UserRepository {
   // ignore: unused_element
   Future<Null> _deleteAll() async {
     await storage.deleteAll();
+  }
+
+  Map _getJsonList(String list) {
+    var emptyList = {'firstNode': '', 'lastNode': ''};
+    try {
+      var decodedList = jsonDecode(list) as Map;
+      return decodedList;
+    } catch (err) {
+      print('Error creating userList - $err');
+      return emptyList;
+    }
   }
 }
