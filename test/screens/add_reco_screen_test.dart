@@ -27,11 +27,11 @@ class MockReadingListBloc extends MockBloc<ReadingListState>
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
-class MockListService extends Mock implements ListService {}
+class MockTwitterService extends Mock implements TwitterService {}
 
 void main() {
   AuthenticationBloc authenticationBloc;
-  ListService listService;
+  TwitterService twitterService;
   var user = User();
   var query = 'Super Cool User';
   var twitterResults = const APIResponse(data: [
@@ -52,9 +52,9 @@ void main() {
 
   setUp(() {
     authenticationBloc = MockAuthenticationBoc();
-    listService = MockListService();
+    twitterService = MockTwitterService();
     when(authenticationBloc.state).thenReturn(Authenticated(user));
-    when(listService.searchTwitterUsers(any, any, any))
+    when(twitterService.searchTwitterUsers(any, any, any))
         // .thenReturn(Future.value(twitterResults));
         .thenAnswer((_) async => twitterResults);
   });
