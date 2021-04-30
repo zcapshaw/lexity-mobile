@@ -40,7 +40,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
   int sourceTwitterId;
   bool sourceTwitterVerified;
   bool isConnected;
-  ListService listService = ListService();
+  TwitterService twitterService = TwitterService();
   User user;
   final double twitterImgSize = 50.0;
   Timer _debounce;
@@ -116,7 +116,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
 
   Future<List> _twitterUserList() async {
     if (recoSourceFocus.hasFocus && recoSource.isNotEmpty) {
-      final twitterUsers = await listService.searchTwitterUsers(
+      final twitterUsers = await twitterService.searchTwitterUsers(
           user.accessToken, user.id, recoSource);
       final decoded = jsonDecode(twitterUsers.data as String) as List;
       return decoded;

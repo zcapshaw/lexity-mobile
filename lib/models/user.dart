@@ -1,10 +1,10 @@
 class User {
-  User({
-    this.createComplete = false,
-    this.id = '',
-    this.accessToken = '',
-    this.authN,
-  });
+  User(
+      {this.createComplete = false,
+      this.id = '',
+      this.accessToken = '',
+      this.authN,
+      this.list});
 
   bool createComplete;
   String id;
@@ -21,6 +21,7 @@ class User {
   int followers;
   int friends;
   int twitterId;
+  Map list;
 
   bool get hasTwitterConnected => twitterId != null;
 }

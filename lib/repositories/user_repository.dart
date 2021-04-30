@@ -32,7 +32,8 @@ class UserRepository {
             joined: decoded['joined'] as int,
             followers: decoded['followers'] as int,
             friends: decoded['friends'] as int,
-            twitterId: decoded['twitterId'] as int);
+            twitterId: decoded['twitterId'] as int,
+            list: decoded['list'] as Map);
         return true;
       } else {
         print('Error loaded user from database - status: ${res.statusCode}');
@@ -46,7 +47,7 @@ class UserRepository {
   }
 
   Future<bool> checkForCachedUser() async {
-    // await _deleteAll();
+    //await _deleteAll();
     Map allValues = await storage.readAll();
 
     if (allValues.containsKey('userId') && allValues['userId'] != '') {
@@ -73,7 +74,8 @@ class UserRepository {
             : int.tryParse(allValues['friends'] as String) ?? 0
         ..twitterId = allValues['twitterId'] == null
             ? null
-            : int.tryParse(allValues['joined'] as String) ?? 0;
+            : int.tryParse(allValues['twitterId'] as String) ?? 0
+        ..list = jsonDecode(allValues['list'] as String) as Map;
       print('user id from storage is: ${allValues['userId']}');
       return true;
     } else {
@@ -82,20 +84,23 @@ class UserRepository {
     }
   }
 
-  void _addOrUpdateUser(bool authN,
-      {String id,
-      String accessToken,
-      String name,
-      String username,
-      String profileImg,
-      String email,
-      bool verified,
-      String bio,
-      String website,
-      int joined,
-      int followers,
-      int friends,
-      int twitterId}) {
+  void _addOrUpdateUser(
+    bool authN, {
+    String id,
+    String accessToken,
+    String name,
+    String username,
+    String profileImg,
+    String email,
+    bool verified,
+    String bio,
+    String website,
+    int joined,
+    int followers,
+    int friends,
+    int twitterId,
+    Map list,
+  }) {
     appUser
       ..authN = authN
       ..id = id ?? appUser.id
@@ -110,7 +115,8 @@ class UserRepository {
       ..joined = joined ?? appUser.joined
       ..followers = followers ?? appUser.followers ?? 0
       ..friends = friends ?? appUser.friends ?? 0
-      ..twitterId = twitterId ?? appUser.twitterId;
+      ..twitterId = twitterId ?? appUser.twitterId
+      ..list = list ?? appUser.list;
     _writeStorage('userId', appUser.id);
     _writeStorage('accessToken', appUser.accessToken);
     _writeStorage('authN', appUser.authN.toString());
@@ -125,6 +131,7 @@ class UserRepository {
     _writeStorage('followers', appUser.followers.toString());
     _writeStorage('friends', appUser.friends.toString());
     _writeStorage('twitterId', appUser.twitterId.toString());
+    _writeStorage('list', jsonEncode(appUser.list));
   }
 
   // create getters
@@ -143,6 +150,7 @@ class UserRepository {
   int get followers => appUser.followers;
   int get friends => appUser.friends;
   int get twitterId => appUser.twitterId;
+  Map get list => appUser.list;
   User get currentUser => appUser;
 
   Future<Null> _writeStorage(String key, String value) async {

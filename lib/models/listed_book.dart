@@ -18,6 +18,8 @@ class ListedBook extends Book with EquatableMixin {
       String listId,
       this.userId,
       this.bookId,
+      this.prev,
+      this.next,
       String type,
       bool inUserList,
       bool userRead,
@@ -44,12 +46,14 @@ class ListedBook extends Book with EquatableMixin {
   final String userId;
   final String bookId;
   final int created;
+  String prev;
+  String next;
   int updated;
   List labels;
   List<Note> notes;
 
   @override
-  List<Object> get props => [bookId, type, notes, recos, labels];
+  List<Object> get props => [bookId, type, notes, recos, labels, prev, next];
 
   @override
   String toString() => 'ListedBook: ${toJson()}';
@@ -67,7 +71,7 @@ class ListedBook extends Book with EquatableMixin {
       recos.addAll(List<Note>.from(oldRecos
         ..removeWhere((reco) => recoSourceNames.contains(reco.sourceName))));
 
-  ListedBook clone() {
+  ListedBook clone({String prev, String next}) {
     return ListedBook(
         title: title,
         subtitle: subtitle,
@@ -79,12 +83,18 @@ class ListedBook extends Book with EquatableMixin {
         listId: listId,
         userId: userId,
         bookId: bookId,
+        prev: prev ?? this.prev, // allow overriding in clone, helpful in tests
+        next: next ?? this.next, // allow overriding in clone, helpful in tests
         type: type,
         inUserList: inUserList,
         userRead: userRead,
         recos: recos,
         labels: labels,
         notes: notes);
+  }
+
+  ListedBook linkListOnly() {
+    return ListedBook(userId: userId, bookId: bookId, prev: prev, next: next);
   }
 
   // ignore: sort_constructors_first
@@ -111,6 +121,8 @@ class ListedBook extends Book with EquatableMixin {
     writeNotNull('labels', labels);
     writeNotNull('notes', notes);
     writeNotNull('updated', updated);
+    writeNotNull('prev', prev);
+    writeNotNull('next', next);
     return val;
   }
 }

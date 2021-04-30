@@ -18,4 +18,13 @@ extension ReadingList<T> on List<ListedBook> {
   int get toReadCountExcludingHeader => toReadCount - headerPlaceholder;
 
   int get readCountExcludingHeader => readCount - headerPlaceholder;
+
+  List<ListedBook> get removeHeaders =>
+      where((book) => book.runtimeType != ListedBookHeader).toList();
+
+  ListedBook get firstBook =>
+      firstWhere((b) => b.runtimeType != ListedBookHeader);
+
+  ListedBook get lastBook =>
+      lastWhere((b) => b.runtimeType != ListedBookHeader);
 }
