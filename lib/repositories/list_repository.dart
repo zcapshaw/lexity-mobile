@@ -204,6 +204,17 @@ class ListRepository {
     return readingList;
   }
 
+  ListedBook addRecoToListedBook(Note reco, ListedBook book) {
+    // insert note as first element in notes list
+    book.notes.insert(0, reco);
+
+    // set the updated at timestamp
+    book.updatedAt = DateTime.now().millisecondsSinceEpoch;
+
+    // return updated ListedBook object
+    return book;
+  }
+
   ListedBook addNoteToListedBook(String noteText, ListedBook book) {
     // construct a Note object from the text passed from the UI
     final note = Note(

@@ -42,6 +42,8 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       yield* _mapNoteDeletedToState(event);
     } else if (event is NoteUpdated) {
       yield* _mapNoteUpdatedToState(event);
+    } else if (event is RecoAdded) {
+      yield* _mapRecoAddedToState(event);
     }
   }
 
@@ -197,6 +199,31 @@ class ReadingListBloc extends Bloc<ReadingListEvent, ReadingListState> {
       final updatedBook = listRepository.updateNoteForListedBook(
           event.noteId, event.book, event.noteText);
 
+      // add the updated book to the reading list
+      var updatedReadingList =
+          (state as ReadingListLoadSuccess).readingList.map((book) {
+        if (book.bookId == event.book.bookId) {
+          return updatedBook;
+        } else {
+          return book;
+        }
+      }).toList();
+      // yield updated list
+      yield ReadingListLoadSuccess(updatedReadingList);
+      // update the back end
+      await listService.addOrUpdateListItem(event.user, [updatedBook]);
+    } catch (err) {
+      print(err);
+      yield ReadingListLoadFailure();
+    }
+  }
+
+  Stream<ReadingListState> _mapRecoAddedToState(RecoAdded event) async* {
+    yield ReadingListUpdating();
+    try {
+      // pass list repo the book and note
+      final updatedBook =
+          listRepository.addRecoToListedBook(event.reco, event.book);
       // add the updated book to the reading list
       var updatedReadingList =
           (state as ReadingListLoadSuccess).readingList.map((book) {

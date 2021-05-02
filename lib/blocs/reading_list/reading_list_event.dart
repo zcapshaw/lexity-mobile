@@ -111,6 +111,20 @@ class ReadingListDismount extends ReadingListEvent {}
 //       'UpdateBookType { book : ${book.bookId}, user: ${user.id}, newType: $newType }';
 // }
 
+class RecoAdded extends ReadingListEvent {
+  const RecoAdded(this.book, this.user, this.reco);
+
+  final ListedBook book;
+  final User user;
+  final Note reco;
+
+  @override
+  List<Object> get props => [book, user, reco];
+
+  @override
+  String toString() => 'RecoAdded { reco: $reco }';
+}
+
 class NoteAdded extends ReadingListEvent {
   const NoteAdded(this.book, this.user, this.note);
 

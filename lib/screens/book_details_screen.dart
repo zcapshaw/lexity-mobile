@@ -7,14 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:lexity_mobile/blocs/notes/notes_cubit.dart';
-import 'package:lexity_mobile/screens/add_note_screen.dart';
-import 'package:lexity_mobile/screens/select_notes_screen.dart';
 import 'package:time_formatter/time_formatter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../blocs/blocs.dart';
 import '../components/components.dart';
 import '../models/models.dart';
+import '../screens/screens.dart';
 import '../utils/test_keys.dart';
 
 class BookDetailsScreen extends StatelessWidget {
@@ -33,6 +32,38 @@ class BookDetailsScreen extends StatelessWidget {
       // context.bloc<ReadingListBloc>().add(UpdateBookType(book, user, newType));
       context.bloc<BookDetailsCubit>().closeBookDetails();
       Navigator.pop(context);
+    }
+
+    void _addReco(BuildContext context, ListedBook book) async {
+      final result = await Navigator.push<Map<String, dynamic>>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const AddRecoScreen(),
+        ),
+      );
+
+      var recoSource = result != null ? result['recoSource'] as String : null;
+      var recoText = result != null ? result['recoText'] as String : null;
+      var sourceTwitterId =
+          result != null ? result['sourceTwitterId'] as int : null;
+      var recoTwitterScreenName =
+          result != null ? result['recoTwitterScreenName'] as String : null;
+      var sourceImg = result != null ? result['sourceImg'] as String : null;
+      var sourceTwitterVerified =
+          result != null ? result['sourceTwitterVerified'] as bool : null;
+
+      final reco = Note(
+        id: Uuid().v4(),
+        comment: recoText,
+        sourceName: recoSource,
+        sourceTwitterId: sourceTwitterId,
+        sourceTwitterScreenName: recoTwitterScreenName,
+        sourceImg: sourceImg,
+        sourceTwitterVerified: sourceTwitterVerified,
+        created: DateTime.now().millisecondsSinceEpoch,
+      );
+
+      context.bloc<ReadingListBloc>().add(RecoAdded(book, user, reco));
     }
 
     return Scaffold(
@@ -103,7 +134,7 @@ class BookDetailsScreen extends StatelessWidget {
                                 callback: () {},
                               ),
                             ActionButton(
-                              icon: Icons.comment,
+                              icon: CupertinoIcons.text_badge_plus,
                               labelText: 'Add Note',
                               key: TestKeys.addNoteButton,
                               callback: () {
@@ -112,9 +143,11 @@ class BookDetailsScreen extends StatelessWidget {
                               },
                             ),
                             ActionButton(
-                              icon: CupertinoIcons.share_up,
-                              labelText: 'Share Book',
-                              callback: () {},
+                              icon: CupertinoIcons.text_bubble_fill,
+                              labelText: 'Add Reco',
+                              callback: () {
+                                _addReco(context, state.book);
+                              },
                             ),
                           ],
                         ),
