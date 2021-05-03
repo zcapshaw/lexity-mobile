@@ -153,7 +153,7 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Add Recos',
+          'Add Reco',
           style: Theme.of(context).textTheme.subtitle1,
         ),
         actions: <Widget>[
@@ -162,7 +162,8 @@ class _AddRecoScreenState extends State<AddRecoScreen> {
           Builder(
               builder: (context) => FlatButton(
                     onPressed: () {
-                      recoSource.isEmpty && recoText.isNotEmpty
+                      recoSource == null ||
+                              recoSource.isEmpty && recoText.isNotEmpty
                           ? Scaffold.of(context).showSnackBar(SnackBar(
                               backgroundColor: Colors.red[300],
                               content:
