@@ -18,6 +18,8 @@ class Book {
       this.description,
       this.categories,
       this.listId,
+      this.isbn,
+      this.googleLink,
       this.type,
       this.recos,
       this.inUserList,
@@ -31,6 +33,8 @@ class Book {
   final String description;
   final List<String> categories;
   final String listId;
+  String isbn;
+  final String googleLink;
   String type;
   List<Note> recos;
   final bool inUserList;

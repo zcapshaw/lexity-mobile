@@ -88,6 +88,8 @@ class BookDetailsScreen extends StatelessWidget {
               child: const CircularProgressIndicator(),
             );
           } else if (state.book != null) {
+            print(
+                'googleLink: ${state.book.googleLink} and ISBN: ${state.book.isbn}');
             return MediaQuery.removePadding(
               context: context,
               removeTop: true,
@@ -162,6 +164,7 @@ class BookDetailsScreen extends StatelessWidget {
                           ),
                         buildNotes(state.notes, user, context, state.book),
                         buildRecos(state.recos, user, context, state.book),
+                        buildLinks(context, state.book),
                       ],
                     ),
                   ),
@@ -366,6 +369,31 @@ class BookDetailsScreen extends StatelessWidget {
             ),
           );
   }
+}
+
+Widget buildLinks(BuildContext context, ListedBook book) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 8.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            children: [
+              const ListTileHeaderText('Get a copy'),
+            ],
+          ),
+        ),
+        // Column(
+        //   crossAxisAlignment: CrossAxisAlignment.start,
+        //   children: <Widget>[],
+        // ),
+      ],
+    ),
+  );
 }
 
 class TwitterShareButton extends StatelessWidget {

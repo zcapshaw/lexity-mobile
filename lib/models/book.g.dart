@@ -18,6 +18,8 @@ Book _$BookFromJson(Map<String, dynamic> json) {
     description: json['description'] as String,
     categories: (json['categories'] as List)?.map((e) => e as String)?.toList(),
     listId: json['listId'] as String,
+    isbn: json['isbn'] as String,
+    googleLink: json['googleLink'] as String,
     type: json['type'] as String,
     recos: (json['recos'] as List)
         ?.map(
@@ -37,6 +39,8 @@ Map<String, dynamic> _$BookToJson(Book instance) => <String, dynamic>{
       'description': instance.description,
       'categories': instance.categories,
       'listId': instance.listId,
+      'isbn': instance.isbn,
+      'googleLink': instance.googleLink,
       'type': instance.type,
       'recos': instance.recos,
       'inUserList': instance.inUserList,
