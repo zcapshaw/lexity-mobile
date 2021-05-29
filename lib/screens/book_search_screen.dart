@@ -236,6 +236,21 @@ class AddBookBackground extends StatelessWidget {
         Expanded(
           child: Image.asset('assets/undraw_reading_time_gvg0.png'),
         ),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 80),
+          child: Container(
+            child: Text(
+              'Powered by Google',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 14,
+                letterSpacing: 0.4,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
