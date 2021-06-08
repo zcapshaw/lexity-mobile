@@ -104,9 +104,7 @@ class ThreadPreviewScreen extends StatelessWidget {
                               onPressed: () {
                                 urlLauncher.launchInWebViewOrVC(
                                     // Initiate tweet of "@lexityapp "
-                                    state.tweetUrl ?? 'https://twitter.com/',
-                                    false,
-                                    false);
+                                    state.tweetUrl ?? 'https://twitter.com/');
                               },
                               child: const Text(
                                 'View on Twitter',

@@ -319,9 +319,7 @@ class _UserMenu extends StatelessWidget {
                   onPressed: () {
                     urlLauncher.launchInWebViewOrVC(
                         // Initiate tweet of "@lexityapp "
-                        'https://twitter.com/intent/tweet?text=%40lexityapp%20',
-                        false,
-                        false);
+                        'https://twitter.com/intent/tweet?text=%40lexityapp%20');
                   },
                   child: Stack(
                     children: <Widget>[
