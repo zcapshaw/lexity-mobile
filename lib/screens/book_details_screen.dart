@@ -89,8 +89,6 @@ class BookDetailsScreen extends StatelessWidget {
               child: const CircularProgressIndicator(),
             );
           } else if (state.book != null) {
-            print(
-                'googleLink: ${state.book.googleLink} and ISBN: ${state.book.isbn}');
             return MediaQuery.removePadding(
               context: context,
               removeTop: true,
