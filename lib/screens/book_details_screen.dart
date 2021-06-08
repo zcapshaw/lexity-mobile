@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/style.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:lexity_mobile/components/image_button.dart';
 import 'package:time_formatter/time_formatter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -14,7 +15,7 @@ import '../blocs/blocs.dart';
 import '../components/components.dart';
 import '../models/models.dart';
 import '../screens/screens.dart';
-import '../utils/test_keys.dart';
+import '../utils/utils.dart';
 
 class BookDetailsScreen extends StatelessWidget {
   @override
@@ -372,6 +373,7 @@ class BookDetailsScreen extends StatelessWidget {
 }
 
 Widget buildLinks(BuildContext context, ListedBook book) {
+  final urlLauncher = UrlLauncher();
   return Padding(
     padding: const EdgeInsets.only(bottom: 8.0),
     child: Column(
@@ -383,14 +385,22 @@ Widget buildLinks(BuildContext context, ListedBook book) {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.baseline,
             children: [
-              const ListTileHeaderText('Get a copy'),
+              const ListTileHeaderText('Find a copy'),
             ],
           ),
         ),
-        // Column(
-        //   crossAxisAlignment: CrossAxisAlignment.start,
-        //   children: <Widget>[],
-        // ),
+        ImageButton(
+          imageFileName: 'assets/google_logo.svg',
+          callback: () async =>
+              await urlLauncher.launchInWebViewOrVC(book.googleLink),
+          isSVG: true,
+        ),
+        ImageButton(
+          imageFileName: 'assets/amazon_logo.svg',
+          callback: () async => await urlLauncher
+              .launchInWebViewOrVC('https://www.amazon.com/s?k=${book.isbn}'),
+          isSVG: true,
+        ),
       ],
     ),
   );
