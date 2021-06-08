@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:lexity_mobile/utils/utils.dart';
@@ -15,15 +14,7 @@ class AuthenticationRepository {
         .get('https://api.lexity.co/auth/${service.toShortString()}/signin');
     if (res.statusCode == 200) {
       final decoded = jsonDecode(res.body) as Map;
-      if (Platform.isIOS) {
-        await urlLauncher.launchInWebViewOrVC(
-            decoded['url'] as String, true, true);
-      } else if (Platform.isAndroid) {
-        await urlLauncher.launchInWebViewOrVC(
-            decoded['url'] as String, false, false);
-      } else {
-        throw Exception('Warning: Platform is NOT iOS or Android');
-      }
+      await urlLauncher.launchInWebViewOrVC(decoded['url'] as String);
     } else {
       throw Exception(
           // ignore: lines_longer_than_80_chars

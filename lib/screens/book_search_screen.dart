@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:lexity_mobile/blocs/authentication/bloc/authentication_bloc.dart';
@@ -235,6 +236,34 @@ class AddBookBackground extends StatelessWidget {
         ),
         Expanded(
           child: Image.asset('assets/undraw_reading_time_gvg0.png'),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 80),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Powered by ',
+                style: TextStyle(
+                  color: Colors.grey[500],
+                  fontSize: 14,
+                  letterSpacing: 0.4,
+                  height: 1.5,
+                ),
+              ),
+              Text(
+                'Google',
+                // Style recommended to align with the unavailable Public Sans
+                style: GoogleFonts.nunito(
+                  color: Colors.grey[500],
+                  fontWeight: FontWeight.w800,
+                  fontSize: 14,
+                  letterSpacing: 0.4,
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
