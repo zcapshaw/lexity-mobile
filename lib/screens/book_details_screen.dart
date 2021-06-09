@@ -395,8 +395,8 @@ Widget buildLinks(BuildContext context, ListedBook book) {
         ),
         ImageButton(
           imageFileName: 'assets/amazon_logo.svg',
-          callback: () async => await urlLauncher
-              .launchInWebViewOrVC('https://www.amazon.com/s?k=${book.isbn}'),
+          callback: () async => await urlLauncher.launchInWebViewOrVC(
+              'https://www.amazon.com/s?k=${book.isbn}+${book.uriEncodedTitle}'),
           isSVG: true,
         ),
       ],

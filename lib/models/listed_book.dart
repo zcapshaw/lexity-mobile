@@ -67,6 +67,7 @@ class ListedBook extends Book with EquatableMixin {
   bool get read => type == 'READ';
   List<String> get recoSourceNames =>
       recos.map((reco) => reco?.sourceName).toList();
+  String get uriEncodedTitle => Uri.encodeFull('$title: $subtitle');
 
   set changeType(String newType) => type = newType;
   set updatedAt(int updatedDateTime) => updated = updatedDateTime;
